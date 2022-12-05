@@ -1,0 +1,152 @@
+plugins {
+    id 'org.springframework.boot' version '3.0.0'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'java'
+    id 'jacoco'
+    id 'maven-publish'
+    id 'com.google.osdetector' version '1.7.1'
+    id 'org.graalvm.buildtools.native' version '0.9.18'
+}
+
+sourceCompatibility = 17
+targetCompatibility = 17
+
+group project.maven_group
+version project.artifact_version
+
+repositories {
+    maven { url 'https://repo.spring.io/release' }
+    mavenCentral()
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.testcontainers:testcontainers-bom:1.17.6'
+    }
+}
+
+dependencies {
+    implementation(
+            'org.springframework.boot:spring-boot-starter-webflux',
+            'org.springframework.boot:spring-boot-starter-data-r2dbc',
+            'org.springframework.boot:spring-boot-starter-validation',
+            'com.fasterxml.jackson.datatype:jackson-datatype-jsr310',
+            'io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE',
+            'org.projectlombok:lombok',
+            'org.postgresql:r2dbc-postgresql:1.0.0.RELEASE'
+    )
+    annotationProcessor(
+            'org.springframework.boot:spring-boot-configuration-processor',
+            'org.projectlombok:lombok'
+    )
+    testImplementation(
+            "org.junit.jupiter:junit-jupiter-api:5.9.0",
+            'org.springframework.boot:spring-boot-starter-test',
+            'org.mockito:mockito-inline:4.8.0',
+            'io.projectreactor:reactor-test',
+            'org.testcontainers:junit-jupiter',
+            'org.testcontainers:postgresql',
+            'org.testcontainers:r2dbc',
+            'io.projectreactor.tools:blockhound:1.0.6.RELEASE',
+    )
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.0"
+    testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+check {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    finalizedBy jacocoTestCoverageVerification
+}
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
+
+/* JACOCO */
+jacocoTestReport {
+    reports {
+        xml.enabled(true)
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                // minimum = 0.90
+            }
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                // minimum = 0.80
+            }
+            limit {
+                counter = 'LINE'
+                value = 'TOTALCOUNT'
+                // maximum = 200
+            }
+            excludes = [
+                    // "com.example.somewhere.*"
+            ]
+        }
+    }
+}
+
+tasks.withType(Test).all {
+    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_13)) {
+        jvmArgs += [
+                "-XX:+AllowRedefinitionToAddDeleteMethods"
+        ]
+    }
+}
+
+//----------------------------------------------------
+// PUBLISH
+//----------------------------------------------------
+publishing {
+    // Declare all publications
+    publications {
+        mavenJava(MavenPublication) { from components.java }
+    }
+
+    // Add repositories to publish to
+    repositories {
+        // GitHub Packages (https://pkg.github.com)
+        maven {
+            name 'GitHub'
+            url "https://maven.pkg.github.com/${project.github_repo}"
+            credentials {
+                username System.getenv('GITHUB_ACTOR')
+                password System.getenv('GITHUB_TOKEN')
+            }
+        }
+    }
+}
+
+//----------------------------------------------------
+// Native Build OPT (subject to change over time)
+//----------------------------------------------------
+graalvmNative {
+    metadataRepository {
+        enabled = true
+        version = '0.2.5'
+    }
+}
+bootBuildImage {
+    builder = 'paketobuildpacks/builder:tiny'
+    environment = ['BP_NATIVE_IMAGE': 'true']
+}

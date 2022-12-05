@@ -1,0 +1,1 @@
+[engine:junit-jupiter]/[class:io.dsub.sweatboys.opendiscogs.api.OpenDiscogsApiApplicationTests]/[method:contextLoads()]
