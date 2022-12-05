@@ -1,9 +1,0 @@
-junit:
-  jupiter:
-    execution:
-      parallel:
-        enabled: true
-
-spring:
-  r2dbc:
-    url: r2dbc:tc:postgresql:///discogs?TC_IMAGE_TAG=15
