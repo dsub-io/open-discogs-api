@@ -22,6 +22,15 @@ jobs:
       -
         name: ✨ Checkout repository
         uses: actions/checkout@v3
+      - 
+        name: ☕ Set up GraalVM JDK 17
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: 'latest'
+          java-version: '17'
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'gradle'
       -
         name: 🧪 Run tests
         run: ./gradlew check
