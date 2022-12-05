@@ -21,7 +21,7 @@ jobs:
     steps:
       -
         name: ✨ Checkout repository
-        uses: actions/checkout@v3🤪
+        uses: actions/checkout@v3
       -
         name: 🧪 Run tests
         run: ./gradlew check
