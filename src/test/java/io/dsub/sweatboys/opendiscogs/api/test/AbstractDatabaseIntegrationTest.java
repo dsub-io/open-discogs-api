@@ -26,6 +26,6 @@ public abstract class AbstractDatabaseIntegrationTest {
   static void beforeAll(@Autowired ConnectionFactory factory) {
     var populator = new ResourceDatabasePopulator();
     populator.addScript(new ClassPathResource("schema.sql"));
-    populator.populate(factory).subscribe();
+    populator.populate(factory).block();
   }
 }

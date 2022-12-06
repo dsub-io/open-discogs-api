@@ -1,7 +1,9 @@
 package io.dsub.sweatboys.opendiscogs.api.artist.controller;
 
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
+import io.dsub.sweatboys.opendiscogs.api.artist.query.ArtistQuery;
 import io.dsub.sweatboys.opendiscogs.api.artist.service.ArtistService;
+import io.dsub.sweatboys.opendiscogs.api.core.response.ResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,11 +16,9 @@ import reactor.core.publisher.Mono;
 @RequestMapping("artist")
 @RequiredArgsConstructor
 public class ArtistController {
-
   private final ArtistService service;
-
-  @GetMapping
-  public Mono<Page<Artist>> findArtist(Pageable pageable) {
-    return service.findArtists(pageable);
+  @GetMapping("artist")
+  public Mono<ResponseDTO<Artist>> findArtist(ArtistQuery query, Pageable pageable) {
+    return service.findArtists(query, pageable);
   }
 }

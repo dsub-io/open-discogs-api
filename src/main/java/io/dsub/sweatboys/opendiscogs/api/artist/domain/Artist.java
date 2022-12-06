@@ -1,5 +1,6 @@
 package io.dsub.sweatboys.opendiscogs.api.artist.domain;
 
+import io.dsub.sweatboys.opendiscogs.api.core.entity.PersistableBaseEntity;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "artist")
-public class Artist {
+public class Artist extends PersistableBaseEntity<Long> {
 
   @Id
   @NotNull
