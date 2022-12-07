@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import reactor.test.StepVerifier;
 
 class ArtistRepositoryImplTest extends AbstractDatabaseIntegrationTest {
 
@@ -51,16 +53,10 @@ class ArtistRepositoryImplTest extends AbstractDatabaseIntegrationTest {
     for (Artist artist : artists) {
       var q = Example.of(Artist.builder().name(artist.getName()).build(),
           ExampleMatcher.matching().withIgnoreNullValues().withIgnoreCase());
-      var foundPage = r2dbcRepository.findBy(q, PageRequest.of(0, 5)).block();
-      assertThat(foundPage).isNotNull();
-      var found = foundPage.getContent();
-      assertThat(found).isNotNull().hasSize(1);
-      var item = found.get(0);
-      assertThat(item.getId()).isEqualTo(artist.getId());
-      assertThat(item.getName()).isEqualTo(artist.getName());
-      assertThat(item.getRealName()).isEqualTo(artist.getRealName());
-      assertThat(item.getProfile()).isEqualTo(artist.getProfile());
-      assertThat(item.getDataQuality()).isEqualTo(artist.getDataQuality());
+      var p = PageRequest.of(0, 5);
+      var res = r2dbcRepository.findBy(q, query -> query.as(Artist.class).page(p)).block();
+      assertThat(res).isNotNull();
+      assertThat(res.getContent().size()).isEqualTo(1);
     }
   }
 }

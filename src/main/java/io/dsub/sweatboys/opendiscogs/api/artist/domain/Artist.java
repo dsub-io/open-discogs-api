@@ -23,20 +23,24 @@ import org.springframework.data.relational.core.mapping.Table;
 public class Artist extends PersistableBaseEntity<Long> {
 
   @Id
-  @NotNull
   @Min(1)
   @Column("id")
-  private Long id;
+  @Builder.Default
+  private Long id = null;
 
   @Column("name")
-  private String name;
+  @Builder.Default
+  private String name = null;
 
   @Column("real_name")
-  private String realName;
+  @Builder.Default
+  private String realName = null;
 
   @Column("profile")
-  private String profile;
+  @Builder.Default
+  private String profile = null;
 
   @Column("data_quality")
-  private String dataQuality;
+  @Builder.Default
+  private String dataQuality = null;
 }

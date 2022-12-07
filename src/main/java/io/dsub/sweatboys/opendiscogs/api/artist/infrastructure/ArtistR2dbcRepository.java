@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.ReactiveQueryByExampleExecutor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface ArtistR2dbcRepository extends R2dbcRepository<Artist, Long>, ReactiveQueryByExampleExecutor<Artist> {
+public interface ArtistR2dbcRepository extends R2dbcRepository<Artist, Long> {
   Flux<Artist> findBy(Example<Artist> example, Pageable pageable);
 }
