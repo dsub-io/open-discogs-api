@@ -7,6 +7,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ArtistRepository {
-  Flux<Artist> findAllBy(Example<Artist> example, Pageable pageable);
+  Mono<Page<Artist>> findAllBy(Example<Artist> example, Pageable pageable);
   Mono<Long> count();
 }

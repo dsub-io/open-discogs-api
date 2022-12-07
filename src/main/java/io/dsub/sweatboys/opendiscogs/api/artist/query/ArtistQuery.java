@@ -2,6 +2,7 @@ package io.dsub.sweatboys.opendiscogs.api.artist.query;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
+import io.dsub.sweatboys.opendiscogs.api.util.StringUtility;
 import lombok.Builder;
 
 @Builder
@@ -15,9 +16,9 @@ public record ArtistQuery(
 ) {
     public Artist toArtist() {
         return Artist.builder()
-            .name(name)
-            .realName(realName)
-            .profile(profile)
+            .name(StringUtility.getInstance().normalize(name))
+            .realName(StringUtility.getInstance().normalize(realName))
+            .profile(StringUtility.getInstance().normalize(profile))
             .build();
     }
 }

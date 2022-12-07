@@ -15,8 +15,8 @@ import reactor.core.publisher.Mono;
 public class ArtistRepositoryImpl implements ArtistRepository {
   private final ArtistR2dbcRepository delegate;
   @Override
-  public Flux<Artist> findAllBy(Example<Artist> example, Pageable pageable) {
-    return delegate.findBy(example, pageable);
+  public Mono<Page<Artist>> findAllBy(Example<Artist> example, Pageable pageable) {
+    return delegate.findBy(example, p -> p.as(Artist.class).page(pageable));
   }
   @Override
   public Mono<Long> count() {

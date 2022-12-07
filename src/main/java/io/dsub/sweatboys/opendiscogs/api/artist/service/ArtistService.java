@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -22,12 +23,16 @@ public class ArtistService implements PagingService {
   private final ArtistRepository artistRepository;
 
   public Mono<ResponseDTO<Artist>> findArtists(ArtistQuery query, Pageable pageable) {
-    return artistRepository.findAllBy(Example.of(query.toArtist(),
-            ExampleMatcher.matching().withIgnoreNullValues().withIgnoreCase()), pageable)
-        .collectList()
-        .flatMap(list -> Mono.just(ResponseDTO.<Artist>builder()
-            .items(list)
-            .build()))
+    return artistRepository.findAllBy(Example.of(query.toArtist()), pageable)
+        .flatMap(page -> Mono.just(page)
+            .map(artist -> ResponseDTO.<Artist>builder()
+                .items(page.getContent())
+                .first(page.isFirst())
+                .last(page.isLast())
+                .pageNumber(page.getNumber())
+                .pageSize(page.getNumberOfElements())
+                .sorted(!page.getSort().isEmpty())
+                .build()))
         .subscribeOn(Schedulers.boundedElastic());
   }
 }

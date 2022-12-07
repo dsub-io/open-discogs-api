@@ -5,7 +5,6 @@ plugins {
     id 'jacoco'
     id 'maven-publish'
     id 'com.google.osdetector' version '1.7.1'
-    id 'org.graalvm.buildtools.native' version '0.9.18'
 }
 
 sourceCompatibility = 17
@@ -53,7 +52,6 @@ dependencies {
             'org.testcontainers:junit-jupiter',
             'org.testcontainers:postgresql',
             'org.testcontainers:r2dbc',
-            'io.projectreactor.tools:blockhound:1.0.6.RELEASE',
     )
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.0"
     testAnnotationProcessor 'org.projectlombok:lombok'
@@ -106,14 +104,6 @@ jacocoTestCoverageVerification {
     }
 }
 
-tasks.withType(Test).all {
-    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_13)) {
-        jvmArgs += [
-                "-XX:+AllowRedefinitionToAddDeleteMethods"
-        ]
-    }
-}
-
 //----------------------------------------------------
 // PUBLISH
 //----------------------------------------------------
@@ -135,18 +125,4 @@ publishing {
             }
         }
     }
-}
-
-//----------------------------------------------------
-// Native Build OPT (subject to change over time)
-//----------------------------------------------------
-graalvmNative {
-    metadataRepository {
-        enabled = true
-        version = '0.2.5'
-    }
-}
-bootBuildImage {
-    builder = 'paketobuildpacks/builder:tiny'
-    environment = ['BP_NATIVE_IMAGE': 'true']
 }
