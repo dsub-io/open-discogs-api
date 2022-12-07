@@ -5,9 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class OpenDiscogsApiApplication {
-
-
-
   public static void main(String[] args) {
     SpringApplication.run(OpenDiscogsApiApplication.class, args);
   }

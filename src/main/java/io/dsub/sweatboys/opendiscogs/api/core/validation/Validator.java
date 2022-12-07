@@ -1,4 +1,4 @@
-package io.dsub.sweatboys.opendiscogs.api.validation;
+package io.dsub.sweatboys.opendiscogs.api.core.validation;
 
 import reactor.core.publisher.Mono;
 

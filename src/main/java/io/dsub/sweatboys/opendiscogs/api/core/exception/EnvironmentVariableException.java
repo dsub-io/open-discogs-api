@@ -1,4 +1,4 @@
-package io.dsub.sweatboys.opendiscogs.api.exception;
+package io.dsub.sweatboys.opendiscogs.api.core.exception;
 
 public class EnvironmentVariableException extends BaseCheckedException {
     public EnvironmentVariableException(String message) {

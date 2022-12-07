@@ -1,46 +1,35 @@
 package io.dsub.sweatboys.opendiscogs.api.artist.domain;
 
-import io.dsub.sweatboys.opendiscogs.api.core.entity.PersistableBaseEntity;
+import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.With;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Getter
-@ToString
-@Builder
 @With
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Builder
 @Table(name = "artist")
-public class Artist extends PersistableBaseEntity<Long> {
-
+@AllArgsConstructor
+public class Artist extends BaseEntity<Long> {
   @Id
   @Min(1)
   @Column("id")
-  @Builder.Default
-  private Long id = null;
+  private final Long id;
 
   @Column("name")
-  @Builder.Default
-  private String name = null;
+  private final String name;
 
   @Column("real_name")
-  @Builder.Default
-  private String realName = null;
+  private final String realName;
 
   @Column("profile")
-  @Builder.Default
-  private String profile = null;
+  private final String profile;
 
   @Column("data_quality")
-  @Builder.Default
-  private String dataQuality = null;
+  private final String dataQuality;
 }

@@ -1,4 +1,4 @@
-package io.dsub.sweatboys.opendiscogs.api.exception;
+package io.dsub.sweatboys.opendiscogs.api.core.exception;
 
 public class InvalidEnvironmentVariableException extends EnvironmentVariableException {
     public InvalidEnvironmentVariableException(String key) {

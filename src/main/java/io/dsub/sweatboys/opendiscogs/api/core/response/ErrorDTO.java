@@ -1,13 +1,14 @@
 package io.dsub.sweatboys.opendiscogs.api.core.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 
+@Builder
 public record ErrorDTO(
     @JsonProperty("reason")
     String reason,
     @JsonProperty("rejected")
-    String rejected,
+    Object rejected,
     @JsonProperty("param")
-    String param,
-    @JsonProperty("resource_uri")
-    String resourceURI) {}
+    String param
+) {}

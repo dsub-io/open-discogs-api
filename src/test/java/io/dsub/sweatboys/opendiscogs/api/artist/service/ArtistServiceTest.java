@@ -8,7 +8,7 @@ import io.dsub.sweatboys.opendiscogs.api.artist.domain.ArtistRepository;
 import io.dsub.sweatboys.opendiscogs.api.artist.infrastructure.ArtistR2dbcRepository;
 import io.dsub.sweatboys.opendiscogs.api.artist.infrastructure.ArtistRepositoryImpl;
 import io.dsub.sweatboys.opendiscogs.api.artist.query.ArtistQuery;
-import io.dsub.sweatboys.opendiscogs.api.core.entity.PersistableBaseEntity;
+import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import io.dsub.sweatboys.opendiscogs.api.test.AbstractConcurrentDatabaseIntegrationTest;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
 import java.util.List;
@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ser.Serializers.Base;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
@@ -38,7 +39,7 @@ class ArtistServiceTest extends AbstractConcurrentDatabaseIntegrationTest {
     this.service = new ArtistService(repository);
     this.artists = IntStream.rangeClosed(1, 10)
         .mapToObj(i -> TestUtil.getInstanceOf(Artist.class).withId((long) i))
-        .peek(PersistableBaseEntity::setAsNew)
+        .peek(BaseEntity::setAsNew)
         .toList();
     var insertThenCount = Flux.fromIterable(artists)
         .flatMap(r2dbcRepository::save)
@@ -50,12 +51,12 @@ class ArtistServiceTest extends AbstractConcurrentDatabaseIntegrationTest {
 
   @AfterEach
   void tearDown() {
-    r2dbcRepository.deleteAll().subscribe();
+    r2dbcRepository.deleteAll().block();
   }
 
   @Test
   void findArtistsReturnsNothing() {
-    r2dbcRepository.deleteAll().subscribe();
+    r2dbcRepository.deleteAll().block();
     StepVerifier.create(service.findArtists(ArtistQuery.builder().build(), PageRequest.of(0, 10)))
         .expectNextMatches(response ->
                 Objects.equals(response.isFirst(), true) &&

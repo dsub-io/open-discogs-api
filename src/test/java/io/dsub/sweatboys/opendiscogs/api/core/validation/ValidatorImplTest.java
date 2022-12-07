@@ -1,4 +1,4 @@
-package io.dsub.sweatboys.opendiscogs.api.validation;
+package io.dsub.sweatboys.opendiscogs.api.core.validation;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;

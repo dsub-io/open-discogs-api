@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.ArtistRepository;
-import io.dsub.sweatboys.opendiscogs.api.core.entity.PersistableBaseEntity;
+import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import io.dsub.sweatboys.opendiscogs.api.test.AbstractDatabaseIntegrationTest;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
 import java.util.List;
@@ -34,7 +34,7 @@ class ArtistRepositoryImplTest extends AbstractDatabaseIntegrationTest {
             .profile(TestUtil.getRandomString())
             .dataQuality(TestUtil.getRandomString())
             .build())
-        .peek(PersistableBaseEntity::setAsNew)
+        .peek(BaseEntity::setAsNew)
         .toList();
     artists = r2dbcRepository.saveAll(items).collectList().block();
     assertThat(artists).hasSize(10);
