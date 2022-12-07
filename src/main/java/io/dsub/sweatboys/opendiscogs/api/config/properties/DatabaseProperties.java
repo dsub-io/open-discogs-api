@@ -1,7 +1,7 @@
 package io.dsub.sweatboys.opendiscogs.api.config.properties;
 
-import io.dsub.sweatboys.opendiscogs.api.exception.EnvironmentVariableException;
-import io.dsub.sweatboys.opendiscogs.api.exception.MissingRequiredEnvironmentVariableException;
+import io.dsub.sweatboys.opendiscogs.api.core.exception.EnvironmentVariableException;
+import io.dsub.sweatboys.opendiscogs.api.core.exception.MissingRequiredEnvironmentVariableException;
 import io.dsub.sweatboys.opendiscogs.api.Constants;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

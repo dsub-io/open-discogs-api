@@ -73,6 +73,9 @@ nbdist/
  *.iml
  *.ipr
 
+# Intellij
+.idea
+
 # CMake
 cmake-build-*/
 

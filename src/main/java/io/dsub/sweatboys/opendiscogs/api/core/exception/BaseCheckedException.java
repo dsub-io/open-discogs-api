@@ -1,4 +1,4 @@
-package io.dsub.sweatboys.opendiscogs.api.exception;
+package io.dsub.sweatboys.opendiscogs.api.core.exception;
 
 public abstract class BaseCheckedException extends Exception {
     public BaseCheckedException(String message) {
