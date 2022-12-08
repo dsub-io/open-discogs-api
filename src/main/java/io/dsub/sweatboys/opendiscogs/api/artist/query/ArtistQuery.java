@@ -9,7 +9,7 @@ import lombok.Builder;
 public record ArtistQuery(
     @JsonProperty("name")
     String name,
-    @JsonProperty("realName")
+    @JsonProperty("real_name")
     String realName,
     @JsonProperty("profile")
     String profile
