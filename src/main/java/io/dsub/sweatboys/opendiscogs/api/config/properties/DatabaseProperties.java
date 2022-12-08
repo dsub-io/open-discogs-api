@@ -1,18 +1,14 @@
 package io.dsub.sweatboys.opendiscogs.api.config.properties;
 
-import io.dsub.sweatboys.opendiscogs.api.core.exception.EnvironmentVariableException;
-import io.dsub.sweatboys.opendiscogs.api.core.exception.MissingRequiredEnvironmentVariableException;
-import io.dsub.sweatboys.opendiscogs.api.Constants;
 import jakarta.validation.constraints.NotBlank;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.env.Environment;
 import org.springframework.validation.annotation.Validated;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Getter
 @Validated
