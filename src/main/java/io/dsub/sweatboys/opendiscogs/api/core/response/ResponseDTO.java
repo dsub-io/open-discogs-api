@@ -17,10 +17,9 @@ import reactor.core.scheduler.Schedulers;
 @Builder
 @AllArgsConstructor
 public class ResponseDTO<T> {
+
   @Builder.Default
   private final List<T> items = Collections.emptyList();
-  @Builder.Default
-  private final List<ErrorDTO> errors = Collections.emptyList();
   @Builder.Default
   @JsonProperty("total_elements")
   private long totalElements = 0;
@@ -41,6 +40,7 @@ public class ResponseDTO<T> {
   private boolean sorted = false;
 
   @JsonProperty("resource_uri")
+  @Builder.Default
   String resourceURI = "";
 
   public static <T> Mono<ResponseDTO<T>> fromPage(Page<T> page) {

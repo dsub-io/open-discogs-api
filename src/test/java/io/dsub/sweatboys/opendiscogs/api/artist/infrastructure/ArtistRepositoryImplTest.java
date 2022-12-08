@@ -16,16 +16,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 
 class ArtistRepositoryImplTest extends AbstractDatabaseIntegrationTest {
   @Autowired
   ArtistR2dbcRepository r2dbcRepository;
+  @Autowired
+  R2dbcEntityTemplate template;
   ArtistRepository repository;
   List<Artist> artists;
 
   @BeforeEach
   void setUp() {
-    repository = new ArtistRepositoryImpl(r2dbcRepository);
+    repository = new ArtistRepositoryImpl(r2dbcRepository, template);
     var items = IntStream.rangeClosed(1, 10)
         .mapToObj(i -> Artist.builder()
             .id((long) i)

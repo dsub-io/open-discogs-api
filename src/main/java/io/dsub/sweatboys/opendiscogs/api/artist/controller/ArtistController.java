@@ -29,6 +29,8 @@ public class ArtistController {
 
   @GetMapping("artist/{id}")
   public Mono<ResponseDTO<Artist>> getArtist(@PathVariable("id") @Valid @NotNull @Min(1) long id) {
-    return service.findArtist(id).flatMap(dto -> Mono.just(dto.withResourceURI("/artist/" + id).withPageNumber(dto.getPageNumber() + 1)));
+    return service.findArtist(id)
+        .flatMap(dto -> Mono.just(dto.withResourceURI("/artist/" + id)
+        .withPageNumber(dto.getPageNumber() + 1)));
   }
 }

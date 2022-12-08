@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ser.Serializers.Base;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
@@ -28,6 +29,8 @@ class ArtistServiceTest extends AbstractConcurrentDatabaseIntegrationTest {
 
   @Autowired
   ArtistR2dbcRepository r2dbcRepository;
+  @Autowired
+  R2dbcEntityTemplate template;
   ArtistService service;
   ArtistRepository repository;
 
@@ -35,7 +38,7 @@ class ArtistServiceTest extends AbstractConcurrentDatabaseIntegrationTest {
 
   @BeforeEach
   void setUp() {
-    this.repository = new ArtistRepositoryImpl(r2dbcRepository);
+    this.repository = new ArtistRepositoryImpl(r2dbcRepository, template);
     this.service = new ArtistService(repository);
     this.artists = IntStream.rangeClosed(1, 10)
         .mapToObj(i -> TestUtil.getInstanceOf(Artist.class).withId((long) i))

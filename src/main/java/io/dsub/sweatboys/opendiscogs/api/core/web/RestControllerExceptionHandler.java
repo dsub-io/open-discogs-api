@@ -1,5 +1,6 @@
 package io.dsub.sweatboys.opendiscogs.api.core.web;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dsub.sweatboys.opendiscogs.api.core.exception.ItemNotFoundException;
 import io.dsub.sweatboys.opendiscogs.api.core.response.ErrorDTO;
 import io.dsub.sweatboys.opendiscogs.api.core.response.ResponseDTO;
@@ -12,11 +13,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.support.WebExchangeBindException;
@@ -34,46 +39,31 @@ public class RestControllerExceptionHandler extends ResponseEntityExceptionHandl
   protected Mono<ResponseEntity<Object>> handleServerWebInputException(ServerWebInputException ex,
       HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
     return Mono.fromCallable(() -> ResponseEntity.status(status)
-            .<Object>body(ResponseDTO.builder()
-                .first(true)
-                .last(true)
-                .errors(parseServerWebInputException(ex))
-                .resourceURI(exchange.getRequest().getPath().value())
-                .build()))
+            .<Object>body(parseServerWebInputException(ex)))
         .subscribeOn(Schedulers.boundedElastic());
   }
 
-  @Order(1)
   @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<?> handleException(ConstraintViolationException e,
+  public Mono<ResponseEntity<Object>> handleException(ConstraintViolationException e,
       ServerHttpRequest request) {
-    return ResponseEntity.badRequest().body(ResponseDTO.builder()
-        .first(true)
-        .last(true)
-        .errors(parseConstraintViolationException(e))
-        .resourceURI(request.getPath().value())
-        .build());
+    return Mono.fromCallable(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .<Object>body(parseConstraintViolationException(e)))
+        .subscribeOn(Schedulers.boundedElastic());
   }
 
-  @Order(3)
-  @ExceptionHandler({IllegalArgumentException.class, ItemNotFoundException.class,
-      ValidationException.class})
-  public ResponseEntity<?> handleException(Exception e) {
-    return ResponseEntity.badRequest().body("yo..." + e.getMessage());
+  @ExceptionHandler(DataAccessException.class)
+  public Mono<ResponseEntity<Object>> handleException(DataAccessException e) {
+    return Mono.fromCallable(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .<Object>body(new SimpleError(e.getMostSpecificCause().getMessage())))
+        .subscribeOn(Schedulers.boundedElastic());
   }
 
   @Override
   protected Mono<ResponseEntity<Object>> handleWebExchangeBindException(WebExchangeBindException ex,
       HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-    return Mono.fromCallable(() -> ResponseEntity
-            .status(status)
-            .<Object>body(ResponseDTO.builder()
-                .first(true)
-                .last(true)
-                .errors(parseWebExchangeBindException(ex))
-                .build()))
-        .subscribeOn(
-            Schedulers.boundedElastic());
+    return Mono.fromCallable(() ->
+            ResponseEntity.status(status).<Object>body(parseWebExchangeBindException(ex)))
+        .subscribeOn(Schedulers.boundedElastic());
   }
 
   private List<ErrorDTO> parseWebExchangeBindException(WebExchangeBindException ex) {
@@ -87,7 +77,8 @@ public class RestControllerExceptionHandler extends ResponseEntityExceptionHandl
   }
 
   private List<ErrorDTO> parseConstraintViolationException(ConstraintViolationException exception) {
-    return exception.getConstraintViolations().parallelStream()
+    return exception.getConstraintViolations()
+        .parallelStream()
         .map(cv -> ErrorDTO.builder()
             .param(getMostChildPath(cv))
             .reason(cv.getMessage())
@@ -105,7 +96,7 @@ public class RestControllerExceptionHandler extends ResponseEntityExceptionHandl
     String reason;
     Object rejected = null;
     if (ex.getCause() instanceof TypeMismatchException err) {
-      reason = err.getMessage();
+      reason = err.getLocalizedMessage().split(";")[0];
       rejected = err.getValue();
     } else {
       reason = ex.getReason();
@@ -121,4 +112,7 @@ public class RestControllerExceptionHandler extends ResponseEntityExceptionHandl
     return ex.getMethodParameter() == null ? null : ex.getMethodParameter().getParameterName();
   }
 
+  private record SimpleError(@JsonProperty("error") String message) {
+
+  }
 }

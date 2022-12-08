@@ -31,19 +31,35 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation(
-            'org.springframework.boot:spring-boot-starter-webflux',
-            'org.springframework.boot:spring-boot-starter-data-r2dbc',
-            'org.springframework.boot:spring-boot-starter-validation',
-            'com.fasterxml.jackson.datatype:jackson-datatype-jsr310',
-            'io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE',
-            'org.projectlombok:lombok',
-            'org.postgresql:r2dbc-postgresql:1.0.0.RELEASE'
-    )
-    annotationProcessor(
-            'org.springframework.boot:spring-boot-configuration-processor',
-            'org.projectlombok:lombok'
-    )
+    // spring configuration
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // webflux
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // r2dbc
+    implementation 'org.postgresql:r2dbc-postgresql:1.0.0.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+
+//    // jooq
+//    jooqGenerator 'org.postgresql:postgresql:42.5.1'
+//    // workaround of issue: https://github.com/etiennestuder/gradle-jooq-plugin/issues/209
+//    jooqGenerator 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
+//    jooqGenerator 'org.jooq:jooq-meta-extensions:3.17.5'
+//    // workaround of array type codegen, see: https://github.com/jOOQ/jOOQ/issues/13322
+//    jooqGenerator 'com.h2database:h2:2.1.214'
+
+    // validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // datatype
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // lombok
+    implementation 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // testing
     testImplementation(
             "org.junit.jupiter:junit-jupiter-api:5.9.0",
             'org.springframework.boot:spring-boot-starter-test',
@@ -103,10 +119,56 @@ jacocoTestCoverageVerification {
         }
     }
 }
+//
+//jooq {
+//    configurations {
+//        main {
+//            generationTool {
+//                // we do not use jdbc
+//                jdbc = null
+//                generator {
+//                    name = 'org.jooq.codegen.DefaultGenerator'
+//                    database {
+//                        name = 'org.jooq.meta.extensions.ddl.DDLDatabase'
+//                        // commented due to issue: https://github.com/etiennestuder/gradle-jooq-plugin/issues/222
+//                        // inputSchema = "public"
+//                        properties {
+//                            property {
+//                                key = 'scripts'
+//                                value = 'src/main/resources/schema.sql'
+//                            }
+//                            property {
+//                                key = 'sort'
+//                                value = 'semantic'
+//                            }
+//                            property {
+//                                key = 'unqualifiedSchema'
+//                                value = 'none'
+//                            }
+//                            property {
+//                                key = 'defaultNameCase'
+//                                value = 'lower'
+//                            }
+//                        }
+//                        includes = '.*'
+//                    }
+//                    generate {
+//                        deprecated = false
+//                        records = true
+//                        immutablePojos = true
+//                        fluentSetters = true
+//                    }
+//                    target {
+//                        packageName = 'io.dsub.sweatboys.opendiscogs.jooq'
+//                        directory = 'build/generated-src/jooq/main'  // default (can be omitted)
+//                    }
+//                    strategy.name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+//                }
+//            }
+//        }
+//    }
+//}
 
-//----------------------------------------------------
-// PUBLISH
-//----------------------------------------------------
 publishing {
     // Declare all publications
     publications {
