@@ -1,5 +1,6 @@
 package io.dsub.sweatboys.opendiscogs.api.config.properties;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+@Setter
 @Getter
 @Validated
 @NoArgsConstructor
@@ -24,7 +26,7 @@ public class DatabaseProperties {
   private String host;
   @NotBlank
   @Setter
-  private String database;
+  private String database = "discogs";
 
   public void setUsername(String username) {
     this.username = encodeToUTF8(username);
@@ -40,6 +42,7 @@ public class DatabaseProperties {
     }
     return URLEncoder.encode(in, StandardCharsets.UTF_8);
   }
+
 
   public String getUrl() {
     return "r2dbc:postgres://%s/%s".formatted(host, database);

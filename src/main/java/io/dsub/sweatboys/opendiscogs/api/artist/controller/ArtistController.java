@@ -6,6 +6,7 @@ import io.dsub.sweatboys.opendiscogs.api.artist.service.ArtistService;
 import io.dsub.sweatboys.opendiscogs.api.core.response.ResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +25,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/artists")
+@Tag(name = "artists", description = "artist tag description")
 public class ArtistController {
 
   private final ArtistService service;
