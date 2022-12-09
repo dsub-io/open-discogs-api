@@ -1,4 +1,4 @@
-package io.dsub.sweatboys.opendiscogs.api.artist.service;
+package io.dsub.sweatboys.opendiscogs.api.artist.application;
 
 import static org.springframework.data.domain.ExampleMatcher.matchingAll;
 
@@ -8,7 +8,6 @@ import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistDetailDTO;
 import io.dsub.sweatboys.opendiscogs.api.artist.query.ArtistQuery;
 import io.dsub.sweatboys.opendiscogs.api.core.exception.ItemNotFoundException;
 import io.dsub.sweatboys.opendiscogs.api.core.response.PagedResponseDTO;
-import io.dsub.sweatboys.opendiscogs.api.core.service.PagingService;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -21,8 +20,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class ArtistService implements PagingService {
-
+public class ArtistService {
   private final ArtistRepository artistRepository;
 
   public Mono<PagedResponseDTO<Artist>> findArtists(ArtistQuery query, Pageable pageable) {
@@ -41,10 +39,10 @@ public class ArtistService implements PagingService {
   public Mono<ResponseEntity<ArtistDetailDTO>> getArtist(long id) {
     return artistRepository.findById(id)
         .map(ResponseEntity::ok)
-        .switchIfEmpty(getError(id));
+        .switchIfEmpty(getItemNotFoundException(id));
   }
 
-  private static Mono<ResponseEntity<ArtistDetailDTO>> getError(long id) {
+  private static Mono<ResponseEntity<ArtistDetailDTO>> getItemNotFoundException(long id) {
     return Mono.error(new ItemNotFoundException("artist", id));
   }
 }

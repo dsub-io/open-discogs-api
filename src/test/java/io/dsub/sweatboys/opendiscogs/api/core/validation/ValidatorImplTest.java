@@ -3,6 +3,7 @@ package io.dsub.sweatboys.opendiscogs.api.core.validation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import io.dsub.sweatboys.opendiscogs.api.test.ConcurrentTest;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
 import jakarta.validation.ConstraintViolation;
 import java.util.Set;
@@ -13,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import reactor.test.StepVerifier;
 
-class ValidatorImplTest {
+class ValidatorImplTest extends ConcurrentTest {
 
   @Mock
   jakarta.validation.Validator delegation;

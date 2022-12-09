@@ -15,7 +15,6 @@ import java.nio.charset.StandardCharsets;
 @Getter
 @Validated
 @NoArgsConstructor
-@AllArgsConstructor
 public class DatabaseProperties {
   @NotBlank
   private String username;
@@ -37,8 +36,8 @@ public class DatabaseProperties {
   }
 
   private String encodeToUTF8(String in) {
-    if (in == null || in.length() == 0) {
-      return in;
+    if (in == null || in.isBlank()) {
+      return "";
     }
     return URLEncoder.encode(in, StandardCharsets.UTF_8);
   }

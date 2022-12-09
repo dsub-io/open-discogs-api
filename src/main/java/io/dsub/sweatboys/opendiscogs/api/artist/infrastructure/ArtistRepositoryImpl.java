@@ -15,12 +15,6 @@ import reactor.core.publisher.Mono;
 @Repository
 @RequiredArgsConstructor
 public class ArtistRepositoryImpl implements ArtistRepository {
-
-  public static final String SEL_ARTIST_MEMBERS_SQL = ""
-      + "SELECT id, name FROM artist "
-      + "LEFT JOIN artist_group ag on artist.id = ag.group_id "
-      + "WHERE artist_id = :id";
-
   private final ArtistR2dbcRepository delegate;
   @Override
   public Mono<Page<Artist>> findAllBy(Example<Artist> example, Pageable pageable) {
