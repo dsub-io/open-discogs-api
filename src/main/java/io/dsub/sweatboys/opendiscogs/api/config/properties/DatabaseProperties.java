@@ -43,7 +43,6 @@ public class DatabaseProperties {
     return URLEncoder.encode(in, StandardCharsets.UTF_8);
   }
 
-
   public String getUrl() {
     return "r2dbc:postgres://%s/%s".formatted(host, database);
   }

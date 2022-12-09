@@ -38,7 +38,7 @@ class ArtistServiceTest extends AbstractConcurrentDatabaseIntegrationTest {
 
   @BeforeEach
   void setUp() {
-    this.repository = new ArtistRepositoryImpl(r2dbcRepository, template);
+    this.repository = new ArtistRepositoryImpl(r2dbcRepository);
     this.service = new ArtistService(repository);
     this.artists = IntStream.rangeClosed(1, 10)
         .mapToObj(i -> TestUtil.getInstanceOf(Artist.class).withId((long) i))

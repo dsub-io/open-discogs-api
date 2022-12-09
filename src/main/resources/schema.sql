@@ -365,9 +365,11 @@ ALTER TABLE "artist_group"
 ALTER TABLE "artist_group"
     ADD CONSTRAINT "fk_artist_group_group_id_artist" FOREIGN KEY ("group_id") REFERENCES "artist" ("id");
 
-
 -- CREATE EXTENSION FOR TRIGRAM TOKENIZER
 CREATE EXTENSION pg_trgm;
+
+-- INDEXES FOR RELATIONAL LOOKUPS
+CREATE INDEX idx_artist_group_group_id_artist_id ON artist_group(group_id, artist_id);
 
 -- INDEXES FOR FULL TEXT SEARCH
 CREATE INDEX CONCURRENTLY idx_artist_name_trigram ON artist USING GIN(UPPER("name") gin_trgm_ops);

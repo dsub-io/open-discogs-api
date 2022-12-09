@@ -9,14 +9,13 @@ import lombok.Getter;
 import lombok.With;
 import org.springframework.data.domain.Page;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 @With
 @Getter
 @Builder
 @AllArgsConstructor
-public class ResponseDTO<T> {
+public class PagedResponseDTO<T> {
 
   @Builder.Default
   private final List<T> items = Collections.emptyList();
@@ -43,8 +42,8 @@ public class ResponseDTO<T> {
   @Builder.Default
   String resourceURI = "";
 
-  public static <T> Mono<ResponseDTO<T>> fromPage(Page<T> page) {
-    return Mono.fromCallable(() -> ResponseDTO.<T>builder()
+  public static <T> Mono<PagedResponseDTO<T>> fromPage(Page<T> page) {
+    return Mono.fromCallable(() -> PagedResponseDTO.<T>builder()
             .items(page.getContent())
             .first(page.isFirst())
             .last(page.isLast())

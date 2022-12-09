@@ -116,55 +116,6 @@ jacocoTestCoverageVerification {
         }
     }
 }
-//
-//jooq {
-//    configurations {
-//        main {
-//            generationTool {
-//                // we do not use jdbc
-//                jdbc = null
-//                generator {
-//                    name = 'org.jooq.codegen.DefaultGenerator'
-//                    database {
-//                        name = 'org.jooq.meta.extensions.ddl.DDLDatabase'
-//                        // commented due to issue: https://github.com/etiennestuder/gradle-jooq-plugin/issues/222
-//                        // inputSchema = "public"
-//                        properties {
-//                            property {
-//                                key = 'scripts'
-//                                value = 'src/main/resources/schema.sql'
-//                            }
-//                            property {
-//                                key = 'sort'
-//                                value = 'semantic'
-//                            }
-//                            property {
-//                                key = 'unqualifiedSchema'
-//                                value = 'none'
-//                            }
-//                            property {
-//                                key = 'defaultNameCase'
-//                                value = 'lower'
-//                            }
-//                        }
-//                        includes = '.*'
-//                    }
-//                    generate {
-//                        deprecated = false
-//                        records = true
-//                        immutablePojos = true
-//                        fluentSetters = true
-//                    }
-//                    target {
-//                        packageName = 'io.dsub.sweatboys.opendiscogs.jooq'
-//                        directory = 'build/generated-src/jooq/main'  // default (can be omitted)
-//                    }
-//                    strategy.name = 'org.jooq.codegen.DefaultGeneratorStrategy'
-//                }
-//            }
-//        }
-//    }
-//}
 
 publishing {
     // Declare all publications
