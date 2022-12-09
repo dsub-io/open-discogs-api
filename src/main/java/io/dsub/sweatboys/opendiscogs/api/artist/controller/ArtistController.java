@@ -16,6 +16,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,9 +38,10 @@ public class ArtistController {
       @ApiResponse(description = "On Bad Request", useReturnTypeSchema = true, responseCode = "400")
   })
   public Mono<PagedResponseDTO<Artist>> searchArtists(@ParameterObject ArtistQuery query,
-      @ParameterObject @PageableDefault(value = 30, page = 1) Pageable pageable) {
+      @ParameterObject @PageableDefault(value = 30, page = 1) Pageable pageable,
+      ServerHttpRequest serverHttpRequest) {
     return service.findArtists(query, pageable).
-        map(dto -> dto.withResourceURI("/artists"));
+        map(dto -> dto.withResourceURI(serverHttpRequest.getURI().toString()));
   }
 
   @GetMapping("/{id}")

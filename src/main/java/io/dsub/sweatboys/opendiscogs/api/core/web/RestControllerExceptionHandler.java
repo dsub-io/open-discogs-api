@@ -1,6 +1,7 @@
 package io.dsub.sweatboys.opendiscogs.api.core.web;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dsub.sweatboys.opendiscogs.api.core.exception.BaseException;
 import io.dsub.sweatboys.opendiscogs.api.core.response.ErrorDTO;
 import io.dsub.sweatboys.opendiscogs.api.core.util.StringUtility;
 import jakarta.validation.ConstraintViolation;
@@ -49,6 +50,14 @@ public class RestControllerExceptionHandler extends ResponseEntityExceptionHandl
   public Mono<ResponseEntity<Object>> handleException(DataAccessException e) {
     return Mono.fromCallable(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .<Object>body(new SimpleError(e.getMostSpecificCause().getMessage())))
+        .subscribeOn(Schedulers.boundedElastic());
+  }
+
+
+  @ExceptionHandler(BaseException.class)
+  public Mono<ResponseEntity<Object>> handleException(BaseException e) {
+    return Mono.fromCallable(() -> ResponseEntity.status(e.getStatusCode())
+            .<Object>body(new SimpleError(e.getReason())))
         .subscribeOn(Schedulers.boundedElastic());
   }
 
@@ -106,7 +115,5 @@ public class RestControllerExceptionHandler extends ResponseEntityExceptionHandl
     return ex.getMethodParameter() == null ? null : ex.getMethodParameter().getParameterName();
   }
 
-  private record SimpleError(@JsonProperty("error") String message) {
-
-  }
+  private record SimpleError(@JsonProperty("error") String message) {}
 }

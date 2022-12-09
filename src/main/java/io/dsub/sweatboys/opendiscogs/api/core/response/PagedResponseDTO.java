@@ -37,7 +37,6 @@ public class PagedResponseDTO<T> {
   private boolean first = false;
   @Builder.Default
   private boolean sorted = false;
-
   @JsonProperty("resource_uri")
   @Builder.Default
   String resourceURI = "";
