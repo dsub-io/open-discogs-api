@@ -1,6 +1,15 @@
 server:
   shutdown: graceful
-
+spring:
+  jackson:
+    property-naming-strategy: LOWER_CAMEL_CASE
+springdoc:
+  api-docs:
+    path: /swagger-doc/v3/api-docs
+    groups:
+      enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
 logging:
   level:
     io.r2dbc.postgresql.QUERY: DEBUG # for queries

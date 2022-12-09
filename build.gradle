@@ -41,13 +41,10 @@ dependencies {
     implementation 'org.postgresql:r2dbc-postgresql:1.0.0.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
 
-//    // jooq
-//    jooqGenerator 'org.postgresql:postgresql:42.5.1'
-//    // workaround of issue: https://github.com/etiennestuder/gradle-jooq-plugin/issues/209
-//    jooqGenerator 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
-//    jooqGenerator 'org.jooq:jooq-meta-extensions:3.17.5'
-//    // workaround of array type codegen, see: https://github.com/jOOQ/jOOQ/issues/13322
-//    jooqGenerator 'com.h2database:h2:2.1.214'
+
+    // swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webflux-api:2.0.0'
 
     // validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
