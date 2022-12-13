@@ -48,11 +48,7 @@ class ArtistRepositoryImplIntegrationTest extends AbstractDatabaseIntegrationTes
 
   @AfterEach
   void tearDown() {
-    databaseClient.sql("DELETE FROM artist_alias WHERE true").then().block();
-    databaseClient.sql("DELETE FROM artist_group WHERE true").then().block();
-    databaseClient.sql("DELETE FROM artist_url WHERE true").then().block();
-    databaseClient.sql("DELETE FROM artist_name_variation WHERE true").then().block();
-    databaseClient.sql("DELETE FROM artist WHERE true").then().block();
+    TestUtil.deleteAll(databaseClient);
   }
   @Test
   void findAllByReturnsByName() {
@@ -75,7 +71,6 @@ class ArtistRepositoryImplIntegrationTest extends AbstractDatabaseIntegrationTes
       assertThat(result.getContent()).isNotNull().isNotEmpty().hasSize(1);
     }
   }
-
 
   @Test
   void MustReturnAllAssociates() {

@@ -21,25 +21,25 @@ public class PagedResponseDTO<T> {
   private final List<T> items = Collections.emptyList();
   @Builder.Default
   @JsonProperty("total_elements")
-  private long totalElements = 0;
+  private Long totalElements = 0L;
   @Builder.Default
   @JsonProperty("total_pages")
-  private int totalPages = 0;
+  private Integer totalPages = 0;
   @Builder.Default
   @JsonProperty("page_number")
-  private int pageNumber = 0;
+  private Integer pageNumber = 0;
   @Builder.Default
   @JsonProperty("page_size")
-  private int pageSize = 0;
+  private Integer pageSize = 0;
   @Builder.Default
-  private boolean last = false;
+  private Boolean last = false;
   @Builder.Default
-  private boolean first = false;
+  private Boolean first = false;
   @Builder.Default
-  private boolean sorted = false;
+  private Boolean sorted = false;
   @JsonProperty("resource_uri")
   @Builder.Default
-  String resourceURI = "";
+  private String resourceURI = "";
 
   public static <T> Mono<PagedResponseDTO<T>> fromPage(Page<T> page) {
     return Mono.fromCallable(() -> PagedResponseDTO.<T>builder()

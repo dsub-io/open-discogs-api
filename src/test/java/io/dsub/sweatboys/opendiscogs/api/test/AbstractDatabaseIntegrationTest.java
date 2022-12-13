@@ -2,8 +2,9 @@ package io.dsub.sweatboys.opendiscogs.api.test;
 
 import io.dsub.sweatboys.opendiscogs.api.test.AbstractDatabaseIntegrationTest.TestConfig;
 import io.r2dbc.spi.ConnectionFactory;
-import org.junit.jupiter.api.TestInstance;
+import org.springframework.boot.test.autoconfigure.data.r2dbc.AutoConfigureDataR2dbc;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -11,10 +12,16 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.r2dbc.connection.init.CompositeDatabasePopulator;
 import org.springframework.r2dbc.connection.init.ConnectionFactoryInitializer;
 import org.springframework.r2dbc.connection.init.ResourceDatabasePopulator;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.PostgreSQLR2DBCDatabaseContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Import(TestConfig.class)
-@DataR2dbcTest
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@Testcontainers
+@DataR2dbcTest(properties = "spring.r2dbc.url=r2dbc:tc:postgresql:///discogs?TC_IMAGE_TAG=14.5")
 public abstract class AbstractDatabaseIntegrationTest {
   @TestConfiguration
   public static class TestConfig {

@@ -1,11 +1,11 @@
 package io.dsub.sweatboys.opendiscogs.api.artist.controller;
 
+import io.dsub.sweatboys.opendiscogs.api.artist.application.ArtistService;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistDetailDTO;
+import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReleaseDTO;
 import io.dsub.sweatboys.opendiscogs.api.artist.query.ArtistQuery;
-import io.dsub.sweatboys.opendiscogs.api.artist.application.ArtistService;
 import io.dsub.sweatboys.opendiscogs.api.core.response.PagedResponseDTO;
-import io.dsub.sweatboys.opendiscogs.api.release.domain.Release;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -58,6 +58,20 @@ public class ArtistController {
   @Operation(description = "Get details by artist id")
   public Mono<ResponseEntity<ArtistDetailDTO>> getArtist(@PathVariable("id") @Valid @NotNull @Min(1) long id) {
     return service.getArtist(id);
+  }
+
+  @GetMapping("/{id}/releases")
+  @Operation(description = "Get releases under specific artist")
+  public Mono<ResponseEntity<PagedResponseDTO<ArtistReleaseDTO>>> findArtistReleases(
+      @Schema(name = "id of artist to be searched")
+      @PathVariable(value = "id")
+      Long id,
+      @ParameterObject
+      @PageableDefault(page = 1, sort = {"id"})
+      Pageable pageable, ServerHttpRequest request) {
+    return service.getArtistReleases(id, pageable)
+        .map(dto -> dto.withResourceURI(request.getURI().getPath()))
+        .map(ResponseEntity::ok);
   }
 
   private static ArtistQuery withQuery(String name, String realName, String profile) {

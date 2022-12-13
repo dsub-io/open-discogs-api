@@ -1,11 +1,3 @@
-junit:
-  jupiter:
-    execution:
-      parallel:
-        enabled: true
-spring:
-  r2dbc:
-    url: r2dbc:tc:postgresql:///discogs?TC_IMAGE_TAG=14.5
 logging:
   level:
     io.r2dbc.postgresql.QUERY: DEBUG # for queries

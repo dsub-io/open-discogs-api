@@ -3,13 +3,16 @@ package io.dsub.sweatboys.opendiscogs.api.artist.infrastructure;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.ArtistRepository;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistDetailDTO;
+import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReleaseDTO;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.FluentQuery.ReactiveFluentQuery;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -30,6 +33,26 @@ public class ArtistRepositoryImpl implements ArtistRepository {
         .flatMap(withArtistMembers())
         .flatMap(withUrls())
         .flatMap(withNameVariations());
+  }
+
+  @Override
+  public Flux<ArtistReleaseDTO> findReleasesByArtistId(Long id, Pageable pageable) {
+    return delegate.findReleasesByArtistId(
+        id,
+        pageable.getOffset(),
+        pageable.getPageSize(),
+        getSortString(pageable));
+  }
+
+  @Override
+  public Mono<Long> countReleasesByArtistId(Long id) {
+    return delegate.countReleasesByArtistId(id);
+  }
+
+  private static String getSortString(Pageable pageable) {
+    return pageable.getSort().stream()
+        .map(order -> String.format("%s %s", order.getProperty(), order.getDirection()))
+        .collect(Collectors.joining(", "));
   }
 
   private static Function<Artist, Mono<? extends ArtistDetailDTO>> toDTO() {
@@ -58,6 +81,6 @@ public class ArtistRepositoryImpl implements ArtistRepository {
 
   private static Function<ReactiveFluentQuery<Artist>, Mono<Page<Artist>>> getPageableQueryFunction(
       Pageable pageable) {
-    return p -> p.as(Artist.class).page(pageable);
+    return p -> p.page(pageable);
   }
 }

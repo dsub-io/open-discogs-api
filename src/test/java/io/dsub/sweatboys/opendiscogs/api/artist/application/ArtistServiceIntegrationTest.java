@@ -6,35 +6,55 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.ArtistRepository;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReferenceDTO;
+import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReleaseDTO;
 import io.dsub.sweatboys.opendiscogs.api.artist.infrastructure.ArtistR2dbcRepository;
 import io.dsub.sweatboys.opendiscogs.api.artist.infrastructure.ArtistRepositoryImpl;
 import io.dsub.sweatboys.opendiscogs.api.artist.query.ArtistQuery;
 import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
+import io.dsub.sweatboys.opendiscogs.api.release.domain.Release;
 import io.dsub.sweatboys.opendiscogs.api.test.AbstractConcurrentDatabaseIntegrationTest;
+import io.dsub.sweatboys.opendiscogs.api.test.AbstractDatabaseIntegrationTest;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
-class ArtistServiceIntegrationTest extends AbstractConcurrentDatabaseIntegrationTest {
-
+class ArtistServiceIntegrationTest extends AbstractDatabaseIntegrationTest {
   @Autowired
   ArtistR2dbcRepository r2dbcRepository;
   @Autowired
   DatabaseClient databaseClient;
+  @Autowired
+  R2dbcEntityTemplate template;
   ArtistService service;
   ArtistRepository repository;
   List<Artist> artists;
+
+  final List<String> tables =
+      List.of(
+          "release_artist",
+          "release_credited_artist",
+          "artist_url",
+          "artist_alias",
+          "artist_group",
+          "artist_name_variation",
+          "artist",
+          "release");
 
   @BeforeEach
   void setUp() {
@@ -44,42 +64,19 @@ class ArtistServiceIntegrationTest extends AbstractConcurrentDatabaseIntegration
         .mapToObj(i -> TestUtil.getInstanceOf(Artist.class).withId((long) i))
         .peek(BaseEntity::setAsNew)
         .toList();
-    var insertThenCount = Flux.fromIterable(artists)
-        .flatMap(r2dbcRepository::save)
-        .then(r2dbcRepository.count());
-    StepVerifier.create(insertThenCount)
-        .expectNext((long) artists.size())
-        .verifyComplete();
+    r2dbcRepository.saveAll(artists).blockLast();
   }
-
   @AfterEach
-  void tearDown() {
-    databaseClient.sql("DELETE FROM artist_alias WHERE true").then().block();
-    databaseClient.sql("DELETE FROM artist_group WHERE true").then().block();
-    databaseClient.sql("DELETE FROM artist_url WHERE true").then().block();
-    databaseClient.sql("DELETE FROM artist_name_variation WHERE true").then().block();
-    databaseClient.sql("DELETE FROM artist WHERE true").then().block();
+  void cleanUp() {
+    TestUtil.deleteAll(databaseClient);
   }
-
-  @Test
-  void findArtistsReturnsNothing() {
-    r2dbcRepository.deleteAll().block();
-    StepVerifier.create(service.findArtists(ArtistQuery.builder().build(), PageRequest.of(0, 10)))
-        .expectNextMatches(response ->
-                Objects.equals(response.isFirst(), true) &&
-                    Objects.equals(response.isLast(), true) &&
-                    Objects.equals(response.isSorted(), false) &&
-                    Objects.equals(response.getItems().size(), 0)
-            )
-        .verifyComplete();
-  }
-
   @Test
   void findArtistsReturnsArtists() {
     var q = ArtistQuery.builder().build();
-    var p = PageRequest.of(0, 5);
+    var p = PageRequest.of(0, 10);
     var page = service.findArtists(q, p).block();
     assertThat(page).isNotNull();
+    assertThat(page.getItems()).hasSize(10);
   }
 
   @Test
@@ -91,6 +88,7 @@ class ArtistServiceIntegrationTest extends AbstractConcurrentDatabaseIntegration
           .build();
       var page = service.findArtists(q, p).block();
       assertNotNull(page);
+      assertThat(page.getItems().contains(artist));
     }
   }
 
@@ -103,11 +101,11 @@ class ArtistServiceIntegrationTest extends AbstractConcurrentDatabaseIntegration
           .build();
       var response = service.findArtists(q, p).block();
       assertNotNull(response);
-      assertThat(response.isSorted()).isTrue();
+      assertThat(response.getSorted()).isNotNull().isTrue();
     }
     var response = service.findArtists(ArtistQuery.builder().build(), p).block();
     assertNotNull(response);
-    assertThat(response.isSorted()).isTrue();
+    assertThat(response.getSorted()).isNotNull().isTrue();
     for (int i = 1; i <= 5; i++) {
       var item = response.getItems().get(i-1);
       assertNotNull(item);
@@ -118,7 +116,7 @@ class ArtistServiceIntegrationTest extends AbstractConcurrentDatabaseIntegration
     }
   }
   @Test
-  void MustReturnAllAssociates() {
+  void getArtistReturnAllAssociates() {
     databaseClient.sql("""
 INSERT INTO artist_alias(artist_id, alias_id)
 VALUES (1,2), (1,3), (2,3), (2,1), (3,1), (3,2), (1, 10)
@@ -145,6 +143,7 @@ VALUES (1,1,'test_name_var_1'), (1,2,'test_name_var_2'), (1,3,'test_name_var_3')
           .isNotEmpty()
           .allSatisfy(ref -> assertThat(ref.id()).isNotNull().isNotEqualTo(1L))
           .allSatisfy(ref -> assertThat(ref.name()).isNotNull().isNotEqualTo(artist.getName()))
+          .allSatisfy(ref -> assertThat(ref.getResourceURL()).isNotNull().contains(ref.id().toString()))
           .hasSize(3);
     }
     for (String nameVariation : artist.getNameVariations()) {
@@ -154,4 +153,53 @@ VALUES (1,1,'test_name_var_1'), (1,2,'test_name_var_2'), (1,3,'test_name_var_3')
       assertThat(url).isNotNull().isNotBlank();
     }
   }
+  @Test
+  void getArtistReleasesReturnsAllReleases() {
+    Flux.range(1, 10)
+        .flatMap(i -> template.insert(Release.class)
+            .using(TestUtil.getInstanceOf(Release.class)
+                .withId((long) i)
+                .withReleasedYear(2022)
+                .withReleasedMonth(i)
+                .withReleasedDay(i)))
+        .blockLast();
+    Flux.range(1, 10)
+        .flatMap(i ->
+            databaseClient
+                .sql("INSERT INTO release_artist VALUES($1, $2)")
+                .bind(0, i)
+                .bind(1, i)
+                .then())
+        .blockLast();
+    Flux.range(1, 10)
+        .flatMap( i -> databaseClient
+            .sql("INSERT INTO release_credited_artist "
+                + "VALUES ($1,$1,$2,$3)")
+            .bind(0, i)
+            .bind(0, i)
+            .bind(1, i * 10)
+            .bind(2, "role " + i)
+            .then())
+        .blockLast();
+
+    for (long i = 1; i <= 10; i++) {
+      var dto = service.getArtistReleases(i, Pageable.ofSize(2)).block();
+      assertThat(dto).isNotNull();
+      assertThat(dto.getItems()).isNotNull().isNotEmpty().hasSize(2);
+      for (ArtistReleaseDTO item :dto.getItems()) {
+        assertThat(item.id()).isEqualTo(i);
+        assertThat(item.releasedYear()).isEqualTo(2022);
+        assertThat(item.releasedMonth()).isEqualTo(i);
+        assertThat(item.releasedDay()).isEqualTo(i);
+        assertThat(item.notes()).isNotBlank();
+        assertThat(item.country()).isNotBlank();
+        assertThat(item.dataQuality()).isNotBlank();
+        assertThat(item.isMaster()).isNotNull();
+        assertThat(item.listedReleaseDate()).isNotBlank();
+        assertThat(item.title()).isNotBlank();
+        assertThat(item.role()).isIn("Main", "role " + i);
+      }
+    }
+  }
+
 }
