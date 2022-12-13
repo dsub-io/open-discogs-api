@@ -1,15 +1,12 @@
 package io.dsub.sweatboys.opendiscogs.api.config.properties;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 @Setter
 @Getter

@@ -9,7 +9,6 @@ import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import io.dsub.sweatboys.opendiscogs.api.test.AbstractDatabaseIntegrationTest;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.r2dbc.core.DatabaseClient;
 
 class ArtistRepositoryImplIntegrationTest extends AbstractDatabaseIntegrationTest {
@@ -48,11 +46,7 @@ class ArtistRepositoryImplIntegrationTest extends AbstractDatabaseIntegrationTes
 
   @AfterEach
   void tearDown() {
-    databaseClient.sql("DELETE FROM artist_alias WHERE true").then().block();
-    databaseClient.sql("DELETE FROM artist_group WHERE true").then().block();
-    databaseClient.sql("DELETE FROM artist_url WHERE true").then().block();
-    databaseClient.sql("DELETE FROM artist_name_variation WHERE true").then().block();
-    databaseClient.sql("DELETE FROM artist WHERE true").then().block();
+    TestUtil.deleteAll(databaseClient);
   }
   @Test
   void findAllByReturnsByName() {
@@ -75,7 +69,6 @@ class ArtistRepositoryImplIntegrationTest extends AbstractDatabaseIntegrationTes
       assertThat(result.getContent()).isNotNull().isNotEmpty().hasSize(1);
     }
   }
-
 
   @Test
   void MustReturnAllAssociates() {

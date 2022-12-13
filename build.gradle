@@ -24,12 +24,6 @@ configurations {
     }
 }
 
-dependencyManagement {
-    imports {
-        mavenBom 'org.testcontainers:testcontainers-bom:1.17.6'
-    }
-}
-
 dependencies {
     // spring configuration
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
@@ -57,6 +51,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     // testing
+    implementation platform('org.testcontainers:testcontainers-bom:1.17.6')
     testImplementation(
             "org.junit.jupiter:junit-jupiter-api:5.9.0",
             'org.springframework.boot:spring-boot-starter-test',

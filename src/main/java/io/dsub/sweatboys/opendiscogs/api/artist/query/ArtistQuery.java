@@ -2,7 +2,6 @@ package io.dsub.sweatboys.opendiscogs.api.artist.query;
 
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
 import io.dsub.sweatboys.opendiscogs.api.core.util.StringUtility;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 /**
