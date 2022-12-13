@@ -4,7 +4,6 @@ import io.dsub.sweatboys.opendiscogs.api.core.response.PagedResponseDTO;
 import io.dsub.sweatboys.opendiscogs.api.label.application.LabelService;
 import io.dsub.sweatboys.opendiscogs.api.label.domain.Label;
 import io.dsub.sweatboys.opendiscogs.api.label.dto.LabelDetailDTO;
-import io.dsub.sweatboys.opendiscogs.api.label.dto.LabelReleaseDTO;
 import io.dsub.sweatboys.opendiscogs.api.label.query.LabelQuery;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,7 +31,7 @@ public class LabelController {
     private final LabelService labelService;
 
     @GetMapping("")
-    @Operation(description = "Search labels by query with AND condition. Empty strings will be ignored.")
+    @Operation(description = "")
     public Mono<ResponseEntity<PagedResponseDTO<Label>>> searchLabels (
         @RequestParam(value = "contact_info", required = false)
         @Schema(description = "Contact info to search for label")
@@ -46,7 +45,7 @@ public class LabelController {
         @RequestParam(value = "profile", required = false)
         @Schema(description = "Profile to search for label")
         String profile,
-        @ParameterObject @PageableDefault(sort = {"id"}) Pageable pageable,
+        @ParameterObject @PageableDefault(page = 1) Pageable pageable,
         ServerHttpRequest serverHttpRequest) {
         return labelService.findLabels(withQuery(contactInfo, dataQuality, name, profile), pageable)
                 .map(dto -> dto.withResourceURI(serverHttpRequest.getURI().getPath()))
@@ -59,20 +58,6 @@ public class LabelController {
         return labelService.getLabel(id);
     }
 
-    @GetMapping("/{id}/releases")
-    @Operation(description = "Get release under specific label")
-    public Mono<ResponseEntity<PagedResponseDTO<LabelReleaseDTO>>> findLabelReleases(
-            @Schema(name = "id of label to be searched")
-            @PathVariable(value = "id")
-            Long id,
-            @ParameterObject
-            @PageableDefault(sort = {"id"})
-            Pageable pageable, ServerHttpRequest request) {
-        return labelService.getLabelReleases(id, pageable)
-                .map(dto -> dto.withResourceURI(request.getURI().getPath()))
-                .map(ResponseEntity::ok);
-    }
-
     private static LabelQuery withQuery(String contactInfo, String dataQuality, String name, String profile) {
         return LabelQuery.builder()
                 .contactInfo(contactInfo)
@@ -81,4 +66,5 @@ public class LabelController {
                 .profile(profile)
                 .build();
     }
+
 }
