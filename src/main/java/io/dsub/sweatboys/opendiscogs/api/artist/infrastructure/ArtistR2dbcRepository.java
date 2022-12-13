@@ -3,7 +3,6 @@ package io.dsub.sweatboys.opendiscogs.api.artist.infrastructure;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReferenceDTO;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReleaseDTO;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.data.repository.query.Param;

@@ -1,7 +1,6 @@
 package io.dsub.sweatboys.opendiscogs.api.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import io.dsub.sweatboys.opendiscogs.api.config.properties.DatabaseProperties;
 import io.dsub.sweatboys.opendiscogs.api.test.ConcurrentTest;

@@ -12,14 +12,11 @@ import io.dsub.sweatboys.opendiscogs.api.artist.infrastructure.ArtistRepositoryI
 import io.dsub.sweatboys.opendiscogs.api.artist.query.ArtistQuery;
 import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import io.dsub.sweatboys.opendiscogs.api.release.domain.Release;
-import io.dsub.sweatboys.opendiscogs.api.test.AbstractConcurrentDatabaseIntegrationTest;
 import io.dsub.sweatboys.opendiscogs.api.test.AbstractDatabaseIntegrationTest;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +24,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
-import org.springframework.http.HttpStatus;
 import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-import reactor.test.StepVerifier;
 
 class ArtistServiceIntegrationTest extends AbstractDatabaseIntegrationTest {
   @Autowired
