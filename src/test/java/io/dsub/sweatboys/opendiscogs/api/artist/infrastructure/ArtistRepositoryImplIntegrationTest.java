@@ -90,18 +90,18 @@ VALUES (1,1,'test_name_var_1'), (1,2,'test_name_var_2'), (1,3,'test_name_var_3')
 """).then().block();
     var artist = repository.findById(1L).block();
     assertThat(artist).isNotNull();
-    for (List<ArtistReferenceDTO> references : List.of(artist.getAliases(), artist.getGroups(), artist.getMembers())) {
+    for (List<ArtistReferenceDTO> references : List.of(artist.aliases(), artist.groups(), artist.members())) {
       assertThat(references)
           .isNotNull()
           .isNotEmpty()
           .allSatisfy(ref -> assertThat(ref.id()).isNotNull().isNotEqualTo(1L))
-          .allSatisfy(ref -> assertThat(ref.name()).isNotNull().isNotEqualTo(artist.getName()))
+          .allSatisfy(ref -> assertThat(ref.name()).isNotNull().isNotEqualTo(artist.name()))
           .hasSize(3);
     }
-    for (String nameVariation : artist.getNameVariations()) {
+    for (String nameVariation : artist.nameVariations()) {
       assertThat(nameVariation).isNotNull().isNotBlank();
     }
-    for (String url : artist.getUrls()) {
+    for (String url : artist.urls()) {
       assertThat(url).isNotNull().isNotBlank();
     }
   }

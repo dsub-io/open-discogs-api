@@ -1,0 +1,103 @@
+package io.dsub.sweatboys.opendiscogs.api.master.infrastructure;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReferenceDTO;
+import io.dsub.sweatboys.opendiscogs.api.master.domain.Master;
+import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.IntStream;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.reactivestreams.Publisher;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.FluentQuery;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+class MasterRepositoryImplTest {
+
+  @Mock
+  MasterR2dbcRepository delegate;
+  @InjectMocks
+  MasterRepositoryImpl masterRepository;
+  @Captor
+  ArgumentCaptor<Example<Master>> exampleCaptor;
+  @Captor
+  ArgumentCaptor<Function<FluentQuery.ReactiveFluentQuery<Master>, Publisher<Object>>> queryFuncCaptor;
+
+  @BeforeEach
+  void setUp() {
+    MockitoAnnotations.openMocks(this);
+  }
+
+  @Test
+  void findAllByReturnsPage() {
+    List<Master> masters = IntStream.rangeClosed(1, 10)
+        .mapToObj(id -> TestUtil.getInstanceOf(Master.class).withId((long) id))
+        .toList();
+    Page<Master> page = new PageImpl<>(masters);
+
+    given(delegate.findBy(exampleCaptor.capture(), queryFuncCaptor.capture()))
+        .willReturn(Mono.just(page));
+
+    Pageable pageable = PageRequest.ofSize(10);
+    Example<Master> example = Example.of(Master.builder().build());
+
+    StepVerifier.create(masterRepository.findAllBy(example, pageable))
+        .expectNext(page)
+        .verifyComplete();
+
+    verify(delegate, times(1)).findBy(any(), any());
+    assertThat(exampleCaptor.getValue()).isEqualTo(example);
+    assertThat(queryFuncCaptor.getValue()).isNotNull();
+  }
+
+  @Test
+  void findByIdReturnsMaster() {
+    var idCaptor = ArgumentCaptor.forClass(Long.class);
+    var master = TestUtil.getInstanceOf(Master.class);
+    var genres = IntStream.rangeClosed(0, 5).mapToObj(i -> TestUtil.getRandomString()).toList();
+    var styles = IntStream.rangeClosed(0, 5).mapToObj(i -> TestUtil.getRandomString()).toList();
+    var artists = IntStream.rangeClosed(0, 3)
+        .mapToObj(i -> TestUtil.getInstanceOf(ArtistReferenceDTO.class)).toList();
+    given(delegate.findById(idCaptor.capture())).willReturn(Mono.just(master));
+    given(delegate.findMasterGenres(idCaptor.capture())).willReturn(Flux.fromIterable(genres));
+    given(delegate.findMasterStyles(idCaptor.capture())).willReturn(Flux.fromIterable(styles));
+    given(delegate.findMasterArtists(idCaptor.capture())).willReturn(Flux.fromIterable(artists));
+
+    StepVerifier.create(masterRepository.findById(master.getId()))
+        .assertNext(dto -> assertThat(dto)
+            .isNotNull()
+            .satisfies(d -> assertThat(d.id()).isEqualTo(master.getId()))
+            .satisfies(d -> assertThat(d.title()).isEqualTo(master.getTitle()))
+            .satisfies(d -> assertThat(d.dataQuality()).isEqualTo(master.getDataQuality()))
+            .satisfies(d -> assertThat(d.mainRelease()).isEqualTo(master.getMainReleaseId()))
+            .satisfies(d -> assertThat(d.genres()).isEqualTo(genres))
+            .satisfies(d -> assertThat(d.styles()).isEqualTo(styles))
+            .satisfies(d -> assertThat(d.artists()).isEqualTo(artists)))
+        .verifyComplete();
+    assertThat(idCaptor.getAllValues())
+        .hasSize(4)
+        .allSatisfy(id -> assertThat(id).isEqualTo(master.getId()));
+    verify(delegate, times(1)).findMasterArtists(any());
+    verify(delegate, times(1)).findMasterGenres(any());
+    verify(delegate, times(1)).findMasterStyles(any());
+    verify(delegate, times(1)).findById(master.getId());
+  }
+}

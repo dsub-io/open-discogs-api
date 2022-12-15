@@ -14,14 +14,17 @@ import org.springframework.data.repository.query.FluentQuery.ReactiveFluentQuery
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Repository
 @RequiredArgsConstructor
 public class ArtistRepositoryImpl implements ArtistRepository {
+
   private final ArtistR2dbcRepository delegate;
+
   @Override
   public Mono<Page<Artist>> findAllBy(Example<Artist> example, Pageable pageable) {
-    return delegate.findBy(example, getPageableQueryFunction(pageable));
+    return delegate.findBy(example, q -> q.page(pageable));
   }
 
   @Override
@@ -60,27 +63,35 @@ public class ArtistRepositoryImpl implements ArtistRepository {
   }
 
   private Function<ArtistDetailDTO, Mono<? extends ArtistDetailDTO>> withArtistMembers() {
-    return dto -> delegate.findMemberArtists(dto.getId()).collectList().map(dto::withMembers);
+    return dto -> delegate.findMemberArtists(dto.id()).collectList()
+        .flatMap(members -> Mono.fromCallable(() -> dto.withMembers(members))
+            .subscribeOn(Schedulers.boundedElastic()));
   }
 
   private Function<ArtistDetailDTO, Mono<? extends ArtistDetailDTO>> withArtistGroups() {
-    return dto -> delegate.findGroupArtists(dto.getId()).collectList().map(dto::withGroups);
+    return dto -> delegate.findGroupArtists(dto.id()).collectList()
+        .flatMap(groups -> Mono.fromCallable(() -> dto.withGroups(groups))
+            .subscribeOn(Schedulers.boundedElastic()));
   }
 
   private Function<ArtistDetailDTO, Mono<? extends ArtistDetailDTO>> withArtistAliases() {
-    return dto -> delegate.findAliasArtists(dto.getId()).collectList().map(dto::withAliases);
+    return dto -> delegate.findAliasArtists(dto.id())
+        .collectList()
+        .flatMap(aliases -> Mono.fromCallable(() -> dto.withAliases(aliases))
+            .subscribeOn(Schedulers.boundedElastic()));
   }
 
   private Function<ArtistDetailDTO, Mono<? extends ArtistDetailDTO>> withUrls() {
-    return dto -> delegate.findUrls(dto.getId()).collectList().map(dto::withUrls);
+    return dto -> delegate.findUrls(dto.id())
+        .collectList()
+        .flatMap(urls -> Mono.fromCallable(() -> dto.withUrls(urls))
+            .subscribeOn(Schedulers.boundedElastic()));
   }
 
   private Function<ArtistDetailDTO, Mono<? extends ArtistDetailDTO>> withNameVariations() {
-    return dto -> delegate.findNameVariations(dto.getId()).collectList().map(dto::withNameVariations);
-  }
-
-  private static Function<ReactiveFluentQuery<Artist>, Mono<Page<Artist>>> getPageableQueryFunction(
-      Pageable pageable) {
-    return p -> p.page(pageable);
+    return dto -> delegate.findNameVariations(dto.id())
+        .collectList()
+        .flatMap(nameVariations -> Mono.fromCallable(() -> dto.withNameVariations(nameVariations))
+            .subscribeOn(Schedulers.boundedElastic()));
   }
 }

@@ -31,7 +31,7 @@ public class Master {
     private final String title;
 
     @Column("main_release_id")
-    @JsonProperty("main_release_id")
+    @JsonProperty("main_release")
     private final Long mainReleaseId;
 
     @Column("released_year")
