@@ -12,31 +12,17 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 @With
-@Getter
 @Builder
-@AllArgsConstructor
 @Schema(description = "Detailed information of an artist")
-public class ArtistDetailDTO {
-  @JsonProperty("id")
-  private final Long id;
-  @JsonProperty("name")
-  private final String name;
-  @JsonProperty("real_name")
-  private final String realName;
-  @JsonProperty("profile")
-  private final String profile;
-  @JsonProperty("data_quality")
-  private final String dataQuality;
-  @JsonProperty("members")
-  private final List<ArtistReferenceDTO> members;
-  @JsonProperty("groups")
-  private final List<ArtistReferenceDTO> groups;
-  @JsonProperty("aliases")
-  private final List<ArtistReferenceDTO> aliases;
-  @JsonProperty("namevariations")
-  private final List<String> nameVariations;
-  @JsonProperty("urls")
-  private final List<String> urls;
+public record ArtistDetailDTO(@JsonProperty("id") Long id, @JsonProperty("name") String name,
+                              @JsonProperty("real_name") String realName,
+                              @JsonProperty("profile") String profile,
+                              @JsonProperty("data_quality") String dataQuality,
+                              @JsonProperty("members") List<ArtistReferenceDTO> members,
+                              @JsonProperty("groups") List<ArtistReferenceDTO> groups,
+                              @JsonProperty("aliases") List<ArtistReferenceDTO> aliases,
+                              @JsonProperty("namevariations") List<String> nameVariations,
+                              @JsonProperty("urls") List<String> urls) {
 
   @JsonProperty("uri")
   public String getUri() {
@@ -55,7 +41,7 @@ public class ArtistDetailDTO {
             .realName(artist.getRealName())
             .profile(artist.getProfile())
             .dataQuality(artist.getDataQuality())
-        .build())
+            .build())
         .subscribeOn(Schedulers.boundedElastic());
   }
 }
