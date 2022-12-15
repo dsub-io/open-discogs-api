@@ -1,16 +1,47 @@
+# netty
 server:
   shutdown: graceful
+
+# spring
 spring:
+  application:
+    name: open-discogs-api
   jackson:
     property-naming-strategy: LOWER_CAMEL_CASE
+
+# observability
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,openapi,swagger-ui
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  zipkin:
+    tracing:
+      endpoint: http://zipkin.dsub.io:9411/api/v2/spans
+  server:
+    port: 9090
+logging:
+  level:
+    io.r2dbc.postgresql.QUERY: TRACE # for queries
+    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+# swagger
 springdoc:
   api-docs:
     path: /swagger-doc/v3/api-docs
     groups:
       enabled: true
   swagger-ui:
-    path: /swagger-ui.html
-logging:
-  level:
-    io.r2dbc.postgresql.QUERY: TRACE # for queries
-    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
+    enabled: true
+  show-spring-cloud-functions: false
+  show-actuator: false
+  use-management-port: true
+  enable-native-support: true

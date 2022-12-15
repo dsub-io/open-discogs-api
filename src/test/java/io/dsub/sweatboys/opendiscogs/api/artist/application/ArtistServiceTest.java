@@ -90,14 +90,14 @@ class ArtistServiceTest extends ConcurrentTest {
   @Test
   void getArtistReturnsArtist() {
     var dto = TestUtil.getInstanceOf(ArtistDetailDTO.class);
-    given(repository.findById(dto.getId())).willReturn(Mono.just(dto));
-    StepVerifier.create(service.getArtist(dto.getId()))
+    given(repository.findById(dto.id())).willReturn(Mono.just(dto));
+    StepVerifier.create(service.getArtist(dto.id()))
         .assertNext(resp -> assertThat(resp)
             .isNotNull()
             .satisfies(r -> assertThat(r.getStatusCode()).isEqualTo(HttpStatus.OK))
             .satisfies(r -> assertThat(r.getBody()).isEqualTo(dto)))
         .verifyComplete();
-    verify(repository, atMostOnce()).findById(dto.getId());
+    verify(repository, atMostOnce()).findById(dto.id());
   }
 
   @Test

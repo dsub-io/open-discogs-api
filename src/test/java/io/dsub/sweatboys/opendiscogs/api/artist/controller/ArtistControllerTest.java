@@ -88,7 +88,7 @@ class ArtistControllerTest extends ConcurrentTest {
         .satisfies(q -> assertThat(q.realName()).isNull())
         .satisfies(q -> assertThat(q.profile()).isNull());
     assertThat(pageable)
-        .satisfies(p -> assertThat(p.getPageNumber()).isEqualTo(1))
+        .satisfies(p -> assertThat(p.getPageNumber()).isEqualTo(0))
         .satisfies(p -> assertThat(p.getPageSize()).isEqualTo(30));
   }
 
@@ -109,10 +109,10 @@ class ArtistControllerTest extends ConcurrentTest {
         .getResponseBody();
     verify(artistService, atMostOnce()).getArtist(1L);
     assertThat(got).isNotNull();
-    assertThat(got.getId()).isNotNull().isEqualTo(dto.getId());
-    assertThat(got.getName()).isNotNull().isEqualTo(dto.getName());
-    assertThat(got.getRealName()).isNotNull().isEqualTo(dto.getRealName());
-    assertThat(got.getProfile()).isNotNull().isEqualTo(dto.getProfile());
+    assertThat(got.id()).isNotNull().isEqualTo(dto.id());
+    assertThat(got.name()).isNotNull().isEqualTo(dto.name());
+    assertThat(got.realName()).isNotNull().isEqualTo(dto.realName());
+    assertThat(got.profile()).isNotNull().isEqualTo(dto.profile());
   }
 
   @Test

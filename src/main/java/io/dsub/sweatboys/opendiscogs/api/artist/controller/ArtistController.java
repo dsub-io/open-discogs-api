@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Validated
 @RestController
@@ -35,10 +36,10 @@ public class ArtistController {
 
   private final ArtistService service;
 
-  @GetMapping("")
+  @GetMapping()
   @Operation(description = "Search artists by query with AND condition. Empty strings will be ignored.")
   public Mono<ResponseEntity<PagedResponseDTO<Artist>>> searchArtists(
-      @RequestParam(value = "name",required = false)
+      @RequestParam(value = "name", required = false)
       @Schema(description = "Name to search for artist")
       String name,
       @RequestParam(value = "real_name", required = false)
@@ -47,31 +48,34 @@ public class ArtistController {
       @RequestParam(value = "profile", required = false)
       @Schema(description = "Profile to search for artist")
       String profile,
-      @ParameterObject @PageableDefault(page = 1) Pageable pageable,
-      ServerHttpRequest serverHttpRequest) {
+      @ParameterObject @PageableDefault Pageable pageable,
+      ServerHttpRequest request) {
     return service.findArtists(withQuery(name, realName, profile), pageable)
-        .map(dto -> dto.withResourceURI(serverHttpRequest.getURI().getPath()))
-        .map(ResponseEntity::ok);
+        .flatMap(dto -> Mono.fromCallable(() ->
+                ResponseEntity.ok(dto.withResourceURI(request.getURI().getPath())))
+            .subscribeOn(Schedulers.boundedElastic()));
   }
 
   @GetMapping("/{id}")
   @Operation(description = "Get details by artist id")
-  public Mono<ResponseEntity<ArtistDetailDTO>> getArtist(@PathVariable("id") @Valid @NotNull @Min(1) long id) {
+  public Mono<ResponseEntity<ArtistDetailDTO>> getArtist(
+      @PathVariable("id") @Valid @NotNull @Min(1) long id) {
     return service.getArtist(id);
   }
 
   @GetMapping("/{id}/releases")
   @Operation(description = "Get releases under specific artist")
   public Mono<ResponseEntity<PagedResponseDTO<ArtistReleaseDTO>>> findArtistReleases(
-      @Schema(name = "id of artist to be searched")
+      @Schema(name = "id", description = "artist id")
       @PathVariable(value = "id")
       Long id,
       @ParameterObject
-      @PageableDefault(page = 1, sort = {"id"})
+      @PageableDefault(sort = {"id"})
       Pageable pageable, ServerHttpRequest request) {
     return service.getArtistReleases(id, pageable)
-        .map(dto -> dto.withResourceURI(request.getURI().getPath()))
-        .map(ResponseEntity::ok);
+        .flatMap(dto -> Mono.fromCallable(() ->
+                ResponseEntity.ok(dto.withResourceURI(request.getURI().getPath())))
+            .subscribeOn(Schedulers.boundedElastic()));
   }
 
   private static ArtistQuery withQuery(String name, String realName, String profile) {
