@@ -39,8 +39,7 @@ public class Label extends BaseEntity<Long> {
     @JsonProperty("profile")
     private final String profile;
 
-    @Column("parentId")
+    @Column("parent_id")
     @JsonProperty("parent_id")
     private final Long parentId;
-
 }
