@@ -14,7 +14,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Import(TestConfig.class)
 @Testcontainers
-@DataR2dbcTest(properties = "spring.r2dbc.url=r2dbc:tc:postgresql:///discogs?TC_IMAGE_TAG=14.5")
+@DataR2dbcTest(properties = "spring.r2dbc.url=r2dbc:tc:postgresql:///discogs?TC_IMAGE_TAG=14.5-alpine")
 public abstract class AbstractDatabaseIntegrationTest {
   @TestConfiguration
   public static class TestConfig {
