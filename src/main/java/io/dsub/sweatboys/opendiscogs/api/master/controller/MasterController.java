@@ -64,7 +64,6 @@ public class MasterController {
         .flatMap(dto -> Mono.fromCallable(() -> ResponseEntity.ok(dto))
             .subscribeOn(Schedulers.boundedElastic()));
   }
-
   @GetMapping("/{id}/releases")
   @Operation(description = "Get master releases from given master by paging and sorting assist.")
   public Mono<PagedResponseDTO<MasterReleaseDTO>> getMasterReleases(

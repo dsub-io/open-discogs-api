@@ -133,4 +133,5 @@ class MasterRepositoryImplTest {
     verify(delegate, times(1))
             .countReleasesByMasterId(1L);
   }
+
 }

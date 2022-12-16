@@ -29,7 +29,7 @@ public class Master {
     @Column("title")
     @JsonProperty("title")
     private final String title;
-
+    
     @Column("released_year")
     @JsonProperty("released_year")
     private final Integer releasedYear;

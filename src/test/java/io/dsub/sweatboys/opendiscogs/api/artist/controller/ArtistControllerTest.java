@@ -107,7 +107,8 @@ class ArtistControllerTest extends ConcurrentTest {
         .expectBody(ArtistDetailDTO.class)
         .returnResult()
         .getResponseBody();
-    verify(artistService, atMostOnce()).getArtist(dto.id());
+        
+    verify(artistService, atMostOnce()).getArtist(1L);
     assertThat(got).isNotNull().isEqualTo(dto);
     assertThat(idCaptor.getValue()).isEqualTo(1L);
   }

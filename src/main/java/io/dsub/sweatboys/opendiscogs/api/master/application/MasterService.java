@@ -17,7 +17,6 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class MasterService {
-
     private final MasterRepository repository;
 
     public Mono<PagedResponseDTO<Master>> findMasters(MasterQuery query, Pageable pageable) {
