@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ReleaseRepositoryImpl implements ReleaseRepository {
   private final ReleaseR2dbcRepository delegate;
-
   @Override
   public Mono<Page<Release>> findAllBy(Example<Release> example, Pageable pageable) {
     return delegate.findBy(example, q -> q.page(pageable));

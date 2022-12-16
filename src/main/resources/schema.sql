@@ -37,7 +37,6 @@ CREATE TABLE "master" (
                           "id" INTEGER PRIMARY KEY NOT NULL,
                           "data_quality" VARCHAR(100),
                           "title" VARCHAR(2000),
-                          "main_release_id" INTEGER,
                           "released_year" SMALLINT
 );
 
@@ -50,6 +49,7 @@ CREATE TABLE "release" (
                            "released_month" SMALLINT,
                            "released_day" SMALLINT,
                            "listed_release_date" VARCHAR(255),
+                           "master_id" INTEGER,
                            "is_master" BOOLEAN,
                            "notes" TEXT,
                            "status" VARCHAR(255)
@@ -58,7 +58,7 @@ CREATE TABLE "release" (
 CREATE TABLE "release_genre" (
                                  "release_id" INTEGER NOT NULL,
                                  "genre_id" INTEGER NOT NULL,
-                                 "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                 "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                  PRIMARY KEY ("release_id", "genre_id")
 );
 
@@ -68,7 +68,7 @@ CREATE TABLE "release_track" (
                                  "position" VARCHAR(1500),
                                  "title" VARCHAR(10000),
                                  "title_hash" BIGINT NOT NULL,
-                                 "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                 "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                  PRIMARY KEY ("release_id", "title_hash")
 );
 
@@ -76,7 +76,7 @@ CREATE TABLE "label_release" (
                                  "label_id" INTEGER NOT NULL,
                                  "release_id" INTEGER NOT NULL,
                                  "category_notation" VARCHAR(1000),
-                                 "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                 "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                  PRIMARY KEY ("label_id", "release_id")
 );
 
@@ -84,7 +84,7 @@ CREATE TABLE "release_image" (
                                  "release_id" INTEGER NOT NULL,
                                  "url_hash" BIGINT NOT NULL,
                                  "url" VARCHAR(2048) NOT NULL,
-                                 "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                 "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                  PRIMARY KEY ("release_id", "url_hash")
 );
 
@@ -93,7 +93,7 @@ CREATE TABLE "release_contract" (
                                     "label_id" INTEGER NOT NULL,
                                     "contract_hash" BIGINT NOT NULL,
                                     "contract" VARCHAR(5000) NOT NULL,
-                                    "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                    "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                     PRIMARY KEY ("release_id", "label_id", "contract_hash")
 );
 
@@ -103,8 +103,18 @@ CREATE TABLE "release_identifier" (
                                       "type" VARCHAR(2500),
                                       "value" TEXT,
                                       "identifier_hash" BIGINT NOT NULL,
-                                      "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                      "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                       PRIMARY KEY ("release_id", "identifier_hash")
+);
+
+CREATE TABLE "master_track" (
+                                "master_id" INTEGER NOT NULL,
+                                "duration" VARCHAR(1500),
+                                "position" VARCHAR(1500),
+                                "title" VARCHAR(10000),
+                                "title_hash" BIGINT NOT NULL,
+                                "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                PRIMARY KEY ("master_id", "title_hash")
 );
 
 CREATE TABLE "master_video" (
@@ -113,28 +123,28 @@ CREATE TABLE "master_video" (
                                 "url" VARCHAR(2048) NOT NULL,
                                 "description" VARCHAR(4000),
                                 "title" VARCHAR(1000),
-                                "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                 PRIMARY KEY ("master_id", "url_hash")
 );
 
 CREATE TABLE "master_genre" (
                                 "master_id" INTEGER NOT NULL,
                                 "genre_id" INTEGER NOT NULL,
-                                "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                 PRIMARY KEY ("master_id", "genre_id")
 );
 
 CREATE TABLE "master_style" (
                                 "master_id" INTEGER NOT NULL,
                                 "style_id" INTEGER NOT NULL,
-                                "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                 PRIMARY KEY ("master_id", "style_id")
 );
 
 CREATE TABLE "release_style" (
                                  "release_id" INTEGER NOT NULL,
                                  "style_id" INTEGER NOT NULL,
-                                 "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                 "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                  PRIMARY KEY ("release_id", "style_id")
 );
 
@@ -144,7 +154,7 @@ CREATE TABLE "release_video" (
                                  "title" VARCHAR(1000),
                                  "url" VARCHAR(2048) NOT NULL,
                                  "url_hash" BIGINT NOT NULL,
-                                 "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                 "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                  PRIMARY KEY ("release_id", "url_hash")
 );
 
@@ -152,7 +162,7 @@ CREATE TABLE "label_url" (
                              "label_id" INTEGER NOT NULL,
                              "url_hash" BIGINT NOT NULL,
                              "url" VARCHAR(2048) NOT NULL,
-                             "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                             "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                              PRIMARY KEY ("label_id", "url_hash")
 );
 
@@ -163,14 +173,14 @@ CREATE TABLE "release_format" (
                                   "quantity" INTEGER,
                                   "text" VARCHAR(5000),
                                   "format_hash" BIGINT NOT NULL,
-                                  "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                  "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                   PRIMARY KEY ("release_id", "format_hash")
 );
 
 CREATE TABLE "artist_alias" (
                                 "artist_id" INTEGER NOT NULL,
                                 "alias_id" INTEGER NOT NULL,
-                                "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                 PRIMARY KEY ("artist_id", "alias_id")
 );
 
@@ -178,21 +188,21 @@ CREATE TABLE "artist_name_variation" (
                                          "artist_id" INTEGER NOT NULL,
                                          "name_variation" VARCHAR(2000) NOT NULL,
                                          "name_variation_hash" BIGINT NOT NULL,
-                                         "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                         "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                          PRIMARY KEY ("artist_id", "name_variation_hash")
 );
 
 CREATE TABLE "master_artist" (
                                  "artist_id" INTEGER NOT NULL,
                                  "master_id" INTEGER NOT NULL,
-                                 "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                 "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                  PRIMARY KEY ("artist_id", "master_id")
 );
 
 CREATE TABLE "release_artist" (
                                   "release_id" INTEGER NOT NULL,
                                   "artist_id" INTEGER NOT NULL,
-                                  "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                  "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                   PRIMARY KEY ("release_id", "artist_id")
 );
 
@@ -201,7 +211,7 @@ CREATE TABLE "release_credited_artist" (
                                            "artist_id" INTEGER NOT NULL,
                                            "role_hash" BIGINT NOT NULL,
                                            "role" VARCHAR(10000),
-                                           "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                           "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                            PRIMARY KEY ("release_id", "artist_id", "role_hash")
 );
 
@@ -209,20 +219,20 @@ CREATE TABLE "artist_url" (
                               "artist_id" INTEGER NOT NULL,
                               "url_hash" BIGINT NOT NULL,
                               "url" VARCHAR(2048) NOT NULL,
-                              "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                              "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                               PRIMARY KEY ("artist_id", "url_hash")
 );
 
 CREATE TABLE "artist_group" (
                                 "artist_id" INTEGER NOT NULL,
                                 "group_id" INTEGER NOT NULL,
-                                "created_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
+                                "updated_at" TIMESTAMP NOT NULL DEFAULT (NOW()),
                                 PRIMARY KEY ("artist_id", "group_id")
 );
 
 CREATE INDEX "pk_style" ON "style" ("id");
 
-COMMENT ON TABLE "data" IS 'Cached resource for keep tracking data dump updates (either being monthly or random occasions)';
+COMMENT ON TABLE "data" IS 'Cached resource for keep tracking data dump updates (either being monthly or random occations)';
 
 COMMENT ON COLUMN "data"."etag" IS 'ETag representing this data being unique. Used for updating cache.';
 
@@ -235,73 +245,95 @@ Always uppercase.';
 
 COMMENT ON COLUMN "data"."uri" IS 'URI to download dump data file.';
 
-COMMENT ON COLUMN "release_genre"."created_at" IS 'created time';
+COMMENT ON COLUMN "style"."id" IS 'id of style';
+
+COMMENT ON COLUMN "style"."name" IS 'name of style';
+
+COMMENT ON COLUMN "genre"."id" IS 'id of genre';
+
+COMMENT ON COLUMN "genre"."name" IS 'name of genre';
+
+COMMENT ON COLUMN "release"."master_id" IS 'id of master release this release belongs to';
+
+COMMENT ON COLUMN "release"."is_master" IS 'indicates i this release is main release of the master release';
+
+COMMENT ON COLUMN "release_genre"."updated_at" IS 'created time';
 
 COMMENT ON COLUMN "release_track"."title_hash" IS 'fnv32 encoded hash from title';
 
-COMMENT ON COLUMN "release_track"."created_at" IS 'created time';
+COMMENT ON COLUMN "release_track"."updated_at" IS 'created time';
 
-COMMENT ON COLUMN "label_release"."created_at" IS 'created time';
+COMMENT ON COLUMN "label_release"."updated_at" IS 'created time';
 
 COMMENT ON COLUMN "release_image"."url_hash" IS 'fnv32 encoded hash from url';
 
-COMMENT ON COLUMN "release_image"."created_at" IS 'created time';
+COMMENT ON COLUMN "release_image"."updated_at" IS 'created time';
 
 COMMENT ON COLUMN "release_contract"."contract_hash" IS 'fnv32 encoded hash from contract';
 
-COMMENT ON COLUMN "release_contract"."created_at" IS 'created time';
+COMMENT ON COLUMN "release_contract"."updated_at" IS 'created time';
 
 COMMENT ON COLUMN "release_identifier"."identifier_hash" IS 'fnv32 encoded hash from string which is description, type, value appended in order';
 
-COMMENT ON COLUMN "release_identifier"."created_at" IS 'created time';
+COMMENT ON COLUMN "release_identifier"."updated_at" IS 'created time';
+
+COMMENT ON COLUMN "master_track"."title_hash" IS 'fnv32 encoded hash from title';
+
+COMMENT ON COLUMN "master_track"."updated_at" IS 'created time';
 
 COMMENT ON COLUMN "master_video"."url_hash" IS 'fnv32 encoded hash from url';
 
-COMMENT ON COLUMN "master_video"."created_at" IS 'created time';
+COMMENT ON COLUMN "master_video"."updated_at" IS 'created time';
 
-COMMENT ON COLUMN "master_genre"."created_at" IS 'created time';
+COMMENT ON COLUMN "master_genre"."updated_at" IS 'created time';
 
-COMMENT ON COLUMN "master_style"."created_at" IS 'created time';
+COMMENT ON COLUMN "master_style"."updated_at" IS 'created time';
 
-COMMENT ON COLUMN "release_style"."created_at" IS 'created time';
+COMMENT ON COLUMN "release_style"."updated_at" IS 'created time';
 
 COMMENT ON COLUMN "release_video"."url_hash" IS 'fnv32 encoded hash from url';
 
-COMMENT ON COLUMN "release_video"."created_at" IS 'created time';
+COMMENT ON COLUMN "release_video"."updated_at" IS 'created time';
 
 COMMENT ON COLUMN "label_url"."url_hash" IS 'fnv32 encoded hash from url';
 
-COMMENT ON COLUMN "label_url"."created_at" IS 'created time';
+COMMENT ON COLUMN "label_url"."updated_at" IS 'created time';
 
 COMMENT ON COLUMN "release_format"."format_hash" IS 'fnv32 encoded hash from string which is description, name, quantity, text appended in order';
 
-COMMENT ON COLUMN "release_format"."created_at" IS 'created time';
+COMMENT ON COLUMN "release_format"."updated_at" IS 'created time';
 
-COMMENT ON COLUMN "artist_alias"."created_at" IS 'created time';
+COMMENT ON COLUMN "artist_alias"."updated_at" IS 'created time';
+
+COMMENT ON COLUMN "artist_name_variation"."artist_id" IS 'id of artist';
+
+COMMENT ON COLUMN "artist_name_variation"."name_variation" IS 'artist"s other name';
 
 COMMENT ON COLUMN "artist_name_variation"."name_variation_hash" IS 'fnv32 encoded hash from name_variation';
 
-COMMENT ON COLUMN "artist_name_variation"."created_at" IS 'created time';
+COMMENT ON COLUMN "artist_name_variation"."updated_at" IS 'created time';
 
-COMMENT ON COLUMN "master_artist"."created_at" IS 'created time';
+COMMENT ON COLUMN "master_artist"."artist_id" IS 'artist id of the master release';
 
-COMMENT ON COLUMN "release_artist"."created_at" IS 'created time';
+COMMENT ON COLUMN "master_artist"."master_id" IS 'master id';
+
+COMMENT ON COLUMN "master_artist"."updated_at" IS 'created time';
+
+COMMENT ON COLUMN "release_artist"."updated_at" IS 'created time';
 
 COMMENT ON COLUMN "release_credited_artist"."role_hash" IS 'fnv32 encoded hash from role';
 
 COMMENT ON COLUMN "release_credited_artist"."role" IS 'role of an artist for a release';
 
-COMMENT ON COLUMN "release_credited_artist"."created_at" IS 'created time';
+COMMENT ON COLUMN "release_credited_artist"."updated_at" IS 'created time';
 
 COMMENT ON COLUMN "artist_url"."url_hash" IS 'fnv32 encoded hash from url';
 
-COMMENT ON COLUMN "artist_url"."created_at" IS 'created time';
+COMMENT ON COLUMN "artist_url"."updated_at" IS 'created time';
 
-COMMENT ON COLUMN "artist_group"."created_at" IS 'created time';
+COMMENT ON COLUMN "artist_group"."updated_at" IS 'created time';
 
 ALTER TABLE "label" ADD CONSTRAINT "fk_label_parent_id_label_id" FOREIGN KEY ("parent_id") REFERENCES "label" ("id");
-
-ALTER TABLE "master" ADD CONSTRAINT "fk_master_main_release_id_release" FOREIGN KEY ("main_release_id") REFERENCES "release" ("id");
 
 ALTER TABLE "release_genre" ADD CONSTRAINT "fk_release_genre_release_id_release" FOREIGN KEY ("release_id") REFERENCES "release" ("id");
 
@@ -365,15 +397,21 @@ ALTER TABLE "artist_group" ADD CONSTRAINT "fk_artist_group_artist_id_artist" FOR
 
 ALTER TABLE "artist_group" ADD CONSTRAINT "fk_artist_group_group_id_artist" FOREIGN KEY ("group_id") REFERENCES "artist" ("id");
 
+ALTER TABLE "release" ADD CONSTRAINT "fk_release_master_id_master" FOREIGN KEY ("master_id") REFERENCES "master" ("id");
+
 -- CREATE EXTENSION FOR TRIGRAM TOKENIZER
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 -- INDEXES FOR RELATIONAL LOOKUPS
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_group_group_id_artist_id ON artist_group(group_id, artist_id);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_release_artist_artist_id_release_id ON release_artist(artist_id, release_id);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_release_credited_artist_artist_id_release_id ON release_artist(artist_id, release_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_group_group_id_artist_id ON artist_group(group_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_release_artist_artist_id_release_id ON release_artist(artist_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_release_credited_artist_artist_id_release_id ON release_artist(artist_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_master_year ON master(released_year);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_release_master_id ON release(master_id);
+-- CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_master_artist_master_id ON master_artist(master_id);
 
 -- INDEXES FOR FULL TEXT SEARCH
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_name_trigram ON artist USING GIN(UPPER("name") gin_trgm_ops);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_real_name_trigram ON artist USING GIN(UPPER("real_name") gin_trgm_ops);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_profile_trigram ON artist USING GIN(UPPER("profile") gin_trgm_ops);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_master_title_trigram ON master USING GIN(UPPER("title") gin_trgm_ops);

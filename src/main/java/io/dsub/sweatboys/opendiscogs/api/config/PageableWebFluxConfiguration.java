@@ -2,7 +2,6 @@ package io.dsub.sweatboys.opendiscogs.api.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.ReactivePageableHandlerMethodArgumentResolver;
-import org.springframework.web.reactive.config.ResourceHandlerRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurationSupport;
 import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer;
 

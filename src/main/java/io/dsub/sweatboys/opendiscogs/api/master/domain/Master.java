@@ -30,10 +30,6 @@ public class Master {
     @JsonProperty("title")
     private final String title;
 
-    @Column("main_release_id")
-    @JsonProperty("main_release")
-    private final Long mainReleaseId;
-
     @Column("released_year")
     @JsonProperty("released_year")
     private final Integer releasedYear;
