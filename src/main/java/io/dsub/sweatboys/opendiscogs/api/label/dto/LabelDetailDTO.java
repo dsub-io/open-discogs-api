@@ -28,15 +28,4 @@ public record LabelDetailDTO(@JsonProperty("id") Long id, @JsonProperty("contact
     public String getReleasesUrl() {
         return "https://api.opendiscogs.com/labels/" + this.id + "/releases";
     }
-
-    public static Mono<LabelDetailDTO> fromLabel(Label label) {
-        return Mono.fromCallable(() -> LabelDetailDTO.builder()
-                        .id(label.getId())
-                        .contactInfo(label.getContactInfo())
-                        .dataQuality(label.getDataQuality())
-                        .name(label.getName())
-                        .profile(label.getProfile())
-                        .build())
-                .subscribeOn(Schedulers.boundedElastic());
-    }
 }

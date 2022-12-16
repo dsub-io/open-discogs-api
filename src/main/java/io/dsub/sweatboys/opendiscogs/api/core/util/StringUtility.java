@@ -19,6 +19,13 @@ public class StringUtility {
   }
 
   public String getMostChildPath(String path) {
-    return Arrays.stream(path.split("\\.")).reduce((prev, curr) -> curr).orElse("");
+    return Arrays.stream(path.split("\\."))
+            .reduce((prev, curr) -> {
+              if (prev.isEmpty()) {
+                return curr;
+              }
+              return curr.isEmpty() ? prev : curr;
+            })
+            .orElse("");
   }
 }

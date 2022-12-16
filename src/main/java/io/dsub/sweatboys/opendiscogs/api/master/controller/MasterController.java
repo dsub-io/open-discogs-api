@@ -8,19 +8,23 @@ import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterReleaseDTO;
 import io.dsub.sweatboys.opendiscogs.api.master.query.MasterQuery;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+@Validated
 @RestController
 @RequestMapping("/masters")
 @RequiredArgsConstructor
+@Tag(name = "masters", description = "master resource endpoints")
 public class MasterController {
 
   private final MasterService service;
