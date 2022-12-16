@@ -11,20 +11,10 @@ spring:
 
 # observability
 management:
-  tracing:
-    sampling:
-      probability: 1.0
   endpoints:
     web:
       exposure:
-        include: prometheus,openapi,swagger-ui
-  metrics:
-    distribution:
-      percentiles-histogram:
-        http.server.requests: true
-  zipkin:
-    tracing:
-      endpoint: http://zipkin.dsub.io:9411/api/v2/spans
+        include: openapi,swagger-ui
   server:
     port: 9090
 logging:

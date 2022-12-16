@@ -2,6 +2,7 @@ package io.dsub.sweatboys.opendiscogs.api.core.validation;
 
 import io.dsub.sweatboys.opendiscogs.api.test.ConcurrentTest;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
+import io.dsub.sweatboys.opendiscogs.api.validation.ValidatorImpl;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

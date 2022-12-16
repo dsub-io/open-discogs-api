@@ -6,7 +6,7 @@ plugins {
     id 'maven-publish'
     id 'com.google.osdetector' version '1.7.1'
     id 'org.springdoc.openapi-gradle-plugin' version '1.6.0'
-    id 'org.graalvm.buildtools.native' version '0.9.19'
+    id 'org.graalvm.buildtools.native' version '0.9.18'
 }
 
 sourceCompatibility = 17
@@ -27,10 +27,6 @@ configurations {
 }
 
 dependencies {
-    if (osdetector.classifier == "aarch_64") {
-        implementation 'io.netty:netty-all:4.1.85.Final'
-    }
-
     // spring configuration
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
@@ -42,12 +38,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
 
     // observability from reference: https://spring.io/blog/2022/10/12/observability-with-spring-boot-3
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'io.micrometer:micrometer-registry-prometheus'
-    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
-    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
-    implementation 'com.github.loki4j:loki-logback-appender:1.3.2'
 
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.0'
@@ -143,4 +134,11 @@ publishing {
             }
         }
     }
+}
+
+bootBuildImage {
+    builder = "paketobuildpacks/builder:tiny"
+    environment = [
+            "BP_NATIVE_IMAGE" : "true"
+    ]
 }
