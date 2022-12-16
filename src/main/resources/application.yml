@@ -1,6 +1,8 @@
 # netty
 server:
   shutdown: graceful
+  http2:
+    enabled: true
 
 # spring
 spring:
