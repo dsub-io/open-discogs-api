@@ -1,11 +1,8 @@
 package io.dsub.sweatboys.opendiscogs.api.label.infrastructure;
 
 import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
-import io.dsub.sweatboys.opendiscogs.api.label.application.LabelService;
 import io.dsub.sweatboys.opendiscogs.api.label.domain.Label;
 import io.dsub.sweatboys.opendiscogs.api.label.domain.LabelRepository;
-import io.dsub.sweatboys.opendiscogs.api.label.dto.LabelDetailDTO;
-import io.dsub.sweatboys.opendiscogs.api.label.dto.LabelReferenceDTO;
 import io.dsub.sweatboys.opendiscogs.api.test.AbstractDatabaseIntegrationTest;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
 import org.jetbrains.annotations.NotNull;
@@ -15,18 +12,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.IntStream;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class LabelRepositoryImplIntegrationTest extends AbstractDatabaseIntegrationTest {
     @Autowired

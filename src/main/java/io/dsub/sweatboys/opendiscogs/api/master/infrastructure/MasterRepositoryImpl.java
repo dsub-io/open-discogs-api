@@ -4,9 +4,6 @@ import io.dsub.sweatboys.opendiscogs.api.master.domain.Master;
 import io.dsub.sweatboys.opendiscogs.api.master.domain.MasterRepository;
 import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterDetailDTO;
 import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterReleaseDTO;
-import java.util.Collections;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -15,6 +12,10 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+
+import java.util.Collections;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor

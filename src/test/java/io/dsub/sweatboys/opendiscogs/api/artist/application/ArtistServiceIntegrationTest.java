@@ -1,8 +1,5 @@
 package io.dsub.sweatboys.opendiscogs.api.artist.application;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.ArtistRepository;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReferenceDTO;
@@ -14,8 +11,6 @@ import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import io.dsub.sweatboys.opendiscogs.api.release.domain.Release;
 import io.dsub.sweatboys.opendiscogs.api.test.AbstractDatabaseIntegrationTest;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
-import java.util.List;
-import java.util.stream.IntStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +21,12 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.stream.IntStream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ArtistServiceIntegrationTest extends AbstractDatabaseIntegrationTest {
   @Autowired

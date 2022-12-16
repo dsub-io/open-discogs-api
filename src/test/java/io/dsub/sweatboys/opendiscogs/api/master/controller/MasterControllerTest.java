@@ -1,12 +1,5 @@
 package io.dsub.sweatboys.opendiscogs.api.master.controller;
 
-import static org.assertj.core.api.Assertions.as;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
-
-import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
 import io.dsub.sweatboys.opendiscogs.api.config.PageableWebFluxConfiguration;
 import io.dsub.sweatboys.opendiscogs.api.core.exception.ItemNotFoundException;
 import io.dsub.sweatboys.opendiscogs.api.core.response.PagedResponseDTO;
@@ -16,10 +9,6 @@ import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterDetailDTO;
 import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterReleaseDTO;
 import io.dsub.sweatboys.opendiscogs.api.master.query.MasterQuery;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
-
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +23,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @Import(PageableWebFluxConfiguration.class)
 @ExtendWith(SpringExtension.class)

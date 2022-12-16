@@ -2,6 +2,8 @@ package io.dsub.sweatboys.opendiscogs.api.master.infrastructure;
 
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReferenceDTO;
 import io.dsub.sweatboys.opendiscogs.api.master.domain.Master;
+import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterReleaseDTO;
+import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterVideoDTO;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.data.repository.query.Param;

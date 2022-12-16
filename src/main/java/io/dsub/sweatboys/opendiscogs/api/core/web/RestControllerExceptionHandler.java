@@ -6,9 +6,6 @@ import io.dsub.sweatboys.opendiscogs.api.core.response.ErrorDTO;
 import io.dsub.sweatboys.opendiscogs.api.core.util.StringUtility;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataAccessException;
@@ -25,6 +22,10 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.ServerWebInputException;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 // TODO: need to standardize error with simple message and status code via BaseException.
 @Slf4j

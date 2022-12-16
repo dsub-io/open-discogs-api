@@ -9,16 +9,10 @@ import io.dsub.sweatboys.opendiscogs.api.label.dto.LabelDetailDTO;
 import io.dsub.sweatboys.opendiscogs.api.label.dto.LabelReleaseDTO;
 import io.dsub.sweatboys.opendiscogs.api.label.query.LabelQuery;
 import io.dsub.sweatboys.opendiscogs.api.test.ConcurrentTest;
-import java.util.List;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atMostOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +28,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static reactor.core.publisher.Mono.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @Import(PageableWebFluxConfiguration.class)
 @ExtendWith(SpringExtension.class)
