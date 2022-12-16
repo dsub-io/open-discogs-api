@@ -377,3 +377,5 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_release_credited_artist_artist_id_re
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_name_trigram ON artist USING GIN(UPPER("name") gin_trgm_ops);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_real_name_trigram ON artist USING GIN(UPPER("real_name") gin_trgm_ops);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_profile_trigram ON artist USING GIN(UPPER("profile") gin_trgm_ops);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_label_name_trigram ON label USING GIN(UPPER("name") gin_trgm_ops);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_label_profile_trigram ON label USING GIN(UPPER("profile") gin_trgm_ops);
