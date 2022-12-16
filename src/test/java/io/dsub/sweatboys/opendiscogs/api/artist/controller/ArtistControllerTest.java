@@ -88,7 +88,7 @@ class ArtistControllerTest extends ConcurrentTest {
         .satisfies(q -> assertThat(q.realName()).isNull())
         .satisfies(q -> assertThat(q.profile()).isNull());
     assertThat(pageable)
-        .satisfies(p -> assertThat(p.getPageNumber()).isEqualTo(1))
+        .satisfies(p -> assertThat(p.getPageNumber()).isEqualTo(0))
         .satisfies(p -> assertThat(p.getPageSize()).isEqualTo(30));
   }
 
@@ -100,19 +100,16 @@ class ArtistControllerTest extends ConcurrentTest {
         .getArtist(idCaptor.capture()))
         .thenReturn(Mono.just(ResponseEntity.ok(dto)));
     var got = client.get()
-        .uri("/artists/1")
+        .uri("/artists/" + dto.id())
         .exchange()
         .expectStatus()
         .isOk()
         .expectBody(ArtistDetailDTO.class)
         .returnResult()
         .getResponseBody();
-    verify(artistService, atMostOnce()).getArtist(1L);
-    assertThat(got).isNotNull();
-    assertThat(got.getId()).isNotNull().isEqualTo(dto.getId());
-    assertThat(got.getName()).isNotNull().isEqualTo(dto.getName());
-    assertThat(got.getRealName()).isNotNull().isEqualTo(dto.getRealName());
-    assertThat(got.getProfile()).isNotNull().isEqualTo(dto.getProfile());
+    verify(artistService, atMostOnce()).getArtist(dto.id());
+    assertThat(got).isNotNull().isEqualTo(dto);
+    assertThat(idCaptor.getValue()).isEqualTo(1L);
   }
 
   @Test
