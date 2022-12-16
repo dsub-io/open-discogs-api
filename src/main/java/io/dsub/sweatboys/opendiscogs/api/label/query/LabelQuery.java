@@ -13,7 +13,6 @@ import lombok.Builder;
  */
 @Builder
 public record LabelQuery (
-
     String contactInfo,
     String dataQuality,
     String name,

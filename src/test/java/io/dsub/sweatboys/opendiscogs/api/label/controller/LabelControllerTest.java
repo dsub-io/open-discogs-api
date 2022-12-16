@@ -11,7 +11,6 @@ import io.dsub.sweatboys.opendiscogs.api.label.query.LabelQuery;
 import io.dsub.sweatboys.opendiscogs.api.test.ConcurrentTest;
 import java.util.List;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +20,6 @@ import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -32,13 +30,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static reactor.core.publisher.Mono.when;
 
 @Import(PageableWebFluxConfiguration.class)
@@ -59,47 +55,47 @@ class LabelControllerTest extends ConcurrentTest {
     }
 
 
-//    @Test
-//    void searchLabelsReturns() {
-//        PagedResponseDTO<Label> response = PagedResponseDTO.<Label>builder()
-//                .first(true)
-//                .last(false)
-//                .totalElements(1L)
-//                .items(List.of(TestUtil.getInstanceOf(Label.class)))
-//                .pageNumber(1)
-//                .sorted(false)
-//                .build();
-//
-//        var labelCaptor = ArgumentCaptor.forClass(LabelQuery.class);
-//        var pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
-//
-//        when(labelService.findLabels(labelCaptor.capture(), pageableCaptor.capture()))
-//                .thenReturn(Mono.just(response));
-//
-//        var gotResponse = client.get()
-//                .uri("/labels?size=30")
-//                .exchange()
-//                .expectStatus()
-//                .isEqualTo(HttpStatus.OK)
-//                .expectBody(response.getClass())
-//                .returnResult()
-//                .getResponseBody();
-//
-//        var query = labelCaptor.getValue();
-//        var pageable = pageableCaptor.getValue();
-//
-//        assertThat(gotResponse).isNotNull();
-//        assertThat(gotResponse.getItems()).isNotNull().hasSize(1);
-//        verify(labelService, atMostOnce()).findLabels(any(), any());
-//        assertThat(query)
-//                .satisfies(q -> assertThat(q.contactInfo()).isNull())
-//                .satisfies(q -> assertThat(q.dataQuality()).isNull())
-//                .satisfies(q -> assertThat(q.name()).isNull())
-//                .satisfies(q -> assertThat(q.profile()).isNull());
-//        assertThat(pageable)
-//                .satisfies(p -> assertThat(p.getPageNumber()).isEqualTo(1))
-//                .satisfies(p -> assertThat(p.getPageSize()).isEqualTo(30));
-//    }
+    @Test
+    void searchLabelsReturns() {
+        PagedResponseDTO<Label> response = PagedResponseDTO.<Label>builder()
+                .first(true)
+                .last(false)
+                .totalElements(1L)
+                .items(List.of(TestUtil.getInstanceOf(Label.class)))
+                .pageNumber(1)
+                .sorted(false)
+                .build();
+
+        var labelCaptor = ArgumentCaptor.forClass(LabelQuery.class);
+        var pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
+
+        when(labelService.findLabels(labelCaptor.capture(), pageableCaptor.capture()))
+                .thenReturn(Mono.just(response));
+
+        var gotResponse = client.get()
+                .uri("/labels?size=30")
+                .exchange()
+                .expectStatus()
+                .isEqualTo(HttpStatus.OK)
+                .expectBody(response.getClass())
+                .returnResult()
+                .getResponseBody();
+
+        var query = labelCaptor.getValue();
+        var pageable = pageableCaptor.getValue();
+
+        assertThat(gotResponse).isNotNull();
+        assertThat(gotResponse.getItems()).isNotNull().hasSize(1);
+        verify(labelService, atMostOnce()).findLabels(any(), any());
+        assertThat(query)
+                .satisfies(q -> assertThat(q.contactInfo()).isNull())
+                .satisfies(q -> assertThat(q.dataQuality()).isNull())
+                .satisfies(q -> assertThat(q.name()).isNull())
+                .satisfies(q -> assertThat(q.profile()).isNull());
+        assertThat(pageable)
+                .satisfies(p -> assertThat(p.getPageNumber()).isEqualTo(0))
+                .satisfies(p -> assertThat(p.getPageSize()).isEqualTo(30));
+    }
 
     @Test
     void getLabelReturns() {
@@ -118,11 +114,11 @@ class LabelControllerTest extends ConcurrentTest {
                 .getResponseBody();
         verify(labelService, atMostOnce()).getLabel(1L);
         assertThat(got).isNotNull();
-        assertThat(got.getId()).isNotNull().isEqualTo(dto.getId());
-        assertThat(got.getContactInfo()).isNotNull().isEqualTo(dto.getContactInfo());
-        assertThat(got.getDataQuality()).isNotNull().isEqualTo(dto.getDataQuality());
-        assertThat(got.getName()).isNotNull().isEqualTo(dto.getName());
-        assertThat(got.getProfile()).isNotNull().isEqualTo(dto.getProfile());
+        assertThat(got.id()).isNotNull().isEqualTo(dto.id());
+        assertThat(got.contactInfo()).isNotNull().isEqualTo(dto.contactInfo());
+        assertThat(got.dataQuality()).isNotNull().isEqualTo(dto.dataQuality());
+        assertThat(got.name()).isNotNull().isEqualTo(dto.name());
+        assertThat(got.profile()).isNotNull().isEqualTo(dto.profile());
     }
 
     @Test
@@ -134,12 +130,19 @@ class LabelControllerTest extends ConcurrentTest {
 
         when(labelService.getLabelReleases(idCaptor.capture(), pageableCaptor.capture()))
                 .thenReturn(PagedResponseDTO.fromPage(page));
-// id = 18 -> daft funk
+
         var result = client.get()
                 .uri("/labels/18/releases")
                 .exchange()
                 .expectBody(PagedResponseDTO.class)
                 .returnResult();
+
+        var body = result.getResponseBody();
+        assertThat(body).isNotNull();
+        var items = body.getItems();
+        assertThat(items).isNotNull().isNotEmpty().hasSize(1);
     }
+
+
 
 }

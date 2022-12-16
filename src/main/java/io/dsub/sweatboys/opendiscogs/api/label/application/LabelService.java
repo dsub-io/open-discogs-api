@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+import java.util.Collections;
 import java.util.function.Function;
 
 import static org.springframework.data.domain.ExampleMatcher.matchingAll;
@@ -48,13 +50,13 @@ public class LabelService {
 
     public Mono<PagedResponseDTO<LabelReleaseDTO>> getLabelReleases(long id, Pageable pageable) {
         return labelRepository.findReleasesByLabelId(id, pageable)
-                .switchIfEmpty(Mono.error(new ItemNotFoundException("label", id)))
                 .collectList()
+                .defaultIfEmpty(Collections.emptyList())
                 .zipWith(labelRepository.countReleasesByLabelId(id))
                 .flatMap(tuple -> PagedResponseDTO.fromPage(new PageImpl<>(tuple.getT1(), pageable, tuple.getT2())));
     }
 
-    private static Mono<ResponseEntity<LabelDetailDTO>> getItemNotfoundException(long id) {
+    private static <T> Mono<T> getItemNotfoundException(long id) {
         return Mono.error(new ItemNotFoundException("label", id));
     }
 }

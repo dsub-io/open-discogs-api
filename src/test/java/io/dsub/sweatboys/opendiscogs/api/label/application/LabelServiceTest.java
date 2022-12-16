@@ -1,9 +1,5 @@
 package io.dsub.sweatboys.opendiscogs.api.label.application;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
-
 import io.dsub.sweatboys.opendiscogs.api.core.exception.ItemNotFoundException;
 import io.dsub.sweatboys.opendiscogs.api.label.domain.Label;
 import io.dsub.sweatboys.opendiscogs.api.label.domain.LabelRepository;
@@ -23,6 +19,10 @@ import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
 import java.util.stream.IntStream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 public class LabelServiceTest extends ConcurrentTest {
 
@@ -79,14 +79,14 @@ public class LabelServiceTest extends ConcurrentTest {
     @Test
     void getLabelReturnsLabel() {
         var dto = TestUtil.getInstanceOf(LabelDetailDTO.class);
-        given(repository.findById(dto.getId())).willReturn(Mono.just(dto));
-        StepVerifier.create(service.getLabel(dto.getId()))
+        given(repository.findById(dto.id())).willReturn(Mono.just(dto));
+        StepVerifier.create(service.getLabel(dto.id()))
                 .assertNext(resp ->assertThat(resp)
                         .isNotNull()
                         .satisfies(r -> assertThat(r.getStatusCode()).isEqualTo(HttpStatus.OK))
                         .satisfies(r -> assertThat(r.getBody()).isEqualTo(dto)))
                 .verifyComplete();
-        verify(repository, atMostOnce()).findById(dto.getId());
+        verify(repository, atMostOnce()).findById(dto.id());
     }
 
     @Test

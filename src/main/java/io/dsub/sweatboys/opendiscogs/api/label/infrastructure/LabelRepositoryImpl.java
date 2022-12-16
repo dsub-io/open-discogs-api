@@ -1,11 +1,13 @@
 package io.dsub.sweatboys.opendiscogs.api.label.infrastructure;
 
+import io.dsub.sweatboys.opendiscogs.api.core.util.StringUtility;
 import io.dsub.sweatboys.opendiscogs.api.label.domain.Label;
 import io.dsub.sweatboys.opendiscogs.api.label.domain.LabelRepository;
 import io.dsub.sweatboys.opendiscogs.api.label.dto.LabelDetailDTO;
 import io.dsub.sweatboys.opendiscogs.api.label.dto.LabelReferenceDTO;
 import io.dsub.sweatboys.opendiscogs.api.label.dto.LabelReleaseDTO;
 import io.dsub.sweatboys.opendiscogs.api.label.projection.LabelDetailProjection;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -40,10 +42,10 @@ public class LabelRepositoryImpl implements LabelRepository {
     @Override
     public Flux<LabelReleaseDTO> findReleasesByLabelId(Long id, Pageable pageable) {
         return delegate.findReleasesByLabelId(
-        id,
-        pageable.getOffset(),
-        pageable.getPageSize(),
-        getSortString(pageable));
+                id,
+                pageable.getOffset(),
+                pageable.getPageSize(),
+                getSortString(pageable));
     }
 
     @Override
@@ -52,34 +54,54 @@ public class LabelRepositoryImpl implements LabelRepository {
     }
 
     private static String getSortString(Pageable pageable) {
-        var sort = pageable.getSort().stream()
+        return pageable.getSort().stream()
                 .map(order -> String.format("%s %s", order.getProperty(), order.getDirection()))
                 .collect(Collectors.joining(", "));
-        System.out.printf("sort resolved as %s\n", sort);
-        return sort;
     }
 
     private static Function<LabelDetailProjection, Mono<LabelDetailDTO>> mapProjectionToDto() {
         return projection -> Mono.fromCallable(() -> LabelDetailDTO.builder()
                         .id(projection.id())
-                        .profile(projection.profile())
-                        .name(projection.name())
-                        .contactInfo(projection.contactInfo())
-                        .dataQuality(projection.dataQuality())
-                        .parentLabel(LabelReferenceDTO.builder()
-                                .id(projection.parentLabelId())
-                                .name(projection.parentLabelName())
-                                .build())
+                        .profile(normalize(projection.profile()))
+                        .name(normalize(projection.name()))
+                        .contactInfo(normalize(projection.contactInfo()))
+                        .dataQuality(normalize(projection.dataQuality()))
+                        .parentLabel(getParentLabelMapped(projection))
                         .build())
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
+    private static LabelReferenceDTO getParentLabelMapped(LabelDetailProjection projection) {
+        if (hasParent(projection)) {
+            return LabelReferenceDTO.builder()
+                    .id(projection.parentLabelId())
+                    .name(normalize(projection.parentLabelName()))
+                    .build();
+        }
+        return null;
+    }
+
+    private static boolean hasParent(LabelDetailProjection projection) {
+        return projection.parentLabelId() != null;
+    }
+
+    private static String normalize(@Nullable String in) {
+        return StringUtility.getInstance().normalize(in);
+    }
+
     private Function<LabelDetailDTO, Mono<? extends LabelDetailDTO>> withSublabels() {
-        return dto -> delegate.findSubLabels(dto.getId()).collectList().map(dto::withSublabels);
+//        return dto -> delegate.findSubLabels(dto.id()).collectList().map(dto::withSublabels);
+        return dto -> delegate.findSubLabels(dto.id())
+                .collectList()
+                .flatMap(sublabels -> Mono.fromCallable(() -> dto.withSublabels(sublabels))
+                    .subscribeOn(Schedulers.boundedElastic()));
     }
 
     private Function<LabelDetailDTO, Mono<? extends LabelDetailDTO>> withUrls() {
-        return dto -> delegate.findUrls(dto.getId()).collectList().map(dto::withUrls);
+        return dto -> delegate.findUrls(dto.id())
+                .collectList()
+                .flatMap(urls -> Mono.fromCallable(() -> dto.withUrls(urls))
+                    .subscribeOn(Schedulers.boundedElastic()));
     }
 
     private static Function<ReactiveFluentQuery<Label>, Mono<Page<Label>>> getPageableQueryFunction(
