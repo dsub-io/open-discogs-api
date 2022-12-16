@@ -2,7 +2,6 @@ package io.dsub.sweatboys.opendiscogs.api.master.domain;
 
 import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterDetailDTO;
 import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterReleaseDTO;
-import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterVideoDTO;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

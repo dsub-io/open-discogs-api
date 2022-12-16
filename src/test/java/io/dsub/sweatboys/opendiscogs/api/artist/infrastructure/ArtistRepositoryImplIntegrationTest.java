@@ -1,15 +1,11 @@
 package io.dsub.sweatboys.opendiscogs.api.artist.infrastructure;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.ArtistRepository;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReferenceDTO;
 import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import io.dsub.sweatboys.opendiscogs.api.test.AbstractDatabaseIntegrationTest;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
-import java.util.List;
-import java.util.stream.IntStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +14,11 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.r2dbc.core.DatabaseClient;
+
+import java.util.List;
+import java.util.stream.IntStream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ArtistRepositoryImplIntegrationTest extends AbstractDatabaseIntegrationTest {
   @Autowired

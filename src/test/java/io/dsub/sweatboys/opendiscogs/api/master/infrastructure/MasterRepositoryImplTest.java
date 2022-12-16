@@ -1,32 +1,29 @@
 package io.dsub.sweatboys.opendiscogs.api.master.infrastructure;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReferenceDTO;
 import io.dsub.sweatboys.opendiscogs.api.master.domain.Master;
 import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterReleaseDTO;
 import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterVideoDTO;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.reactivestreams.Publisher;
 import org.springframework.data.domain.*;
 import org.springframework.data.repository.query.FluentQuery;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.IntStream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 class MasterRepositoryImplTest {
 
@@ -133,4 +130,5 @@ class MasterRepositoryImplTest {
     verify(delegate, times(1))
             .countReleasesByMasterId(1L);
   }
+
 }

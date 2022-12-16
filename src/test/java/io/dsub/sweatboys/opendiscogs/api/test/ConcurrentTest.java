@@ -1,8 +1,8 @@
 package io.dsub.sweatboys.opendiscogs.api.test;
 
-import static org.junit.jupiter.api.parallel.ExecutionMode.CONCURRENT;
-
 import org.junit.jupiter.api.parallel.Execution;
+
+import static org.junit.jupiter.api.parallel.ExecutionMode.CONCURRENT;
 
 @Execution(CONCURRENT)
 public abstract class ConcurrentTest {

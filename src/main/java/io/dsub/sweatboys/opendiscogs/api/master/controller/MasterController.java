@@ -14,11 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -64,7 +60,6 @@ public class MasterController {
         .flatMap(dto -> Mono.fromCallable(() -> ResponseEntity.ok(dto))
             .subscribeOn(Schedulers.boundedElastic()));
   }
-
   @GetMapping("/{id}/releases")
   @Operation(description = "Get master releases from given master by paging and sorting assist.")
   public Mono<PagedResponseDTO<MasterReleaseDTO>> getMasterReleases(

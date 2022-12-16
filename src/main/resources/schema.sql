@@ -232,7 +232,7 @@ CREATE TABLE "artist_group" (
 
 CREATE INDEX "pk_style" ON "style" ("id");
 
-COMMENT ON TABLE "data" IS 'Cached resource for keep tracking data dump updates (either being monthly or random occations)';
+COMMENT ON TABLE "data" IS 'Cached resource for keep tracking data dump updates (either being monthly or random occasions)';
 
 COMMENT ON COLUMN "data"."etag" IS 'ETag representing this data being unique. Used for updating cache.';
 
@@ -414,4 +414,6 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_release_master_id ON release(master_
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_name_trigram ON artist USING GIN(UPPER("name") gin_trgm_ops);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_real_name_trigram ON artist USING GIN(UPPER("real_name") gin_trgm_ops);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_profile_trigram ON artist USING GIN(UPPER("profile") gin_trgm_ops);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_label_name_trigram ON label USING GIN(UPPER("name") gin_trgm_ops);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_label_profile_trigram ON label USING GIN(UPPER("profile") gin_trgm_ops);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_master_title_trigram ON master USING GIN(UPPER("title") gin_trgm_ops);
