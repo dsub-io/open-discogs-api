@@ -1,5 +1,6 @@
 package io.dsub.sweatboys.opendiscogs.api.label.application;
 
+import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
 import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import io.dsub.sweatboys.opendiscogs.api.label.domain.Label;
 import io.dsub.sweatboys.opendiscogs.api.label.domain.LabelRepository;
@@ -109,33 +110,53 @@ public class LabelServiceIntegrationTest extends AbstractDatabaseIntegrationTest
         }
     }
 
-//    @Test
-//    void getLabelReleasesReturnsAllReleases() {
-//        Flux.range(1, 10)
-//                .flatMap(i -> template.insert(Release.class)
-//                        .using(TestUtil.getInstanceOf(Release.class)
-//                                .withId((long) i)
-//                                .withReleasedYear(2022)))
-//                .blockLast();
-//
-//        Flux.range(1, 10)
-//                .flatMap(i ->
-//                        databaseClient
-//                                .sql("INSERT INTO label_release VALUES($1, $2)")
-//                                .bind(0, i)
-//                                .bind(1, i)
-//                                .then())
-//                .blockLast();
-//
-//        for (long i = 1; i <= 10; i++) {
-//            var dto = service.getLabelReleases(i, Pageable.ofSize(2)).block();
-//            assertThat(dto).isNotNull();
-//            assertThat(dto.getItems()).isNotNull().isNotEmpty().hasSize(10);
-//            for (LabelReleaseDTO item : dto.getItems()) {
-//                assertThat(item.id()).isEqualTo(i);
-//                assertThat(item.title()).isNotBlank();
-//
-//            }
-//        }
-//    }
+    @Test
+    void getLabelReleasesReturnsAllReleases() {
+        Flux.range(1, 2)
+                .flatMap(i -> template.insert(Release.class)
+                        .using(TestUtil.getInstanceOf(Release.class)
+                                .withId((long) i)
+                                .withReleasedYear(2022)
+                                .withReleasedMonth(i)
+                                .withReleasedDay(i)))
+                .blockLast();
+        Flux.range(1, 2)
+                .flatMap(i -> template.insert(Artist.class)
+                        .using(TestUtil.getInstanceOf(Artist.class)
+                                .withId((long) i)))
+                .blockLast();
+        Flux.range(1, 2)
+                .flatMap(i ->
+                        databaseClient
+                                .sql("INSERT INTO release_artist VALUES($1, $1)")
+                                .bind(0, i)
+                                .then())
+                .blockLast();
+        Flux.range(1, 2)
+                .flatMap(i -> databaseClient
+                        .sql("INSERT INTO release_format (release_id, format_hash, description) VALUES (:i,:i,'test-description')")
+                        .bind("i", i)
+                        .then())
+                .blockLast();
+        Flux.range(1, 2)
+                .flatMap(i -> databaseClient
+                        .sql("INSERT INTO label_release (label_id, release_id, category_notation) VALUES (:i,:i,'test-catno')")
+                        .bind("i", i)
+                        .then())
+                .blockLast();
+        for (long i : List.of(1L, 2L)) {
+            var dto = service.getLabelReleases(i, Pageable.ofSize(2)).block();
+            assertThat(dto).isNotNull();
+            assertThat(dto.getItems()).isNotNull().isNotEmpty().hasSize(1);
+            for (LabelReleaseDTO item : dto.getItems()) {
+                assertThat(item.id()).isEqualTo(i);
+                assertThat(item.name()).isNotNull().isNotBlank();
+                assertThat(item.title()).isNotNull().isNotBlank();
+                assertThat(item.releasedYear()).isEqualTo(2022);
+                assertThat(item.status()).isNotNull().isNotBlank();
+                assertThat(item.categoryNotation()).isNotNull().isEqualTo("test-catno");
+                assertThat(item.description()).isNotNull().isEqualTo("test-description");
+            }
+        }
+    }
 }

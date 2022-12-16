@@ -9,9 +9,6 @@ import io.dsub.sweatboys.opendiscogs.api.label.query.LabelQuery;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +18,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Validated
 @RestController
@@ -28,34 +26,31 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/labels")
 @Tag(name = "labels", description = "label resource endpoints")
 public class LabelController {
-
     private final LabelService labelService;
-
     @GetMapping("")
     @Operation(description = "Search labels by query with AND condition. Empty strings will be ignored.")
-    public Mono<ResponseEntity<PagedResponseDTO<Label>>> searchLabels (
-        @RequestParam(value = "contact_info", required = false)
-        @Schema(description = "Contact info to search for label")
-        String contactInfo,
-        @RequestParam(value = "data_quality", required = false)
-        @Schema(description = "Data Quality to search for label")
-        String dataQuality,
-        @RequestParam(value = "name",required = false)
-        @Schema(description = "Name to search for label")
-        String name,
-        @RequestParam(value = "profile", required = false)
-        @Schema(description = "Profile to search for label")
-        String profile,
-        @ParameterObject @PageableDefault(sort = {"id"}) Pageable pageable,
-        ServerHttpRequest serverHttpRequest) {
-        return labelService.findLabels(withQuery(contactInfo, dataQuality, name, profile), pageable)
-                .map(dto -> dto.withResourceURI(serverHttpRequest.getURI().getPath()))
-                .map(ResponseEntity::ok);
+    public Mono<ResponseEntity<PagedResponseDTO<Label>>> searchLabels(
+            @RequestParam(value = "contact_info", required = false)
+            @Schema(description = "Contact info to search for label")
+            String contactInfo,
+            @RequestParam(value = "data_quality", required = false)
+            @Schema(description = "Data Quality to search for label")
+            String dataQuality,
+            @RequestParam(value = "name", required = false)
+            @Schema(description = "Name to search for label")
+            String name,
+            @RequestParam(value = "profile", required = false)
+            @Schema(description = "Profile to search for label")
+            String profile,
+            @ParameterObject @PageableDefault(sort = {"id"}) Pageable pageable,
+            ServerHttpRequest request) {
+        return labelService
+                .findLabels(withQuery(contactInfo, dataQuality, name, profile), pageable)
+                .flatMap(dto -> wrapResponse(dto, request));
     }
-
     @GetMapping("/{id}")
     @Operation(description = "Get details by label id")
-    public Mono<ResponseEntity<LabelDetailDTO>> getLabel(@PathVariable("id") @Valid @NotNull @Min(1) long id) {
+    public Mono<ResponseEntity<LabelDetailDTO>> getLabel(@PathVariable("id") long id) {
         return labelService.getLabel(id);
     }
 
@@ -67,10 +62,17 @@ public class LabelController {
             Long id,
             @ParameterObject
             @PageableDefault(sort = {"id"})
-            Pageable pageable, ServerHttpRequest request) {
-        return labelService.getLabelReleases(id, pageable)
-                .map(dto -> dto.withResourceURI(request.getURI().getPath()))
-                .map(ResponseEntity::ok);
+            Pageable pageable,
+            ServerHttpRequest request) {
+        return labelService
+                .getLabelReleases(id, pageable)
+                .flatMap(dto -> wrapResponse(dto, request));
+    }
+
+    private static <T> Mono<ResponseEntity<PagedResponseDTO<T>>> wrapResponse(PagedResponseDTO<T> dto, ServerHttpRequest req) {
+        return Mono.fromCallable(() -> dto.withResourceURI(req.getURI().getPath()))
+                .map(ResponseEntity::ok)
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     private static LabelQuery withQuery(String contactInfo, String dataQuality, String name, String profile) {

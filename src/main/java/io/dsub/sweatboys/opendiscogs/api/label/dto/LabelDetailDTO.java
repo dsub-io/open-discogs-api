@@ -13,32 +13,19 @@ import reactor.core.scheduler.Schedulers;
 import java.util.List;
 
 @With
-@Getter
 @Builder
-@AllArgsConstructor
 @Schema(description = "Detailed information of a label")
-public class LabelDetailDTO {
-    @JsonProperty("id")
-    private final Long id;
-    @JsonProperty("contact_info")
-    private final String contactInfo;
-    @JsonProperty("data_quality")
-    private final String dataQuality;
-    @JsonProperty("name")
-    private final String name;
-    @JsonProperty("profile")
-    private final String profile;
-    @JsonProperty("parent_label")
-    private final LabelReferenceDTO parentLabel;
-    @JsonProperty("sublabels")
-    private final List<LabelReferenceDTO> sublabels;
-    @JsonProperty("urls")
-    private final List<String> urls;
-
+public record LabelDetailDTO(@JsonProperty("id") Long id, @JsonProperty("contact_info") String contactInfo,
+                             @JsonProperty("data_quality") String dataQuality, @JsonProperty("name") String name,
+                             @JsonProperty("profile") String profile,
+                             @JsonProperty("parent_label") LabelReferenceDTO parentLabel,
+                             @JsonProperty("sublabels") List<LabelReferenceDTO> sublabels,
+                             @JsonProperty("urls") List<String> urls) {
     @JsonProperty("uri")
     public String getUri() {
         return "https://www.discogs.com/label/" + this.id;
     }
+
     @JsonProperty("release_url")
     public String getReleasesUrl() {
         return "https://api.opendiscogs.com/labels/" + this.id + "/releases";
@@ -46,12 +33,12 @@ public class LabelDetailDTO {
 
     public static Mono<LabelDetailDTO> fromLabel(Label label) {
         return Mono.fromCallable(() -> LabelDetailDTO.builder()
-                .id(label.getId())
-                .contactInfo(label.getContactInfo())
-                .dataQuality(label.getDataQuality())
-                .name(label.getName())
-                .profile(label.getProfile())
-            .build())
-            .subscribeOn(Schedulers.boundedElastic());
+                        .id(label.getId())
+                        .contactInfo(label.getContactInfo())
+                        .dataQuality(label.getDataQuality())
+                        .name(label.getName())
+                        .profile(label.getProfile())
+                        .build())
+                .subscribeOn(Schedulers.boundedElastic());
     }
 }
