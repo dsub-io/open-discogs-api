@@ -12,6 +12,7 @@ import io.dsub.sweatboys.opendiscogs.api.core.exception.ItemNotFoundException;
 import io.dsub.sweatboys.opendiscogs.api.master.domain.Master;
 import io.dsub.sweatboys.opendiscogs.api.master.domain.MasterRepository;
 import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterDetailDTO;
+import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterReleaseDTO;
 import io.dsub.sweatboys.opendiscogs.api.master.query.MasterQuery;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
 import java.util.stream.IntStream;
@@ -28,6 +29,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -67,8 +69,8 @@ class MasterServiceTest {
     verify(masterRepository, times(1)).findAllBy(any(), any());
     assertThat(exampleCaptor.getValue().getProbe())
         .isNotNull()
-        .satisfies(m -> assertThat(m.getTitle()).isEqualTo(q.title()))
-        .satisfies(m -> assertThat(m.getReleasedYear()).isEqualTo(q.year()));
+        .satisfies(m -> assertThat(m.getTitle()).isEqualTo(q.getTitle()))
+        .satisfies(m -> assertThat(m.getReleasedYear()).isEqualTo(q.getYear()));
     assertThat(pageableCaptor.getValue()).isEqualTo(p);
   }
 
@@ -102,4 +104,52 @@ class MasterServiceTest {
     assertThat(idCaptor.getAllValues()).hasSize(1);
     verify(masterRepository, times(1)).findById(any());
   }
+
+  @Test
+  void getMasterSubReleasesReturnsError(){
+    var iCaptor = ArgumentCaptor.forClass(Long.class);
+    var pCaptor = ArgumentCaptor.forClass(Pageable.class);
+    var pReq = PageRequest.of(1, 10);
+    given(masterRepository.findReleasesByMasterId(iCaptor.capture(), pCaptor.capture()))
+            .willReturn(Flux.empty());
+    given(masterRepository.countReleasesByMasterId(iCaptor.capture()))
+            .willReturn(Mono.empty());
+    StepVerifier.create(service.getMasterSubReleases(1L, pReq))
+            .expectErrorSatisfies(err -> assertThat(err).hasMessageContainingAll("master", "1", "not found"))
+            .verify();
+    assertThat(iCaptor.getAllValues())
+            .hasSize(2)
+            .allSatisfy(i -> assertThat(i).isEqualTo(1L));
+    assertThat(pCaptor.getAllValues()).hasSize(1);
+    assertThat(pCaptor.getValue()).isEqualTo(pReq);
+    verify(masterRepository, times(1)).findReleasesByMasterId(any(), any());
+    verify(masterRepository, times(1)).countReleasesByMasterId(any());
+  }
+
+    @Test
+    void getMasterSubReleasesReturnsResult() {
+      var iCaptor = ArgumentCaptor.forClass(Long.class);
+      var pCaptor = ArgumentCaptor.forClass(Pageable.class);
+      var pReq = PageRequest.of(0, 10);
+      var res = IntStream.rangeClosed(1, 10).mapToObj(i -> TestUtil.getInstanceOf(MasterReleaseDTO.class)).toList();
+      given(masterRepository.findReleasesByMasterId(iCaptor.capture(), pCaptor.capture()))
+              .willReturn(Flux.fromIterable(res));
+      given(masterRepository.countReleasesByMasterId(iCaptor.capture()))
+              .willReturn(Mono.just(15L));
+      StepVerifier.create(service.getMasterSubReleases(1L, pReq))
+              .assertNext(dto -> assertThat(dto)
+                      .satisfies(d -> assertThat(d.getPageSize()).isEqualTo(10))
+                      .satisfies(d -> assertThat(d.getItems()).hasSize(10))
+                      .satisfies(d -> assertThat(d.getLast()).isNotNull().isFalse())
+                      .satisfies(d -> assertThat(d.getFirst()).isNotNull().isTrue())
+                      .satisfies(d -> assertThat(d.getPageNumber()).isEqualTo(1)))
+              .verifyComplete();
+      assertThat(iCaptor.getAllValues())
+              .hasSize(2)
+              .allSatisfy(i -> assertThat(i).isEqualTo(1L));
+      assertThat(pCaptor.getAllValues()).hasSize(1);
+      assertThat(pCaptor.getValue()).isEqualTo(pReq);
+      verify(masterRepository, times(1)).findReleasesByMasterId(any(), any());
+      verify(masterRepository, times(1)).countReleasesByMasterId(any());
+    }
 }

@@ -100,19 +100,17 @@ class ArtistControllerTest extends ConcurrentTest {
         .getArtist(idCaptor.capture()))
         .thenReturn(Mono.just(ResponseEntity.ok(dto)));
     var got = client.get()
-        .uri("/artists/1")
+        .uri("/artists/" + dto.id())
         .exchange()
         .expectStatus()
         .isOk()
         .expectBody(ArtistDetailDTO.class)
         .returnResult()
         .getResponseBody();
+        
     verify(artistService, atMostOnce()).getArtist(1L);
-    assertThat(got).isNotNull();
-    assertThat(got.id()).isNotNull().isEqualTo(dto.id());
-    assertThat(got.name()).isNotNull().isEqualTo(dto.name());
-    assertThat(got.realName()).isNotNull().isEqualTo(dto.realName());
-    assertThat(got.profile()).isNotNull().isEqualTo(dto.profile());
+    assertThat(got).isNotNull().isEqualTo(dto);
+    assertThat(idCaptor.getValue()).isEqualTo(1L);
   }
 
   @Test

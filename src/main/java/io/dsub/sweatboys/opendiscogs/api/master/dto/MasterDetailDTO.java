@@ -27,14 +27,15 @@ public record MasterDetailDTO(
     @JsonProperty("styles")
     List<String> styles,
     @JsonProperty("artists")
-    List<ArtistReferenceDTO> artists
+    List<ArtistReferenceDTO> artists,
+    @JsonProperty("videos")
+    List<MasterVideoDTO> videos
 ) {
     public static Mono<MasterDetailDTO> fromMaster(Master master) {
         return Mono.fromCallable(() -> MasterDetailDTO.builder()
                 .id(master.getId())
                 .title(master.getTitle())
                 .dataQuality(master.getDataQuality())
-                .mainRelease(master.getMainReleaseId())
                 .year(master.getReleasedYear())
                 .build())
             .subscribeOn(Schedulers.boundedElastic());
