@@ -24,6 +24,6 @@ public record ArtistQuery(
     }
 
     private String ofNormalized(String in) {
-        return StringUtility.getInstance().normalize(in);
+        return StringUtility.normalize(in);
     }
 }

@@ -31,6 +31,8 @@ public class ArtistReleaseDTO {
     private String listedReleaseDate;
     @JsonProperty("is_master")
     private Boolean isMaster;
+    @JsonProperty("master_id")
+    private Long masterId;
     @JsonProperty("notes")
     private String notes;
     @JsonProperty("status")

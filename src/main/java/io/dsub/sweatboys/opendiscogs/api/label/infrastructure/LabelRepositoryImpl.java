@@ -86,7 +86,7 @@ public class LabelRepositoryImpl implements LabelRepository {
     }
 
     private static String normalize(@Nullable String in) {
-        return StringUtility.getInstance().normalize(in);
+        return StringUtility.normalize(in);
     }
 
     private Function<LabelDetailDTO, Mono<? extends LabelDetailDTO>> withSublabels() {
