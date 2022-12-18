@@ -1,32 +1,38 @@
 package io.dsub.sweatboys.opendiscogs.api.artist.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.With;
+import lombok.*;
+
+import java.util.Objects;
 
 @With
-public record ArtistReleaseDTO(
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ArtistReleaseDTO {
     @JsonProperty("id")
-    Long id,
+    private Long id;
     @JsonProperty("role")
-    String role,
+    private String role;
     @JsonProperty("title")
-    String title,
+    private String title;
     @JsonProperty("country")
-    String country,
+    private String country;
     @JsonProperty("data_quality")
-    String dataQuality,
+    private String dataQuality;
     @JsonProperty("released_year")
-    Integer releasedYear,
+    private Integer releasedYear;
     @JsonProperty("released_month")
-    Integer releasedMonth,
+    private Integer releasedMonth;
     @JsonProperty("released_day")
-    Integer releasedDay,
+    private Integer releasedDay;
     @JsonProperty("listed_release_date")
-    String listedReleaseDate,
+    private String listedReleaseDate;
     @JsonProperty("is_master")
-    Boolean isMaster,
+    private Boolean isMaster;
     @JsonProperty("notes")
-    String notes,
+    private String notes;
     @JsonProperty("status")
-    String status
-) {}
+    private String status;
+}

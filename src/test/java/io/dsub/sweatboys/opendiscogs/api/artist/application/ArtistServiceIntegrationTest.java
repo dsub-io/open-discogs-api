@@ -182,19 +182,19 @@ VALUES (1,1,'test_name_var_1'), (1,2,'test_name_var_2'), (1,3,'test_name_var_3')
     for (long i = 1; i <= 10; i++) {
       var dto = service.getArtistReleases(i, Pageable.ofSize(2)).block();
       assertThat(dto).isNotNull();
-      assertThat(dto.getItems()).isNotNull().isNotEmpty().hasSize(2);
+      assertThat(dto.getItems()).isNotNull().isNotEmpty().hasSize(1);
       for (ArtistReleaseDTO item :dto.getItems()) {
-        assertThat(item.id()).isEqualTo(i);
-        assertThat(item.releasedYear()).isEqualTo(2022);
-        assertThat(item.releasedMonth()).isEqualTo(i);
-        assertThat(item.releasedDay()).isEqualTo(i);
-        assertThat(item.notes()).isNotBlank();
-        assertThat(item.country()).isNotBlank();
-        assertThat(item.dataQuality()).isNotBlank();
-        assertThat(item.isMaster()).isNotNull();
-        assertThat(item.listedReleaseDate()).isNotBlank();
-        assertThat(item.title()).isNotBlank();
-        assertThat(item.role()).isIn("Main", "role " + i);
+        assertThat(item.getId()).isEqualTo(i);
+        assertThat(item.getReleasedYear()).isEqualTo(2022);
+        assertThat(item.getReleasedMonth()).isEqualTo(i);
+        assertThat(item.getReleasedDay()).isEqualTo(i);
+        assertThat(item.getNotes()).isNotBlank();
+        assertThat(item.getCountry()).isNotBlank();
+        assertThat(item.getDataQuality()).isNotBlank();
+        assertThat(item.getIsMaster()).isNotNull();
+        assertThat(item.getListedReleaseDate()).isNotBlank();
+        assertThat(item.getTitle()).isNotBlank();
+        assertThat(item.getRole()).contains("Main", "role " + i);
       }
     }
   }
