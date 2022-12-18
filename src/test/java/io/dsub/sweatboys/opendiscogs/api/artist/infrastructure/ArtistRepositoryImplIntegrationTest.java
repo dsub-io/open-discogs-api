@@ -6,6 +6,7 @@ import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReferenceDTO;
 import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import io.dsub.sweatboys.opendiscogs.api.test.AbstractDatabaseIntegrationTest;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
+import org.jooq.DSLContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,12 +26,14 @@ class ArtistRepositoryImplIntegrationTest extends AbstractDatabaseIntegrationTes
   ArtistR2dbcRepository r2dbcRepository;
   @Autowired
   DatabaseClient databaseClient;
+  @Autowired
+  DSLContext jooq;
   ArtistRepository repository;
   List<Artist> artists;
 
   @BeforeEach
   void setUp() {
-    repository = new ArtistRepositoryImpl(r2dbcRepository);
+    repository = new ArtistRepositoryImpl(r2dbcRepository, jooq);
     var items = IntStream.rangeClosed(1, 10)
         .mapToObj(i -> Artist.builder()
             .id((long) i)

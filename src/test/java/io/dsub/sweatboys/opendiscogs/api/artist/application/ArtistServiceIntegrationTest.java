@@ -11,6 +11,7 @@ import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import io.dsub.sweatboys.opendiscogs.api.release.domain.Release;
 import io.dsub.sweatboys.opendiscogs.api.test.AbstractDatabaseIntegrationTest;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
+import org.jooq.DSLContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,8 @@ class ArtistServiceIntegrationTest extends AbstractDatabaseIntegrationTest {
   DatabaseClient databaseClient;
   @Autowired
   R2dbcEntityTemplate template;
+  @Autowired
+  DSLContext jooq;
   ArtistService service;
   ArtistRepository repository;
   List<Artist> artists;
@@ -52,7 +55,7 @@ class ArtistServiceIntegrationTest extends AbstractDatabaseIntegrationTest {
 
   @BeforeEach
   void setUp() {
-    this.repository = new ArtistRepositoryImpl(r2dbcRepository);
+    this.repository = new ArtistRepositoryImpl(r2dbcRepository, jooq);
     this.service = new ArtistService(repository);
     this.artists = IntStream.rangeClosed(1, 10)
         .mapToObj(i -> TestUtil.getInstanceOf(Artist.class).withId((long) i))
