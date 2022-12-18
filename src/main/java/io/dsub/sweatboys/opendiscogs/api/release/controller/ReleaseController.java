@@ -46,7 +46,7 @@ public class ReleaseController {
             @PageableDefault(sort = {"id"})
             Pageable pageable
     ) {
-
+        return null;
     }
 
     private static ReleaseQuery withQuery(String title, String country, Integer year, Integer month, Boolean isMaster) {

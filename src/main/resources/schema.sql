@@ -405,10 +405,9 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 -- INDEXES FOR RELATIONAL LOOKUPS
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_group_group_id_artist_id ON artist_group(group_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_release_artist_artist_id_release_id ON release_artist(artist_id);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_release_credited_artist_artist_id_release_id ON release_artist(artist_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_release_credited_artist_artist_id_release_id ON release_credited_artist(artist_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_master_year ON master(released_year);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_release_master_id ON release(master_id);
--- CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_master_artist_master_id ON master_artist(master_id);
 
 -- INDEXES FOR FULL TEXT SEARCH
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_name_trigram ON artist USING GIN(UPPER("name") gin_trgm_ops);

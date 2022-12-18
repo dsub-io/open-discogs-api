@@ -1,10 +1,13 @@
 package io.dsub.sweatboys.opendiscogs.api.artist.infrastructure;
 
+import io.dsub.opendiscogs.jooq.tables.Release;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.ArtistRepository;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistDetailDTO;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReleaseDTO;
 import lombok.RequiredArgsConstructor;
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,11 +20,15 @@ import java.util.Collections;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static io.dsub.opendiscogs.jooq.Tables.*;
+import static org.jooq.impl.DSL.asterisk;
+
 @Repository
 @RequiredArgsConstructor
 public class ArtistRepositoryImpl implements ArtistRepository {
 
   private final ArtistR2dbcRepository delegate;
+  private final DSLContext ctx;
 
   @Override
   public Mono<Page<Artist>> findAllBy(Example<Artist> example, Pageable pageable) {

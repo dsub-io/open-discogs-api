@@ -12,11 +12,12 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class DatabaseConfiguration {
     @Bean
-    public ConnectionFactory connectionFactory(DatabaseProperties properties) {
+    public ConnectionFactory connectionFactory(final DatabaseProperties properties) {
+        System.out.printf("%s %s %s %s\n", properties.getDatabase(), properties.getHost(), properties.getUsername(), properties.getPassword());
         final ConnectionFactoryOptions options = getConnectionFactoryOptions(properties);
         return ConnectionFactoryBuilder.withOptions(options.mutate()).build();
     }
-    private ConnectionFactoryOptions getConnectionFactoryOptions(DatabaseProperties properties) {
+    private ConnectionFactoryOptions getConnectionFactoryOptions(final DatabaseProperties properties) {
         return ConnectionFactoryOptions.parse(properties.getUrl()).mutate()
                 .option(ConnectionFactoryOptions.USER, properties.getUsername())
                 .option(ConnectionFactoryOptions.PASSWORD, properties.getPassword())
