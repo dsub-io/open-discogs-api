@@ -1,54 +1,46 @@
 package io.dsub.sweatboys.opendiscogs.api.config.properties;
 
-import io.dsub.sweatboys.opendiscogs.api.exception.EnvironmentVariableException;
-import io.dsub.sweatboys.opendiscogs.api.exception.MissingRequiredEnvironmentVariableException;
-import io.dsub.sweatboys.opendiscogs.api.Constants;
+import jakarta.validation.constraints.NotBlank;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import lombok.Getter;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.env.Environment;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 
+@Setter
 @Getter
-public class DatabaseProperties implements InitializingBean {
+@Validated
+@NoArgsConstructor
+public class DatabaseProperties {
 
-  private final String username;
-  private final String password;
-  private final String url;
+  @NotBlank
+  private String username;
+  @NotBlank
+  private String password;
+  @NotBlank
+  @Setter
+  private String host;
+  @NotBlank
+  @Setter
+  private String database = "discogs";
 
-  public DatabaseProperties(Environment env) {
-    username = readEncodedEnvironmentVariable(env, Constants.DB_USER_KEY);
-    password = readEncodedEnvironmentVariable(env, Constants.DB_PASS_KEY);
-    url = env.getProperty(Constants.DB_URL_KEY);
+  public void setUsername(String username) {
+    this.username = encodeToUTF8(username);
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    validateUsername();
-    validateUrl();
-  }
-
-  private void validateUsername() throws EnvironmentVariableException {
-    if (this.username == null || this.username.isBlank()) {
-      throw new MissingRequiredEnvironmentVariableException(Constants.DB_USER_KEY);
-    }
-  }
-
-  private void validateUrl() throws EnvironmentVariableException {
-    if (this.url == null || this.url.isBlank()) {
-      throw new MissingRequiredEnvironmentVariableException(Constants.DB_URL_KEY);
-    }
-  }
-
-  private String readEncodedEnvironmentVariable(Environment env, String key) {
-    String value = env.getProperty(key);
-    return encodeToUTF8(value);
+  public void setPassword(String password) {
+    this.password = encodeToUTF8(password);
   }
 
   private String encodeToUTF8(String in) {
-    if (in == null || in.length() == 0) {
-      return in;
+    if (in == null || in.isBlank()) {
+      return "";
     }
     return URLEncoder.encode(in, StandardCharsets.UTF_8);
+  }
+
+  public String getUrl() {
+    return "r2dbc:postgres://%s/%s".formatted(host, database);
   }
 }

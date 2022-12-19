@@ -5,7 +5,8 @@ plugins {
     id 'jacoco'
     id 'maven-publish'
     id 'com.google.osdetector' version '1.7.1'
-    id 'org.graalvm.buildtools.native' version '0.9.18'
+    id 'org.springdoc.openapi-gradle-plugin' version '1.6.0'
+    id 'nu.studer.jooq' version '8.0'
 }
 
 sourceCompatibility = 17
@@ -25,26 +26,42 @@ configurations {
     }
 }
 
-dependencyManagement {
-    imports {
-        mavenBom 'org.testcontainers:testcontainers-bom:1.17.6'
-    }
-}
-
 dependencies {
-    implementation(
-            'org.springframework.boot:spring-boot-starter-webflux',
-            'org.springframework.boot:spring-boot-starter-data-r2dbc',
-            'org.springframework.boot:spring-boot-starter-validation',
-            'com.fasterxml.jackson.datatype:jackson-datatype-jsr310',
-            'io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE',
-            'org.projectlombok:lombok',
-            'org.postgresql:r2dbc-postgresql:1.0.0.RELEASE'
-    )
-    annotationProcessor(
-            'org.springframework.boot:spring-boot-configuration-processor',
-            'org.projectlombok:lombok'
-    )
+    // spring configuration
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // webflux
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // r2dbc
+    implementation 'org.postgresql:r2dbc-postgresql:1.0.0.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+
+    // jooq
+    implementation 'org.jooq:jooq:3.17.6'
+    jooqGenerator 'org.jooq:jooq-meta-extensions:3.17.6'
+    jooqGenerator 'org.postgresql:postgresql:42.5.1'
+
+    // observability from reference: https://spring.io/blog/2022/10/12/observability-with-spring-boot-3
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webflux-api:2.0.0'
+
+    // validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'io.github.wimdeblauwe:error-handling-spring-boot-starter:4.0.0'
+
+    // datatype
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // lombok
+    implementation 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // testing
+    implementation platform('org.testcontainers:testcontainers-bom:1.17.6')
     testImplementation(
             "org.junit.jupiter:junit-jupiter-api:5.9.0",
             'org.springframework.boot:spring-boot-starter-test',
@@ -53,7 +70,6 @@ dependencies {
             'org.testcontainers:junit-jupiter',
             'org.testcontainers:postgresql',
             'org.testcontainers:r2dbc',
-            'io.projectreactor.tools:blockhound:1.0.6.RELEASE',
     )
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.0"
     testAnnotationProcessor 'org.projectlombok:lombok'
@@ -106,17 +122,6 @@ jacocoTestCoverageVerification {
     }
 }
 
-tasks.withType(Test).all {
-    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_13)) {
-        jvmArgs += [
-                "-XX:+AllowRedefinitionToAddDeleteMethods"
-        ]
-    }
-}
-
-//----------------------------------------------------
-// PUBLISH
-//----------------------------------------------------
 publishing {
     // Declare all publications
     publications {
@@ -137,16 +142,48 @@ publishing {
     }
 }
 
-//----------------------------------------------------
-// Native Build OPT (subject to change over time)
-//----------------------------------------------------
-graalvmNative {
-    metadataRepository {
-        enabled = true
-        version = '0.2.5'
+jooq {
+    configurations {
+        main {  // name of the jOOQ configuration
+            generateSchemaSourceOnCompilation = false  // default (can be omitted)
+            generationTool {
+                jdbc {
+                    driver = 'org.postgresql.Driver'
+                    url = "jdbc:postgresql://${System.getenv("API_DB_HOST")}/${System.getenv("API_DB_DATABASE") == null ? "discogs" : System.getenv("API_DB_DATABASE")}"
+                    user = "${System.getenv("API_DB_USERNAME")}"
+                    password = "${System.getenv("API_DB_PASSWORD")}"
+                }
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    database {
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        inputSchema = 'public'
+                        forcedTypes {
+                            forcedType {
+                                name = 'varchar'
+                                includeExpression = '.*'
+                                includeTypes = 'JSONB?'
+                            }
+                            forcedType {
+                                name = 'varchar'
+                                includeExpression = '.*'
+                                includeTypes = 'INET'
+                            }
+                        }
+                    }
+                    generate {
+                        deprecated = false
+                        records = true
+                        immutablePojos = true
+                        fluentSetters = true
+                    }
+                    target {
+                        packageName = 'io.dsub.opendiscogs.jooq'
+                        directory = 'src/main/generated/java'  // default (can be omitted)
+                    }
+                    strategy.name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+                }
+            }
+        }
     }
-}
-bootBuildImage {
-    builder = 'paketobuildpacks/builder:tiny'
-    environment = ['BP_NATIVE_IMAGE': 'true']
 }

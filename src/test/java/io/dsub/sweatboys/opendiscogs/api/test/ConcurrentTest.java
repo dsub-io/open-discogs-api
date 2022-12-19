@@ -6,4 +6,5 @@ import org.junit.jupiter.api.parallel.Execution;
 
 @Execution(CONCURRENT)
 public abstract class ConcurrentTest {
+
 }
