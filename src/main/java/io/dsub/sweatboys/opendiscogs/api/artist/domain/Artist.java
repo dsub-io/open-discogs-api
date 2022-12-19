@@ -17,6 +17,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table(name = "artist")
 @AllArgsConstructor
 public class Artist extends BaseEntity<Long> {
+
   @Id
   @Min(1)
   @Column("id")

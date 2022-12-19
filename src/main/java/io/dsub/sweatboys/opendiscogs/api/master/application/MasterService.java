@@ -17,26 +17,28 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class MasterService {
-    private final MasterRepository repository;
 
-    public Mono<PagedResponseDTO<Master>> findMasters(MasterQuery query, Pageable pageable) {
-        return repository.findAllBy(Example.of(Master.builder()
-                        .title(query.getTitle())
-                        .releasedYear(query.getYear())
-                        .build()), pageable)
-                .flatMap(PagedResponseDTO::fromPage);
-    }
+  private final MasterRepository repository;
 
-    public Mono<MasterDetailDTO> getById(Long id) {
-        return repository.findById(id)
-                .switchIfEmpty(Mono.error(new ItemNotFoundException("master", id)));
-    }
+  public Mono<PagedResponseDTO<Master>> findMasters(MasterQuery query, Pageable pageable) {
+    return repository.findAllBy(Example.of(Master.builder()
+            .title(query.getTitle())
+            .releasedYear(query.getYear())
+            .build()), pageable)
+        .flatMap(PagedResponseDTO::fromPage);
+  }
 
-    public Mono<PagedResponseDTO<MasterReleaseDTO>> getMasterSubReleases(Long id, Pageable pageable) {
-        return repository.findReleasesByMasterId(id, pageable)
-                .switchIfEmpty(Mono.error(new ItemNotFoundException("master", id)))
-                .collectList()
-                .zipWith(repository.countReleasesByMasterId(id))
-                .flatMap(tuple -> PagedResponseDTO.fromPage(new PageImpl<>(tuple.getT1(), pageable, tuple.getT2())));
-    }
+  public Mono<MasterDetailDTO> getById(Long id) {
+    return repository.findById(id)
+        .switchIfEmpty(Mono.error(new ItemNotFoundException("master", id)));
+  }
+
+  public Mono<PagedResponseDTO<MasterReleaseDTO>> getMasterSubReleases(Long id, Pageable pageable) {
+    return repository.findReleasesByMasterId(id, pageable)
+        .switchIfEmpty(Mono.error(new ItemNotFoundException("master", id)))
+        .collectList()
+        .zipWith(repository.countReleasesByMasterId(id))
+        .flatMap(tuple -> PagedResponseDTO.fromPage(
+            new PageImpl<>(tuple.getT1(), pageable, tuple.getT2())));
+  }
 }

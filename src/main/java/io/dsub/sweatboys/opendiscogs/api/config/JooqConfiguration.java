@@ -11,11 +11,12 @@ import org.springframework.r2dbc.connection.TransactionAwareConnectionFactoryPro
 
 @Configuration(proxyBeanMethods = false)
 public class JooqConfiguration {
-    @Bean
-    public DSLContext dslContext(@Autowired ConnectionFactory connectionFactory) {
-        return DSL.using(
-                new TransactionAwareConnectionFactoryProxy(connectionFactory),
-                SQLDialect.POSTGRES
-        );
-    }
+
+  @Bean
+  public DSLContext dslContext(@Autowired ConnectionFactory connectionFactory) {
+    return DSL.using(
+        new TransactionAwareConnectionFactoryProxy(connectionFactory),
+        SQLDialect.POSTGRES
+    );
+  }
 }

@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Mono;
 
 public interface ReleaseRepository {
-    Mono<Page<ReleaseDTO>> findAllBy(Example<Release> example, Pageable pageable);
-    Mono<ReleaseDetailDTO> getById(Long id);
+
+  Mono<Page<ReleaseDTO>> findAllBy(Example<Release> example, Pageable pageable);
+
+  Mono<ReleaseDetailDTO> getById(Long id);
 }

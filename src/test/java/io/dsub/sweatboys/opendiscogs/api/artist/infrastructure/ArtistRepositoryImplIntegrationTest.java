@@ -1,11 +1,15 @@
 package io.dsub.sweatboys.opendiscogs.api.artist.infrastructure;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.ArtistRepository;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReferenceDTO;
 import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import io.dsub.sweatboys.opendiscogs.api.test.AbstractDatabaseIntegrationTest;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
+import java.util.List;
+import java.util.stream.IntStream;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,12 +20,8 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.r2dbc.core.DatabaseClient;
 
-import java.util.List;
-import java.util.stream.IntStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 class ArtistRepositoryImplIntegrationTest extends AbstractDatabaseIntegrationTest {
+
   @Autowired
   ArtistR2dbcRepository r2dbcRepository;
   @Autowired
@@ -52,18 +52,19 @@ class ArtistRepositoryImplIntegrationTest extends AbstractDatabaseIntegrationTes
   void tearDown() {
     TestUtil.deleteAll(databaseClient);
   }
+
   @Test
   void findAllByReturnsByName() {
     for (Artist artist : artists) {
       var example = Example.of(
-              Artist.builder()
-                  .name(artist.getName())
-                  .build(),
-              ExampleMatcher
-                  .matching()
-                  .withIgnoreNullValues()
-                  .withIgnoreCase()
-          );
+          Artist.builder()
+              .name(artist.getName())
+              .build(),
+          ExampleMatcher
+              .matching()
+              .withIgnoreNullValues()
+              .withIgnoreCase()
+      );
       var pageable = PageRequest.of(0, 5);
       var result = repository.findAllBy(example, pageable).block();
       assertThat(result).isNotNull().isNotEmpty();
@@ -77,24 +78,25 @@ class ArtistRepositoryImplIntegrationTest extends AbstractDatabaseIntegrationTes
   @Test
   void MustReturnAllAssociates() {
     databaseClient.sql("""
-INSERT INTO artist_alias(artist_id, alias_id)
-VALUES (1,2), (1,3), (2,3), (2,1), (3,1), (3,2), (1, 10)
-""").then().block();
+        INSERT INTO artist_alias(artist_id, alias_id)
+        VALUES (1,2), (1,3), (2,3), (2,1), (3,1), (3,2), (1, 10)
+        """).then().block();
     databaseClient.sql("""
-INSERT INTO artist_group(artist_id, group_id) 
-VALUES (1,4), (1,5), (1,6), (7,1), (8,1), (9,1)
-""").then().block();
+        INSERT INTO artist_group(artist_id, group_id) 
+        VALUES (1,4), (1,5), (1,6), (7,1), (8,1), (9,1)
+        """).then().block();
     databaseClient.sql("""
-INSERT INTO artist_url(artist_id, url_hash, url) 
-VALUES (1,1,'test_url_1'), (1,2,'test_url_2'), (1,3,'test_url_3')
-""").then().block();
+        INSERT INTO artist_url(artist_id, url_hash, url) 
+        VALUES (1,1,'test_url_1'), (1,2,'test_url_2'), (1,3,'test_url_3')
+        """).then().block();
     databaseClient.sql("""
-INSERT INTO artist_name_variation(artist_id, name_variation_hash, name_variation) 
-VALUES (1,1,'test_name_var_1'), (1,2,'test_name_var_2'), (1,3,'test_name_var_3'), (1,4, 'test_name_var_4') 
-""").then().block();
+        INSERT INTO artist_name_variation(artist_id, name_variation_hash, name_variation) 
+        VALUES (1,1,'test_name_var_1'), (1,2,'test_name_var_2'), (1,3,'test_name_var_3'), (1,4, 'test_name_var_4') 
+        """).then().block();
     var artist = repository.findById(1L).block();
     assertThat(artist).isNotNull();
-    for (List<ArtistReferenceDTO> references : List.of(artist.aliases(), artist.groups(), artist.members())) {
+    for (List<ArtistReferenceDTO> references : List.of(artist.aliases(), artist.groups(),
+        artist.members())) {
       assertThat(references)
           .isNotNull()
           .isNotEmpty()

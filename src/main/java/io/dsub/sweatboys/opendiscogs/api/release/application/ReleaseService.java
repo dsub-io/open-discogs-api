@@ -18,17 +18,20 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class ReleaseService {
-    private final ReleaseRepository releaseRepository;
-    public Mono<PagedResponseDTO<ReleaseDTO>> search(ReleaseQuery query, Pageable pageable) {
-        return releaseRepository.findAllBy(Example.of(query.toRelease(),
-                        matchingAll()
-                                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
-                                .withIgnoreCase()
-                                .withIgnoreNullValues()), pageable)
-                .flatMap(PagedResponseDTO::fromPage);
-    }
-    public Mono<ReleaseDetailDTO> getReleaseById(Long id) {
-        return releaseRepository.getById(id)
-            .switchIfEmpty(Mono.error(new ItemNotFoundException("release", id)));
-    }
+
+  private final ReleaseRepository releaseRepository;
+
+  public Mono<PagedResponseDTO<ReleaseDTO>> search(ReleaseQuery query, Pageable pageable) {
+    return releaseRepository.findAllBy(Example.of(query.toRelease(),
+            matchingAll()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+                .withIgnoreCase()
+                .withIgnoreNullValues()), pageable)
+        .flatMap(PagedResponseDTO::fromPage);
+  }
+
+  public Mono<ReleaseDetailDTO> getReleaseById(Long id) {
+    return releaseRepository.getById(id)
+        .switchIfEmpty(Mono.error(new ItemNotFoundException("release", id)));
+  }
 }

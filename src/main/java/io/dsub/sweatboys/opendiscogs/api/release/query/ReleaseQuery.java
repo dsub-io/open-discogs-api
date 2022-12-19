@@ -7,19 +7,20 @@ import lombok.With;
 @With
 @Builder
 public record ReleaseQuery(
-        String title,
-        String country,
-        Integer year,
-        Integer month,
-        Boolean isMaster
+    String title,
+    String country,
+    Integer year,
+    Integer month,
+    Boolean isMaster
 ) {
-    public Release toRelease(){
-        return Release.builder()
-                .title(title)
-                .country(country)
-                .releasedYear(year)
-                .releasedMonth(month)
-                .isMaster(isMaster)
-                .build();
-    }
+
+  public Release toRelease() {
+    return Release.builder()
+        .title(title)
+        .country(country)
+        .releasedYear(year)
+        .releasedMonth(month)
+        .isMaster(isMaster)
+        .build();
+  }
 }

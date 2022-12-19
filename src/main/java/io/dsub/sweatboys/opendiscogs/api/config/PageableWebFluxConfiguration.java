@@ -7,11 +7,12 @@ import org.springframework.web.reactive.result.method.annotation.ArgumentResolve
 
 @Configuration(proxyBeanMethods = false)
 public class PageableWebFluxConfiguration extends WebFluxConfigurationSupport {
-    @Override
-    public void configureArgumentResolvers(ArgumentResolverConfigurer configurer) {
-        var resolver = new ReactivePageableHandlerMethodArgumentResolver();
-        resolver.setOneIndexedParameters(true);
-        resolver.setMaxPageSize(30);
-        configurer.addCustomResolver(resolver);
-    }
+
+  @Override
+  public void configureArgumentResolvers(ArgumentResolverConfigurer configurer) {
+    var resolver = new ReactivePageableHandlerMethodArgumentResolver();
+    resolver.setOneIndexedParameters(true);
+    resolver.setMaxPageSize(30);
+    configurer.addCustomResolver(resolver);
+  }
 }

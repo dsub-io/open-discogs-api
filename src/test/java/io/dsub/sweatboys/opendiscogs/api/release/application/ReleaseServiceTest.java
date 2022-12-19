@@ -96,6 +96,7 @@ class ReleaseServiceTest {
     assertThat(idCaptor.getValue()).isEqualTo(1L);
     verify(releaseRepository, times(1)).getById(any());
   }
+
   @Test
   void getReleaseByIdReturnsError() {
     given(releaseRepository.getById(idCaptor.capture()))

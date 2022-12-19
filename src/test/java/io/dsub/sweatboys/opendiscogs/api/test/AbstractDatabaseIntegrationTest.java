@@ -18,8 +18,16 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @DataR2dbcTest(properties = "spring.r2dbc.url=r2dbc:tc:postgresql:///discogs?TC_IMAGE_TAG=14.5-alpine")
 public abstract class AbstractDatabaseIntegrationTest {
+
+  protected void initDatabase(DatabaseClient client) {
+    client.sql("DROP schema public CASCADE; CREATE SCHEMA public").then().block();
+    new ResourceDatabasePopulator(new ClassPathResource("schema.sql")).populate(
+        client.getConnectionFactory()).block();
+  }
+
   @TestConfiguration
   public static class TestConfig {
+
     @Bean
     public ConnectionFactoryInitializer initializer(ConnectionFactory connectionFactory) {
       ConnectionFactoryInitializer initializer = new ConnectionFactoryInitializer();
@@ -29,10 +37,5 @@ public abstract class AbstractDatabaseIntegrationTest {
       initializer.setDatabasePopulator(populator);
       return initializer;
     }
-  }
-
-  protected void initDatabase(DatabaseClient client){
-    client.sql("DROP schema public CASCADE; CREATE SCHEMA public").then().block();
-    new ResourceDatabasePopulator(new ClassPathResource("schema.sql")).populate(client.getConnectionFactory()).block();
   }
 }

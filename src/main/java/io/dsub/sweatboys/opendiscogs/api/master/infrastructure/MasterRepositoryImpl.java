@@ -4,6 +4,9 @@ import io.dsub.sweatboys.opendiscogs.api.master.domain.Master;
 import io.dsub.sweatboys.opendiscogs.api.master.domain.MasterRepository;
 import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterDetailDTO;
 import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterReleaseDTO;
+import java.util.Collections;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -13,15 +16,17 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.Collections;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 @Repository
 @RequiredArgsConstructor
 public class MasterRepositoryImpl implements MasterRepository {
 
   private final MasterR2dbcRepository repository;
+
+  private static String getSortString(Pageable pageable) {
+    return pageable.getSort().stream()
+        .map(order -> String.format("%s %s", order.getProperty(), order.getDirection()))
+        .collect(Collectors.joining(", "));
+  }
 
   @Override
   public Mono<Page<Master>> findAllBy(Example<Master> example, Pageable pageable) {
@@ -41,7 +46,8 @@ public class MasterRepositoryImpl implements MasterRepository {
 
   @Override
   public Flux<MasterReleaseDTO> findReleasesByMasterId(Long id, Pageable pageable) {
-    return repository.findReleasesByMasterId(id, getSortString(pageable), pageable.getOffset(), pageable.getPageSize());
+    return repository.findReleasesByMasterId(id, getSortString(pageable), pageable.getOffset(),
+        pageable.getPageSize());
   }
 
   @Override
@@ -86,11 +92,5 @@ public class MasterRepositoryImpl implements MasterRepository {
         .defaultIfEmpty(Collections.emptyList())
         .flatMap(videos -> Mono.fromCallable(() -> dto.withVideos(videos))
             .subscribeOn(Schedulers.boundedElastic()));
-  }
-
-  private static String getSortString(Pageable pageable) {
-    return pageable.getSort().stream()
-            .map(order -> String.format("%s %s", order.getProperty(), order.getDirection()))
-            .collect(Collectors.joining(", "));
   }
 }

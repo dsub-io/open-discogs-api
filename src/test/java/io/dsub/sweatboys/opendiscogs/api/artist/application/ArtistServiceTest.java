@@ -1,5 +1,12 @@
 package io.dsub.sweatboys.opendiscogs.api.artist.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.ArtistRepository;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistDetailDTO;
@@ -8,23 +15,25 @@ import io.dsub.sweatboys.opendiscogs.api.artist.query.ArtistQuery;
 import io.dsub.sweatboys.opendiscogs.api.core.exception.ItemNotFoundException;
 import io.dsub.sweatboys.opendiscogs.api.test.ConcurrentTest;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.springframework.data.domain.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
-
-import java.util.stream.IntStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 class ArtistServiceTest extends ConcurrentTest {
 
@@ -55,7 +64,8 @@ class ArtistServiceTest extends ConcurrentTest {
     var pageable = PageRequest.of(0, 10, Direction.ASC, "name", "real_name");
 
     Mono<Page<Artist>> expected = Mono
-        .fromCallable(() -> (Page<Artist>) new PageImpl<>(artists, pageableCaptor.getValue(), artists.size()))
+        .fromCallable(
+            () -> (Page<Artist>) new PageImpl<>(artists, pageableCaptor.getValue(), artists.size()))
         .subscribeOn(Schedulers.boundedElastic());
 
     given(repository.findAllBy(exampleCaptor.capture(), pageableCaptor.capture()))
@@ -126,7 +136,7 @@ class ArtistServiceTest extends ConcurrentTest {
             .satisfies(p -> assertThat(p.getItems())
                 .isNotNull()
                 .hasSize(10)
-        .containsAll(dtoList)))
+                .containsAll(dtoList)))
         .verifyComplete();
     verify(repository, times(1))
         .countReleasesByArtistId(10L);

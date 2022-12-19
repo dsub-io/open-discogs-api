@@ -1,14 +1,16 @@
 package io.dsub.sweatboys.opendiscogs.api.config.properties;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dsub.sweatboys.opendiscogs.api.test.ConcurrentTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 class DatabasePropertiesTest extends ConcurrentTest {
+
   private DatabaseProperties properties;
+
   @BeforeEach
   void setUp() {
     properties = new DatabaseProperties();

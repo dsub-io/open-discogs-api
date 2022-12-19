@@ -16,7 +16,11 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -28,6 +32,13 @@ import reactor.core.scheduler.Schedulers;
 public class MasterController {
 
   private final MasterService service;
+
+  private static MasterQuery withQuery(String title, Integer year) {
+    return MasterQuery.builder()
+        .title(title)
+        .year(year)
+        .build();
+  }
 
   @GetMapping
   @Operation(description = "Search master releases by query AND condition. Empty strings will be ignored.")
@@ -41,15 +52,9 @@ public class MasterController {
       @ParameterObject @PageableDefault(sort = {"id"}) Pageable pageable,
       ServerHttpRequest request) {
     return service.findMasters(withQuery(title, year), pageable)
-        .flatMap(dto -> Mono.fromCallable(() -> ResponseEntity.ok(dto.withResourceURI(request.getURI().getPath())))
+        .flatMap(dto -> Mono.fromCallable(
+                () -> ResponseEntity.ok(dto.withResourceURI(request.getURI().getPath())))
             .subscribeOn(Schedulers.boundedElastic()));
-  }
-
-  private static MasterQuery withQuery(String title, Integer year) {
-    return MasterQuery.builder()
-        .title(title)
-        .year(year)
-        .build();
   }
 
   @GetMapping("/{id}")
@@ -63,6 +68,7 @@ public class MasterController {
         .flatMap(dto -> Mono.fromCallable(() -> ResponseEntity.ok(dto))
             .subscribeOn(Schedulers.boundedElastic()));
   }
+
   @GetMapping("/{id}/releases")
   @Operation(description = "Get master releases from given master by paging and sorting assist.")
   public Mono<PagedResponseDTO<MasterReleaseDTO>> getMasterReleases(

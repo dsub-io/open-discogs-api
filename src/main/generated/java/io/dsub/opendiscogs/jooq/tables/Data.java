@@ -7,10 +7,8 @@ package io.dsub.opendiscogs.jooq.tables;
 import io.dsub.opendiscogs.jooq.Keys;
 import io.dsub.opendiscogs.jooq.Public;
 import io.dsub.opendiscogs.jooq.tables.records.DataRecord;
-
 import java.time.LocalDateTime;
 import java.util.function.Function;
-
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Function5;
@@ -30,160 +28,162 @@ import org.jooq.impl.TableImpl;
 
 
 /**
- * Cached resource for keep tracking data dump updates (either being monthly or
- * random occasions)
+ * Cached resource for keep tracking data dump updates (either being monthly or random occasions)
  */
-@SuppressWarnings({ "all", "unchecked", "rawtypes" })
+@SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Data extends TableImpl<DataRecord> {
 
-    private static final long serialVersionUID = 1L;
+  /**
+   * The reference instance of <code>public.data</code>
+   */
+  public static final Data DATA = new Data();
+  private static final long serialVersionUID = 1L;
+  /**
+   * The column <code>public.data.etag</code>. ETag representing this data being unique. Used for
+   * updating cache.
+   */
+  public final TableField<DataRecord, String> ETAG = createField(DSL.name("etag"),
+      SQLDataType.VARCHAR(200).nullable(false), this,
+      "ETag representing this data being unique. Used for updating cache.");
+  /**
+   * The column <code>public.data.generated_at</code>. Date this data is generated at.
+   */
+  public final TableField<DataRecord, LocalDateTime> GENERATED_AT = createField(
+      DSL.name("generated_at"), SQLDataType.LOCALDATETIME(6).nullable(false), this,
+      "Date this data is generated at.");
+  /**
+   * The column <code>public.data.checksum</code>. Checksum to validate when fetching dump source.
+   */
+  public final TableField<DataRecord, String> CHECKSUM = createField(DSL.name("checksum"),
+      SQLDataType.VARCHAR(200).nullable(false), this,
+      "Checksum to validate when fetching dump source.");
+  /**
+   * The column <code>public.data.target_type</code>. Type of data. Referred as artists, labels,
+   * masters, release. Always uppercase.
+   */
+  public final TableField<DataRecord, String> TARGET_TYPE = createField(DSL.name("target_type"),
+      SQLDataType.VARCHAR(20).nullable(false), this,
+      "Type of data. Referred as artists, labels, masters, release.\nAlways uppercase.");
+  /**
+   * The column <code>public.data.uri</code>. URI to download dump data file.
+   */
+  public final TableField<DataRecord, String> URI = createField(DSL.name("uri"),
+      SQLDataType.VARCHAR(2048).nullable(false), this, "URI to download dump data file.");
 
-    /**
-     * The reference instance of <code>public.data</code>
-     */
-    public static final Data DATA = new Data();
+  private Data(Name alias, Table<DataRecord> aliased) {
+    this(alias, aliased, null);
+  }
 
-    /**
-     * The class holding records for this type
-     */
-    @Override
-    public Class<DataRecord> getRecordType() {
-        return DataRecord.class;
-    }
+  private Data(Name alias, Table<DataRecord> aliased, Field<?>[] parameters) {
+    super(alias, null, aliased, parameters, DSL.comment(
+            "Cached resource for keep tracking data dump updates (either being monthly or random occasions)"),
+        TableOptions.table());
+  }
 
-    /**
-     * The column <code>public.data.etag</code>. ETag representing this data
-     * being unique. Used for updating cache.
-     */
-    public final TableField<DataRecord, String> ETAG = createField(DSL.name("etag"), SQLDataType.VARCHAR(200).nullable(false), this, "ETag representing this data being unique. Used for updating cache.");
+  /**
+   * Create an aliased <code>public.data</code> table reference
+   */
+  public Data(String alias) {
+    this(DSL.name(alias), DATA);
+  }
 
-    /**
-     * The column <code>public.data.generated_at</code>. Date this data is
-     * generated at.
-     */
-    public final TableField<DataRecord, LocalDateTime> GENERATED_AT = createField(DSL.name("generated_at"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "Date this data is generated at.");
+  /**
+   * Create an aliased <code>public.data</code> table reference
+   */
+  public Data(Name alias) {
+    this(alias, DATA);
+  }
 
-    /**
-     * The column <code>public.data.checksum</code>. Checksum to validate when
-     * fetching dump source.
-     */
-    public final TableField<DataRecord, String> CHECKSUM = createField(DSL.name("checksum"), SQLDataType.VARCHAR(200).nullable(false), this, "Checksum to validate when fetching dump source.");
+  /**
+   * Create a <code>public.data</code> table reference
+   */
+  public Data() {
+    this(DSL.name("data"), null);
+  }
 
-    /**
-     * The column <code>public.data.target_type</code>. Type of data. Referred
-     * as artists, labels, masters, release.
-     * Always uppercase.
-     */
-    public final TableField<DataRecord, String> TARGET_TYPE = createField(DSL.name("target_type"), SQLDataType.VARCHAR(20).nullable(false), this, "Type of data. Referred as artists, labels, masters, release.\nAlways uppercase.");
+  public <O extends Record> Data(Table<O> child, ForeignKey<O, DataRecord> key) {
+    super(child, key, DATA);
+  }
 
-    /**
-     * The column <code>public.data.uri</code>. URI to download dump data file.
-     */
-    public final TableField<DataRecord, String> URI = createField(DSL.name("uri"), SQLDataType.VARCHAR(2048).nullable(false), this, "URI to download dump data file.");
+  /**
+   * The class holding records for this type
+   */
+  @Override
+  public Class<DataRecord> getRecordType() {
+    return DataRecord.class;
+  }
 
-    private Data(Name alias, Table<DataRecord> aliased) {
-        this(alias, aliased, null);
-    }
+  @Override
+  public Schema getSchema() {
+    return aliased() ? null : Public.PUBLIC;
+  }
 
-    private Data(Name alias, Table<DataRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment("Cached resource for keep tracking data dump updates (either being monthly or random occasions)"), TableOptions.table());
-    }
+  @Override
+  public UniqueKey<DataRecord> getPrimaryKey() {
+    return Keys.DATA_PKEY;
+  }
 
-    /**
-     * Create an aliased <code>public.data</code> table reference
-     */
-    public Data(String alias) {
-        this(DSL.name(alias), DATA);
-    }
+  @Override
+  public Data as(String alias) {
+    return new Data(DSL.name(alias), this);
+  }
 
-    /**
-     * Create an aliased <code>public.data</code> table reference
-     */
-    public Data(Name alias) {
-        this(alias, DATA);
-    }
+  @Override
+  public Data as(Name alias) {
+    return new Data(alias, this);
+  }
 
-    /**
-     * Create a <code>public.data</code> table reference
-     */
-    public Data() {
-        this(DSL.name("data"), null);
-    }
+  @Override
+  public Data as(Table<?> alias) {
+    return new Data(alias.getQualifiedName(), this);
+  }
 
-    public <O extends Record> Data(Table<O> child, ForeignKey<O, DataRecord> key) {
-        super(child, key, DATA);
-    }
+  /**
+   * Rename this table
+   */
+  @Override
+  public Data rename(String name) {
+    return new Data(DSL.name(name), null);
+  }
 
-    @Override
-    public Schema getSchema() {
-        return aliased() ? null : Public.PUBLIC;
-    }
+  /**
+   * Rename this table
+   */
+  @Override
+  public Data rename(Name name) {
+    return new Data(name, null);
+  }
 
-    @Override
-    public UniqueKey<DataRecord> getPrimaryKey() {
-        return Keys.DATA_PKEY;
-    }
+  /**
+   * Rename this table
+   */
+  @Override
+  public Data rename(Table<?> name) {
+    return new Data(name.getQualifiedName(), null);
+  }
 
-    @Override
-    public Data as(String alias) {
-        return new Data(DSL.name(alias), this);
-    }
+  // -------------------------------------------------------------------------
+  // Row5 type methods
+  // -------------------------------------------------------------------------
 
-    @Override
-    public Data as(Name alias) {
-        return new Data(alias, this);
-    }
+  @Override
+  public Row5<String, LocalDateTime, String, String, String> fieldsRow() {
+    return (Row5) super.fieldsRow();
+  }
 
-    @Override
-    public Data as(Table<?> alias) {
-        return new Data(alias.getQualifiedName(), this);
-    }
+  /**
+   * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+   */
+  public <U> SelectField<U> mapping(
+      Function5<? super String, ? super LocalDateTime, ? super String, ? super String, ? super String, ? extends U> from) {
+    return convertFrom(Records.mapping(from));
+  }
 
-    /**
-     * Rename this table
-     */
-    @Override
-    public Data rename(String name) {
-        return new Data(DSL.name(name), null);
-    }
-
-    /**
-     * Rename this table
-     */
-    @Override
-    public Data rename(Name name) {
-        return new Data(name, null);
-    }
-
-    /**
-     * Rename this table
-     */
-    @Override
-    public Data rename(Table<?> name) {
-        return new Data(name.getQualifiedName(), null);
-    }
-
-    // -------------------------------------------------------------------------
-    // Row5 type methods
-    // -------------------------------------------------------------------------
-
-    @Override
-    public Row5<String, LocalDateTime, String, String, String> fieldsRow() {
-        return (Row5) super.fieldsRow();
-    }
-
-    /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
-     */
-    public <U> SelectField<U> mapping(Function5<? super String, ? super LocalDateTime, ? super String, ? super String, ? super String, ? extends U> from) {
-        return convertFrom(Records.mapping(from));
-    }
-
-    /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class,
-     * Function)}.
-     */
-    public <U> SelectField<U> mapping(Class<U> toType, Function5<? super String, ? super LocalDateTime, ? super String, ? super String, ? super String, ? extends U> from) {
-        return convertFrom(toType, Records.mapping(from));
-    }
+  /**
+   * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
+   */
+  public <U> SelectField<U> mapping(Class<U> toType,
+      Function5<? super String, ? super LocalDateTime, ? super String, ? super String, ? super String, ? extends U> from) {
+    return convertFrom(toType, Records.mapping(from));
+  }
 }
