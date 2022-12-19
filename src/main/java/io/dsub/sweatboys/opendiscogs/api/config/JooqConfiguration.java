@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.r2dbc.connection.TransactionAwareConnectionFactoryProxy;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class JooqConfiguration {
     @Bean
     public DSLContext dslContext(@Autowired ConnectionFactory connectionFactory) {

@@ -3,14 +3,12 @@ server:
   shutdown: graceful
   http2:
     enabled: true
-
 # spring
 spring:
   application:
     name: open-discogs-api
   jackson:
     property-naming-strategy: LOWER_CAMEL_CASE
-
 # observability
 management:
   endpoints:

@@ -5,9 +5,8 @@ import io.dsub.sweatboys.opendiscogs.api.artist.domain.ArtistRepository;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistDetailDTO;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReleaseDTO;
 import lombok.RequiredArgsConstructor;
+import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.*;
-import org.jooq.impl.DSL;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,36 +15,18 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static io.dsub.opendiscogs.jooq.Tables.*;
 import static io.dsub.sweatboys.opendiscogs.api.core.util.JooqUtility.getSortFields;
+import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.select;
 
 @Repository
 @RequiredArgsConstructor
 public class ArtistRepositoryImpl implements ArtistRepository {
-    private static final List<Field<?>> ARTIST_RELEASES_SELECT_FIELDS;
-    private static final List<Field<?>> ARTIST_RELEASES_MAIN_SELECT_FIELDS;
-    private static final List<Field<?>> ARTIST_RELEASES_ROLES_SELECT_FIELDS;
-    private static final List<Field<?>> RELEASES_FIELDS;
-
-    /* initialize fields */
-    static {
-        RELEASES_FIELDS = new ArrayList<>(Arrays.asList(RELEASE.as("r").fields()));
-        ARTIST_RELEASES_SELECT_FIELDS = new ArrayList<>(RELEASES_FIELDS);
-        ARTIST_RELEASES_SELECT_FIELDS.add(DSL.field("string_agg(distinct trim(r.role), ',')", String.class).as("role"));
-        ARTIST_RELEASES_MAIN_SELECT_FIELDS = new ArrayList<>(RELEASES_FIELDS);
-        ARTIST_RELEASES_MAIN_SELECT_FIELDS.add(DSL.field("'Main'").as("role"));
-        ARTIST_RELEASES_ROLES_SELECT_FIELDS = new ArrayList<>(RELEASES_FIELDS);
-        ARTIST_RELEASES_ROLES_SELECT_FIELDS.add(DSL.field(RELEASE_CREDITED_ARTIST.ROLE.as("role")));
-    }
-
     private final ArtistR2dbcRepository delegate;
     private final DSLContext ctx;
 
@@ -67,35 +48,40 @@ public class ArtistRepositoryImpl implements ArtistRepository {
 
     @Override
     public Flux<ArtistReleaseDTO> findReleasesByArtistId(Long id, Pageable pageable) {
-        return Flux.from(ctx
-                .select(ARTIST_RELEASES_SELECT_FIELDS)
-                .from(ARTIST_RELEASES_AS_MAIN(id)
-                        .unionAll(ARTISTS_RELEASES_WHERE_PARTICIPATED(id))
-                        .asTable("r"))
-                .groupBy(RELEASES_FIELDS)
-                .orderBy(getSortFields(pageable))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize()))
+        return Flux.from(
+                        ctx.select(RELEASE.ID.as("id"),
+                                        RELEASE.TITLE.as("title"),
+                                        RELEASE.COUNTRY.as("country"),
+                                        RELEASE.DATA_QUALITY.as("data_quality"),
+                                        RELEASE.RELEASED_YEAR.as("released_year"),
+                                        RELEASE.RELEASED_MONTH.as("released_month"),
+                                        RELEASE.RELEASED_DAY.as("released_day"),
+                                        RELEASE.LISTED_RELEASE_DATE.as("listed_release_date"),
+                                        RELEASE.IS_MASTER.as("is_master"),
+                                        RELEASE.NOTES.as("notes"),
+                                        RELEASE.STATUS.as("status"),
+                                        RELEASE.MASTER_ID.as("master_id"),
+                                        field("role", String.class))
+                                .from(select(field("release_id", Long.class), field("string_agg(distinct trim(r.role), ',')", String.class).as("role"))
+                                        .from(
+                                                select(field("release_id", Long.class), field("'Main'", String.class).as("role"))
+                                                        .from(RELEASE_ARTIST).where(RELEASE_ARTIST.ARTIST_ID.eq(id.intValue()))
+                                                        .unionAll(select(field("release_id", Long.class), field("role", String.class))
+                                                                .from(RELEASE_CREDITED_ARTIST)
+                                                                .where(RELEASE_CREDITED_ARTIST.ARTIST_ID.eq(id.intValue())))
+                                                        .asTable("r")
+                                        )
+                                        .groupBy(field("release_id")))
+                                .join(RELEASE).on(RELEASE.ID.eq(field("release_id", Integer.class)))
+                                .orderBy(getSortFields(pageable))
+                                .offset(pageable.getOffset())
+                                .limit(pageable.getPageSize()))
                 .map(toArtistReleaseDTO())
                 .publishOn(Schedulers.boundedElastic());
     }
 
     private static Function<Record, ArtistReleaseDTO> toArtistReleaseDTO() {
         return record -> record.into(ArtistReleaseDTO.class);
-    }
-
-    private static SelectConditionStep<Record> ARTISTS_RELEASES_WHERE_PARTICIPATED(Long id) {
-        return select(ARTIST_RELEASES_ROLES_SELECT_FIELDS)
-                .from(RELEASE_CREDITED_ARTIST)
-                .join(RELEASE.as("r")).on(RELEASE.as("r").ID.eq(RELEASE_CREDITED_ARTIST.RELEASE_ID))
-                .where(RELEASE_CREDITED_ARTIST.ARTIST_ID.eq(id.intValue()));
-    }
-
-    private static SelectConditionStep<Record> ARTIST_RELEASES_AS_MAIN(Long id) {
-        return select(ARTIST_RELEASES_MAIN_SELECT_FIELDS)
-                .from(RELEASE_ARTIST)
-                .join(RELEASE.as("r")).on(RELEASE_ARTIST.RELEASE_ID.eq(RELEASE.as("r").ID))
-                .where(RELEASE_ARTIST.ARTIST_ID.eq(id.intValue()));
     }
 
     @Override

@@ -41,8 +41,7 @@ public class MasterController {
       @ParameterObject @PageableDefault(sort = {"id"}) Pageable pageable,
       ServerHttpRequest request) {
     return service.findMasters(withQuery(title, year), pageable)
-        .flatMap(dto -> Mono.fromCallable(() ->
-                ResponseEntity.ok(dto.withResourceURI(request.getURI().getPath())))
+        .flatMap(dto -> Mono.fromCallable(() -> ResponseEntity.ok(dto.withResourceURI(request.getURI().getPath())))
             .subscribeOn(Schedulers.boundedElastic()));
   }
 

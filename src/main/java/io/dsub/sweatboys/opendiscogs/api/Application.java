@@ -1,9 +1,14 @@
 package io.dsub.sweatboys.opendiscogs.api;
 
+import io.dsub.sweatboys.opendiscogs.api.core.validation.SortParamsValidator;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import org.springframework.aot.hint.MemberCategory;
+import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ImportRuntimeHints;
 
 @SpringBootApplication
 // {x-release-please-start-version}

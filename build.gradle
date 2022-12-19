@@ -6,7 +6,6 @@ plugins {
     id 'maven-publish'
     id 'com.google.osdetector' version '1.7.1'
     id 'org.springdoc.openapi-gradle-plugin' version '1.6.0'
-    id 'org.graalvm.buildtools.native' version '0.9.18'
     id 'nu.studer.jooq' version '8.0'
 }
 
@@ -141,13 +140,6 @@ publishing {
             }
         }
     }
-}
-
-bootBuildImage {
-    builder = "paketobuildpacks/builder:tiny"
-    environment = [
-            "BP_NATIVE_IMAGE": "true"
-    ]
 }
 
 jooq {

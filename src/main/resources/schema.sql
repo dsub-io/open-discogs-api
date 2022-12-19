@@ -416,3 +416,4 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_profile_trigram ON artist USI
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_label_name_trigram ON label USING GIN(UPPER("name") gin_trgm_ops);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_label_profile_trigram ON label USING GIN(UPPER("profile") gin_trgm_ops);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_master_title_trigram ON master USING GIN(UPPER("title") gin_trgm_ops);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_release_title_trigram ON release USING GIN(UPPER("title") gin_trgm_ops);

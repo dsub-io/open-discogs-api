@@ -47,6 +47,7 @@ class ArtistServiceTest extends ConcurrentTest {
   void findArtists() {
     var exampleCaptor = artistExampleArgumentCaptor;
     var pageableCaptor = pageableArgumentCaptor;
+
     var artists = IntStream.rangeClosed(1, 10)
         .mapToObj(i -> TestUtil.getInstanceOf(Artist.class).withId((long) i))
         .toList();
@@ -54,8 +55,7 @@ class ArtistServiceTest extends ConcurrentTest {
     var pageable = PageRequest.of(0, 10, Direction.ASC, "name", "real_name");
 
     Mono<Page<Artist>> expected = Mono
-        .fromCallable(
-            () -> (Page<Artist>) new PageImpl<>(artists, pageableCaptor.getValue(), artists.size()))
+        .fromCallable(() -> (Page<Artist>) new PageImpl<>(artists, pageableCaptor.getValue(), artists.size()))
         .subscribeOn(Schedulers.boundedElastic());
 
     given(repository.findAllBy(exampleCaptor.capture(), pageableCaptor.capture()))
@@ -126,8 +126,6 @@ class ArtistServiceTest extends ConcurrentTest {
             .satisfies(p -> assertThat(p.getItems())
                 .isNotNull()
                 .hasSize(10)
-                .allSatisfy(dto -> assertThat(dto)
-                    .hasNoNullFieldsOrProperties())
         .containsAll(dtoList)))
         .verifyComplete();
     verify(repository, times(1))

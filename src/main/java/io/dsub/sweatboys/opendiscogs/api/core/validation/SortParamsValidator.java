@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SortParamsValidator implements ConstraintValidator<SortableParams, Pageable> {
+    public SortParamsValidator() {}
+
     private final Set<String> allowedParams = new HashSet<>();
     @Override
     public void initialize(SortableParams params) {

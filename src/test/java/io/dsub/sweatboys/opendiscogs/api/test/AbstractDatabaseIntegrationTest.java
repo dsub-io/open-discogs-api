@@ -11,6 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.r2dbc.connection.init.CompositeDatabasePopulator;
 import org.springframework.r2dbc.connection.init.ConnectionFactoryInitializer;
 import org.springframework.r2dbc.connection.init.ResourceDatabasePopulator;
+import org.springframework.r2dbc.core.DatabaseClient;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Import({TestConfig.class, JooqConfiguration.class})
@@ -28,5 +29,10 @@ public abstract class AbstractDatabaseIntegrationTest {
       initializer.setDatabasePopulator(populator);
       return initializer;
     }
+  }
+
+  protected void initDatabase(DatabaseClient client){
+    client.sql("DROP schema public CASCADE; CREATE SCHEMA public").then().block();
+    new ResourceDatabasePopulator(new ClassPathResource("schema.sql")).populate(client.getConnectionFactory()).block();
   }
 }

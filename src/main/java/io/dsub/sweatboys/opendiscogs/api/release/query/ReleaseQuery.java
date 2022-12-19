@@ -1,5 +1,6 @@
 package io.dsub.sweatboys.opendiscogs.api.release.query;
 
+import io.dsub.sweatboys.opendiscogs.api.release.domain.Release;
 import lombok.Builder;
 import lombok.With;
 
@@ -11,4 +12,14 @@ public record ReleaseQuery(
         Integer year,
         Integer month,
         Boolean isMaster
-) {}
+) {
+    public Release toRelease(){
+        return Release.builder()
+                .title(title)
+                .country(country)
+                .releasedYear(year)
+                .releasedMonth(month)
+                .isMaster(isMaster)
+                .build();
+    }
+}

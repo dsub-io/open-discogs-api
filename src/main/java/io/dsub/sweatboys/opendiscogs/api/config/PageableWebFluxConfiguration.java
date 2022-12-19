@@ -5,7 +5,7 @@ import org.springframework.data.web.ReactivePageableHandlerMethodArgumentResolve
 import org.springframework.web.reactive.config.WebFluxConfigurationSupport;
 import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class PageableWebFluxConfiguration extends WebFluxConfigurationSupport {
     @Override
     public void configureArgumentResolvers(ArgumentResolverConfigurer configurer) {

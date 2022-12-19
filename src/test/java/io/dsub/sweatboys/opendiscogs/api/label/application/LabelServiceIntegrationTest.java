@@ -116,6 +116,7 @@ public class LabelServiceIntegrationTest extends AbstractDatabaseIntegrationTest
                 .flatMap(i -> template.insert(Release.class)
                         .using(TestUtil.getInstanceOf(Release.class)
                                 .withId((long) i)
+                                .withMasterId(null)
                                 .withReleasedYear(2022)
                                 .withReleasedMonth(i)
                                 .withReleasedDay(i)))

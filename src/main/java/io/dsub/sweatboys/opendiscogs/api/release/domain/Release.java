@@ -55,11 +55,15 @@ public class Release extends BaseEntity<Long> {
   @JsonProperty("is_master")
   private final Boolean isMaster;
 
+  @Column("master_id")
+  @JsonProperty("master_id")
+  private final Long masterId;
+
   @Column("notes")
   @JsonProperty("notes")
   private final String notes;
 
   @Column("status")
   @JsonProperty("status")
-  private final Boolean status;
+  private final String status;
 }

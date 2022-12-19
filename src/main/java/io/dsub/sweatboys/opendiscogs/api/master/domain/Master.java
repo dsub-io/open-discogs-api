@@ -1,6 +1,7 @@
 package io.dsub.sweatboys.opendiscogs.api.master.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Builder
 @Table(name = "master")
 @AllArgsConstructor
-public class Master {
+public class Master extends BaseEntity<Long> {
     @Id
     @Min(1)
     @Column("id")
