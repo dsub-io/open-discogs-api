@@ -90,7 +90,7 @@ public class LabelRepositoryImpl implements LabelRepository {
     }
 
     private Function<LabelDetailDTO, Mono<? extends LabelDetailDTO>> withSublabels() {
-//        return dto -> delegate.findSubLabels(dto.id()).collectList().map(dto::withSublabels);
+//        return dto2 -> delegate.findSubLabels(dto.id()).collectList().map(dto::withSublabels);
         return dto -> delegate.findSubLabels(dto.id())
                 .collectList()
                 .flatMap(sublabels -> Mono.fromCallable(() -> dto.withSublabels(sublabels))
