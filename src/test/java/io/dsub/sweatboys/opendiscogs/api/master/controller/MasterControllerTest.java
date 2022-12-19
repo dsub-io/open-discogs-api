@@ -66,7 +66,7 @@ public class MasterControllerTest {
         .uri("/masters?size=40&title=test&year=2003")
         .exchange()
         .expectStatus()
-        .isEqualTo(HttpStatus.OK)
+        .isOk()
         .expectBody(response.getClass())
         .returnResult()
         .getResponseBody();

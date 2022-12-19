@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.With;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import reactor.core.scheduler.Schedulers;
 @With
 @Getter
 @Builder
+@EqualsAndHashCode
 @AllArgsConstructor
 public class PagedResponseDTO<T> {
 

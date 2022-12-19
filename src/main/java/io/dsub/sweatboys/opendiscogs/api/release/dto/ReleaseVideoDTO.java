@@ -9,11 +9,9 @@ import lombok.With;
 
 @Data
 @With
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public final class ReleaseVideoDTO {
-
   @JsonProperty("title")
   private String title;
   @JsonProperty("url")

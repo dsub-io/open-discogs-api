@@ -1,6 +1,7 @@
 package io.dsub.sweatboys.opendiscogs.api.master.controller;
 
 import io.dsub.sweatboys.opendiscogs.api.core.response.PagedResponseDTO;
+import io.dsub.sweatboys.opendiscogs.api.core.validation.SortableParams;
 import io.dsub.sweatboys.opendiscogs.api.master.application.MasterService;
 import io.dsub.sweatboys.opendiscogs.api.master.domain.Master;
 import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterDetailDTO;
@@ -42,19 +43,21 @@ public class MasterController {
 
   @GetMapping
   @Operation(description = "Search master releases by query AND condition. Empty strings will be ignored.")
-  public Mono<ResponseEntity<PagedResponseDTO<Master>>> search(
+  public Mono<PagedResponseDTO<Master>> search(
       @RequestParam(value = "title", required = false)
       @Schema(description = "Title to be contained")
       String title,
       @RequestParam(value = "year", required = false)
       @Schema(description = "Year to search")
       Integer year,
-      @ParameterObject @PageableDefault(sort = {"id"}) Pageable pageable,
+      @ParameterObject
+      @PageableDefault(sort = {"id"})
+      @SortableParams({"id", "title", "released_year"})
+      Pageable pageable,
       ServerHttpRequest request) {
     return service.findMasters(withQuery(title, year), pageable)
-        .flatMap(dto -> Mono.fromCallable(
-                () -> ResponseEntity.ok(dto.withResourceURI(request.getURI().getPath())))
-            .subscribeOn(Schedulers.boundedElastic()));
+        .flatMap(dto -> Mono.fromCallable(() -> dto.withResourceURI(request.getURI().getPath()))
+            .publishOn(Schedulers.boundedElastic()));
   }
 
   @GetMapping("/{id}")

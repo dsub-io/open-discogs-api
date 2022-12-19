@@ -30,17 +30,14 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 class ReleaseServiceTest {
-
   @Mock
   ReleaseRepository releaseRepository;
   @InjectMocks
   ReleaseService service;
-
   @Captor
   ArgumentCaptor<Example<Release>> exampleCaptor;
   @Captor
   ArgumentCaptor<Pageable> pageCaptor;
-
   @Captor
   ArgumentCaptor<Long> idCaptor;
 
