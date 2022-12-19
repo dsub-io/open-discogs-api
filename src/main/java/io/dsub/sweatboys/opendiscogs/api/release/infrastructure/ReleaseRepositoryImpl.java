@@ -148,10 +148,6 @@ public class ReleaseRepositoryImpl implements ReleaseRepository {
         return in == null ? Collections.emptyList() : List.of(in.split(","));
     }
 
-    private static Function<Release, Mono<? extends ReleaseDetailDTO>> toReleaseDetailDTO() {
-        return r -> Mono.fromCallable(() -> ReleaseDetailDTO.fromRelease(r));
-    }
-
     private static Function<Page<Release>, Mono<? extends Page<ReleaseDTO>>> toReleaseDTO(Pageable pageable) {
         return page -> Mono.fromCallable(() -> new PageImpl<>(page.get().map(ReleaseDTO::fromRelease).toList(), pageable, page.getTotalElements()));
     }

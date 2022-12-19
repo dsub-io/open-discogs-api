@@ -25,11 +25,6 @@ public class StringUtility {
         return INSTANCE.doGetMostChildPath(path);
     }
 
-    public String normalize(String in, String delimiter) {
-        return Arrays.stream(in.split(delimiter))
-                .map(String::trim)
-                .collect(Collectors.joining(delimiter));
-    }
     private String doGetMostChildPath(String path) {
         return Arrays.stream(path.split("\\."))
                 .reduce((prev, curr) -> {

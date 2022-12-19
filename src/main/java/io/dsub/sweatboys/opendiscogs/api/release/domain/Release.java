@@ -5,17 +5,20 @@ import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.With;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+@Data
 @With
-@Getter
 @Builder
 @Table(name = "release")
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class Release extends BaseEntity<Long> {
   @Id
   @Min(1)

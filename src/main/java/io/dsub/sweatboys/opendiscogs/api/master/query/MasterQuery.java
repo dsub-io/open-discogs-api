@@ -5,7 +5,6 @@ import lombok.*;
 @With
 @Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class MasterQuery {
   @Schema(description = "Year when master released")
