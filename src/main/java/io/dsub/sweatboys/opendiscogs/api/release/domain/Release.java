@@ -5,18 +5,21 @@ import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.With;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+@Data
 @With
-@Getter
 @Builder
 @Table(name = "release")
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class Release extends BaseEntity<Long> {
+
   @Id
   @Min(1)
   @Column("id")
@@ -55,11 +58,15 @@ public class Release extends BaseEntity<Long> {
   @JsonProperty("is_master")
   private final Boolean isMaster;
 
+  @Column("master_id")
+  @JsonProperty("master_id")
+  private final Long masterId;
+
   @Column("notes")
   @JsonProperty("notes")
   private final String notes;
 
   @Column("status")
   @JsonProperty("status")
-  private final Boolean status;
+  private final String status;
 }

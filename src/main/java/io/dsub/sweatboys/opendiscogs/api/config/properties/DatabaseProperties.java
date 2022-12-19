@@ -1,19 +1,19 @@
 package io.dsub.sweatboys.opendiscogs.api.config.properties;
 
 import jakarta.validation.constraints.NotBlank;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 @Setter
 @Getter
 @Validated
 @NoArgsConstructor
 public class DatabaseProperties {
+
   @NotBlank
   private String username;
   @NotBlank

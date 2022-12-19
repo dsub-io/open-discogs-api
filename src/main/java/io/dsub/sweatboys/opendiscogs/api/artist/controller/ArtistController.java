@@ -6,6 +6,7 @@ import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistDetailDTO;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReleaseDTO;
 import io.dsub.sweatboys.opendiscogs.api.artist.query.ArtistQuery;
 import io.dsub.sweatboys.opendiscogs.api.core.response.PagedResponseDTO;
+import io.dsub.sweatboys.opendiscogs.api.core.validation.SortableParams;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,7 +20,11 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -31,6 +36,10 @@ import reactor.core.scheduler.Schedulers;
 public class ArtistController {
 
   private final ArtistService service;
+
+  private static ArtistQuery withQuery(String name, String realName, String profile) {
+    return ArtistQuery.builder().name(name).realName(realName).profile(profile).build();
+  }
 
   @GetMapping()
   @Operation(description = "Search artists by query with AND condition. Empty strings will be ignored.")
@@ -67,14 +76,12 @@ public class ArtistController {
       Long id,
       @ParameterObject
       @PageableDefault(sort = {"id"})
+      @SortableParams({"id", "title", "country", "master_id", "released_year", "released_month",
+          "released_day"})
       Pageable pageable, ServerHttpRequest request) {
     return service.getArtistReleases(id, pageable)
         .flatMap(dto -> Mono.fromCallable(() ->
                 ResponseEntity.ok(dto.withResourceURI(request.getURI().getPath())))
             .subscribeOn(Schedulers.boundedElastic()));
-  }
-
-  private static ArtistQuery withQuery(String name, String realName, String profile) {
-    return ArtistQuery.builder().name(name).realName(realName).profile(profile).build();
   }
 }

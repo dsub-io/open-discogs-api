@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @OpenAPIDefinition(info = @Info(title = "Open Discogs API", version = "0.0.0", description = "Documentation APIs v0.0.0"))
 // {x-release-please-end}
 public class Application {
+
   public static void main(String[] args) {
     SpringApplication.run(Application.class, args);
   }

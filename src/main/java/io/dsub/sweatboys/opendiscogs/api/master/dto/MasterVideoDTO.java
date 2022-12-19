@@ -9,4 +9,6 @@ public record MasterVideoDTO(
     String description,
     @JsonProperty("title")
     String title
-) {}
+) {
+
+}
