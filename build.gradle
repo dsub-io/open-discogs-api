@@ -44,7 +44,11 @@ dependencies {
 
     // observability from reference: https://spring.io/blog/2022/10/12/observability-with-spring-boot-3
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.micrometer:micrometer-registry-prometheus'
+    implementation 'io.micrometer:micrometer-observation'
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+
+
 
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.0'
@@ -193,9 +197,6 @@ bootBuildImage {
     def containerRegistry = System.getenv("CONTAINER_REGISTRY") ?: "ghcr.io"
     def containerImageName = System.getenv("CONTAINER_IMAGE_NAME") ?: "sweatboys/${rootProject.name}"
     def containerImageVersion = System.getenv("CONTAINER_IMAGE_VERSION") ?: "latest"
-
-    buildpacks.
-
     imageName = "${containerRegistry}/${containerImageName}:${containerImageVersion}"
     builder = "paketobuildpacks/builder:tiny"
     publish = false

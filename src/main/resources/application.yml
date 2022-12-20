@@ -11,6 +11,9 @@ spring:
     property-naming-strategy: LOWER_CAMEL_CASE
 # observability
 management:
+  tracing:
+    sampling:
+      probability: 1
   endpoints:
     web:
       exposure:
