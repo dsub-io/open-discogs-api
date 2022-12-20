@@ -55,7 +55,8 @@ jobs:
           release-type: simple
           extra-files: |
             gradle.properties
-            src/main/java/io.dsub.sweatboys.opendiscogs.api/Application.java
+            README.md
+            src/main/java/io/dsub/sweatboys/opendiscogs/api/Application.java
           pull-request-title-pattern: "chore${scope}: release${component} v${version}"
           package-name: ${{ env.GITHUB_REPOSITORY }}
     outputs:

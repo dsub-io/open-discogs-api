@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "open-discogs-api.fullname" . }}
+  labels:
+    {{- include "open-discogs-api.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.api.port }}
+      targetPort: metric
+      protocol: TCP
+      name: metric
+    - port: {{ .Values.service.metric.port }}
+      targetPort: http
+      protocol: TCP
+      name: metric
+  selector:
+    {{- include "open-discogs-api.selectorLabels" . | nindent 4 }}
