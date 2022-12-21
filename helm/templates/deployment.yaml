@@ -67,6 +67,8 @@ spec:
               value: {{ .Values.application.database.pass }}
             - name: API_SERVER_HOST
               value: {{ .Values.application.endpoint }}
+            - name: OTEL_EXPORTER
+              value: {{ .Values.opentelemetry.exporter }}
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: {{ .Values.opentelemetry.otlp.endpoint }}
             - name: OTEL_SERVICE_NAME
@@ -76,9 +78,9 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: OTEL_RESOURCE_ATTRIBUTES
-              value: pod=$(KUBE_POD_NAME),namespace={{ .Release.Namespace }}
+              value: {{ .Values.opentelemetry.resource.attributes }}
             - name: OTEL_METRICS_EXPORTER
-              value: none
+              value: {{ .Values.opentelemetry.metrics.exporter }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
