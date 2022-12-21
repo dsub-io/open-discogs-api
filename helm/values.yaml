@@ -69,9 +69,6 @@ opentelemetry:
     # Open telemetry otlp endpoint.
     # This could be a tempo, a jaeger, etc.
     endpoint: ''
-  service:
-    # Service name of this application
-    name: 'open-discogs-api'
 ingress:
   enabled: false
   className: ""

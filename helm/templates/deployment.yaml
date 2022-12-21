@@ -70,7 +70,7 @@ spec:
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: {{ .Values.opentelemetry.otlp.endpoint }}
             - name: OTEL_SERVICE_NAME
-              value: {{ .Values.opentelemetry.service.name }}
+              value: {{ include "open-discogs-api.fullname" . }}
             - name: KUBE_POD_NAME
               valueFrom:
                 fieldRef:
