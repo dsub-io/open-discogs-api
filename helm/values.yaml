@@ -71,6 +71,8 @@ opentelemetry:
     endpoint: ''
     # If insecure endpoint or not.
     insecure: false
+  traces:
+    exporter: none
   metrics:
     exporter: none
   # Exporter types
