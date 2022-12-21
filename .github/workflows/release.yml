@@ -99,10 +99,7 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:latest
             ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ steps.previoustag.outputs.tag }}
-            ${{ env.CONTAINER_IMAGE_NAME }}:latest
-            ${{ env.CONTAINER_IMAGE_NAME }}:${{ steps.previoustag.outputs.tag }}
       - name: Sign the published Docker image
         env:
           COSIGN_EXPERIMENTAL: "true"
