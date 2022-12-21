@@ -1,6 +1,8 @@
 # netty
 server:
   shutdown: graceful
+  port:
+    8080
   http2:
     enabled: true
 # spring
@@ -9,23 +11,33 @@ spring:
     name: open-discogs-api
   jackson:
     property-naming-strategy: LOWER_CAMEL_CASE
+  main:
+    banner-mode: off
 # observability
 management:
   tracing:
     sampling:
-      probability: 1
+      probability: 1.0
   endpoints:
     web:
       exposure:
-        include: openapi,swagger-ui
+        include: health,info,openapi,swagger-ui,prometheus
   server:
-    port: 9090
+    port: 8081
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: 'true'
+    tags:
+      application: open-discogs-api
 logging:
-  level:
-    io.r2dbc.postgresql.QUERY: TRACE # for queries
-    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
+#  level:
+#    io.r2dbc.postgresql.QUERY: TRACE # for queries
+#    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
   pattern:
-    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+    level: "trace_id=%mdc{trace_id} span_id=%mdc{span_id} trace_flags=%mdc{trace_flags} %p"
 # swagger
 springdoc:
   api-docs:
@@ -34,6 +46,7 @@ springdoc:
       enabled: true
   swagger-ui:
     enabled: true
+    path: /docs
   show-spring-cloud-functions: false
   show-actuator: false
   use-management-port: true
