@@ -63,7 +63,7 @@ jobs:
     env:
       CONTAINER_IMAGE_VERSION: ${{ needs.release.outputs.tag_name }}
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' && needs.release.outputs.tag_name != '' }}
     needs:
       - build
       - release
@@ -74,6 +74,7 @@ jobs:
     outputs:
       version: ${{ steps.set-version.outputs.version }}
     steps:
+      - uses: actions/checkout@v3
       - name: Install cosign
         uses: sigstore/cosign-installer@7cc35d7fdbe70d4278a0c96779081e6fac665f88
       - name: Set up QEMU
