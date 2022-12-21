@@ -69,6 +69,8 @@ spec:
               value: {{ .Values.application.endpoint }}
             - name: OTEL_EXPORTER
               value: {{ .Values.opentelemetry.exporter }}
+            - name: OTEL_TRACES_EXPORTER
+              value: {{ .Values.opentelemetry.traces.exporter }}
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: {{ .Values.opentelemetry.otlp.endpoint }}
             - name: OTEL_SERVICE_NAME
