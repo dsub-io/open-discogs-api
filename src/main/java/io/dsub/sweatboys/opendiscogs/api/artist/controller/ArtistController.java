@@ -53,7 +53,10 @@ public class ArtistController {
       @RequestParam(value = "profile", required = false)
       @Schema(description = "Profile to search for artist")
       String profile,
-      @ParameterObject @PageableDefault Pageable pageable,
+      @ParameterObject
+      @PageableDefault
+      @SortableParams({"id", "name", "real_name", "profile"})
+      Pageable pageable,
       ServerHttpRequest request) {
     return service.findArtists(withQuery(name, realName, profile), pageable)
         .flatMap(dto -> Mono.fromCallable(() ->

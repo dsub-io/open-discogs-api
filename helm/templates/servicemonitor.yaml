@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "open-discogs-api.fullname" . }}
+  labels:
+    {{- include "open-discogs-api.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app:  {{ include "open-discogs-api.fullname" . }}
+  endpoints:
+    - port: management
+      path: "/actuator/prometheus"

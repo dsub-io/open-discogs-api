@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "open-discogs-api.fullname" . }}
+  labels:
+    {{- include "open-discogs-api.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "open-discogs-api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "open-discogs-api.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "open-discogs-api.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.api.port }}
+              protocol: TCP
+            - name: management
+              containerPort: {{ .Values.service.management.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: management
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: management
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: management
+            periodSeconds: 5
+            failureThreshold: 30
+          env:
+            - name: SERVER_PORT
+              value: {{ .Values.application.api.port }}
+            - name: MANAGEMENT_SERVER_PORT
+              value: {{ .Values.application.management.port }}
+            - name: API_DB_HOST
+              value: {{ .Values.application.database.host }}
+            - name: API_DB_USERNAME
+              value: {{ .Values.application.database.user }}
+            - name: API_DB_PASSWORD
+              value: {{ .Values.application.database.pass }}
+            - name: API_SERVER_HOST
+              value: {{ .Values.application.endpoint }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.opentelemetry.otlp.endpoint }}
+            - name: OTEL_SERVICE_NAME
+              value: {{ include "open-discogs-api.fullname" . }}
+            - name: KUBE_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: pod=$(KUBE_POD_NAME),namespace={{ .Release.Namespace }}
+            - name: OTEL_METRICS_EXPORTER
+              value: none
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -7,6 +7,7 @@ plugins {
     id 'com.google.osdetector' version '1.7.1'
     id 'org.springdoc.openapi-gradle-plugin' version '1.6.0'
     id 'nu.studer.jooq' version '8.0'
+    id 'com.google.cloud.tools.jib' version '3.3.1'
 }
 
 sourceCompatibility = 17
@@ -44,6 +45,8 @@ dependencies {
 
     // observability from reference: https://spring.io/blog/2022/10/12/observability-with-spring-boot-3
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'io.prometheus:simpleclient:0.16.0'
 
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.0'
@@ -189,18 +192,17 @@ jooq {
 }
 
 bootBuildImage {
-  def containerRegistry = System.getenv("CONTAINER_REGISTRY") ?: "ghcr.io"
-  def containerImageName = System.getenv("CONTAINER_IMAGE_NAME") ?: "sweatboys/${rootProject.name}"
-  def containerImageVersion = System.getenv("CONTAINER_IMAGE_VERSION") ?: "latest"
-
-  imageName = "${containerRegistry}/${containerImageName}:${containerImageVersion}"
-  builder = "paketobuildpacks/builder:tiny"
-  publish = false
-  docker {
-    publishRegistry {
-      username = System.getenv("CONTAINER_REGISTRY_USER") ?: ""
-      password = System.getenv("CONTAINER_REGISTRY_PASSWORD") ?: ""
-      url = "https://${containerRegistry}"
+    def containerRegistry = System.getenv("CONTAINER_REGISTRY") ?: "ghcr.io"
+    def containerImageName = System.getenv("CONTAINER_IMAGE_NAME") ?: "sweatboys/${rootProject.name}"
+    def containerImageVersion = System.getenv("CONTAINER_IMAGE_VERSION") ?: "latest"
+    imageName = "${containerRegistry}/${containerImageName}:${containerImageVersion}"
+    builder = "paketobuildpacks/builder:tiny"
+    publish = false
+    docker {
+        publishRegistry {
+            username = System.getenv("CONTAINER_REGISTRY_USER") ?: ""
+            password = System.getenv("CONTAINER_REGISTRY_PASSWORD") ?: ""
+            url = "https://${containerRegistry}"
+        }
     }
-  }
 }
