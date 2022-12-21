@@ -62,8 +62,6 @@ jobs:
       release_created: ${{ steps.release-please.outputs.release_created }}
       tag_name: ${{ steps.release-please.outputs.tag_name }}
   build-and-push-image:
-    env:
-      CONTAINER_IMAGE_VERSION: ${{ github.ref_name }}
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
@@ -77,6 +75,11 @@ jobs:
       version: ${{ steps.set-version.outputs.version }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get Previous tag
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
       - name: Install cosign
         uses: sigstore/cosign-installer@7cc35d7fdbe70d4278a0c96779081e6fac665f88
       - name: Set up QEMU
@@ -97,17 +100,17 @@ jobs:
           push: true
           tags: |
             ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:latest
-            ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ env.CONTAINER_IMAGE_VERSION }}
+            ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ steps.previoustag.outputs.tag }}
             ${{ env.CONTAINER_IMAGE_NAME }}:latest
-            ${{ env.CONTAINER_IMAGE_NAME }}:${{ env.CONTAINER_IMAGE_VERSION }}
+            ${{ env.CONTAINER_IMAGE_NAME }}:${{ steps.previoustag.outputs.tag }}
       - name: Sign the published Docker image
         env:
           COSIGN_EXPERIMENTAL: "true"
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
-        run: cosign sign ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ env.CONTAINER_IMAGE_VERSION }}
+        run: cosign sign ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ steps.previoustag.outputs.tag }}
       - id: set-version
-        run: echo "version=$CONTAINER_IMAGE_VERSION" >> $GITHUB_OUTPUT
+        run: echo "version=${{ steps.previoustag.outputs.tag }}" >> $GITHUB_OUTPUT
       - name: Send status to Slack
         uses: lazy-actions/slatify@c4847b8c84e3e8076fd3c42cc00517a10426ed65
         if: ${{ failure() && env.SLACK_WEBHOOK_URL }}
