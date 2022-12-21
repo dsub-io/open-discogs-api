@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/sweatboys/open-discogs-api/compare/v1.2.2...v1.3.0) (2022-12-21)
+
+
+### Features
+
+* adds extra fields for helm values ([ee4a5ef](https://github.com/sweatboys/open-discogs-api/commit/ee4a5eff98c6b5b279f3173bafd62372f00dc93e))
+
 ## [1.2.2](https://github.com/sweatboys/open-discogs-api/compare/v1.2.1...v1.2.2) (2022-12-21)
 
 
