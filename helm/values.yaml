@@ -69,6 +69,16 @@ opentelemetry:
     # Open telemetry otlp endpoint.
     # This could be a tempo, a jaeger, etc.
     endpoint: ''
+    # If insecure endpoint or not.
+    insecure: false
+  metrics:
+    exporter: none
+  # Exporter types
+  exporter: none
+  # Open Telemetry Resources
+  resource:
+    # Open Telemetry Resource Attributes (i.e. service.name=<svc-name>)
+    attributes: pod=$(KUBE_POD_NAME),namespace={{ .Release.Namespace }}
 ingress:
   enabled: false
   className: ""
