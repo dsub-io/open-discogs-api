@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/sweatboys/open-discogs-api/compare/v1.2.1...v1.2.2) (2022-12-21)
+
+
+### Bug Fixes
+
+* corrects version update to be applied ([4da3ee5](https://github.com/sweatboys/open-discogs-api/commit/4da3ee5e6460e76e4b8b12cbe32d9f8bed18208c))
+
 ## [1.2.1](https://github.com/sweatboys/open-discogs-api/compare/v1.2.0...v1.2.1) (2022-12-21)
 
 
