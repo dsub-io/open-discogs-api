@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/sweatboys/open-discogs-api/compare/v1.3.0...v1.3.1) (2022-12-21)
+
+
+### Bug Fixes
+
+* adds missing exporter ([0adb502](https://github.com/sweatboys/open-discogs-api/commit/0adb502ae6fde792e4b6fa3fe776779515555100))
+
 ## [1.3.0](https://github.com/sweatboys/open-discogs-api/compare/v1.2.2...v1.3.0) (2022-12-21)
 
 
