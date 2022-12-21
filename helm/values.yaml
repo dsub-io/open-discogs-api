@@ -36,12 +36,42 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+# application settings.
+# update service settings accordingly...:)
+application:
+  # application name.
+  # this applies to OpenTelemetry service name as well.
+  name: open-discogs-api
+  api:
+    port: 8080
+  management:
+    port: 8081
+  # postgres configuration
+  database:
+    # host address including port.
+    # i.e. pg.test.io:5432
+    host: 'localhost:5432'
+    user: 'fill-me'
+    pass: 'fill-me'
+  # base_url value to be displayed on resource_uri of query result.
+  endpoint: 'localhost:8080'
+
+# service settings
 service:
   type: ClusterIP
   api:
     port: 8080
-  metric:
+  management:
     port: 8081
+
+opentelemetry:
+  otlp:
+    # Open telemetry otlp endpoint.
+    # This could be a tempo, a jaeger, etc.
+    endpoint: ''
+  service:
+    # Service name of this application
+    name: 'open-discogs-api'
 ingress:
   enabled: false
   className: ""

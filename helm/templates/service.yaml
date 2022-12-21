@@ -8,12 +8,12 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.api.port }}
-      targetPort: metric
-      protocol: TCP
-      name: metric
-    - port: {{ .Values.service.metric.port }}
       targetPort: http
       protocol: TCP
-      name: metric
+      name: http
+    - port: {{ .Values.service.management.port }}
+      targetPort: management
+      protocol: TCP
+      name: management
   selector:
     {{- include "open-discogs-api.selectorLabels" . | nindent 4 }}

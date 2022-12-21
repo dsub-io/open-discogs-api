@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "open-discogs-api.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "open-discogs-api.fullname" . }}:{{ .Values.service.management.port }}/actuator/health']
   restartPolicy: Never

@@ -37,17 +37,48 @@ spec:
             - name: http
               containerPort: {{ .Values.service.api.port }}
               protocol: TCP
-            - name: metric
-              containerPort: {{ .Values.service.metric.port }}
+            - name: management
+              containerPort: {{ .Values.service.management.port }}
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /actuator/health/readiness
+              port: management
           readinessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /actuator/health/liveness
+              port: management
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: management
+            periodSeconds: 5
+            failureThreshold: 30
+          env:
+            - name: SERVER_PORT
+              value: {{ .Values.application.api.port }}
+            - name: MANAGEMENT_SERVER_PORT
+              value: {{ .Values.application.management.port }}
+            - name: API_DB_HOST
+              value: {{ .Values.application.database.host }}
+            - name: API_DB_USERNAME
+              value: {{ .Values.application.database.user }}
+            - name: API_DB_PASSWORD
+              value: {{ .Values.application.database.pass }}
+            - name: API_SERVER_HOST
+              value: {{ .Values.application.endpoint }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.opentelemetry.otlp.endpoint }}
+            - name: OTEL_SERVICE_NAME
+              value: {{ .Values.opentelemetry.service.name }}
+            - name: KUBE_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: pod=$(KUBE_POD_NAME),namespace={{ .Release.Namespace }}
+            - name: OTEL_METRICS_EXPORTER
+              value: none
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
