@@ -56,9 +56,9 @@ spec:
             failureThreshold: 30
           env:
             - name: SERVER_PORT
-              value: {{ .Values.application.api.port }}
+              value: {{ .Values.application.api.port | quote }}
             - name: MANAGEMENT_SERVER_PORT
-              value: {{ .Values.application.management.port }}
+              value: {{ .Values.application.management.port | quote }}
             - name: API_DB_HOST
               value: {{ .Values.application.database.host }}
             - name: API_DB_USERNAME
