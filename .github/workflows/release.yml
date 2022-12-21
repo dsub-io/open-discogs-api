@@ -63,7 +63,7 @@ jobs:
       tag_name: ${{ steps.release-please.outputs.tag_name }}
   build-and-push-image:
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' && needs.release.outputs.tag_name != '' }}
     needs:
       - build
       - release
@@ -99,7 +99,7 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ steps.previoustag.outputs.tag }}
+            ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ needs.release.outputs.tag_name }}
       - name: Sign the published Docker image
         env:
           COSIGN_EXPERIMENTAL: "true"
