@@ -32,6 +32,10 @@ management:
             requests: 'true'
     tags:
       application: open-discogs-api
+  endpoint:
+    health:
+      probes:
+        enabled: on
 logging:
 #  level:
 #    io.r2dbc.postgresql.QUERY: TRACE # for queries
