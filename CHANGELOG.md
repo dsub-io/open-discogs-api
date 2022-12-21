@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/sweatboys/open-discogs-api/compare/v1.0.0...v1.1.0) (2022-12-21)
+
+
+### Features
+
+* adds support for open telemetry ([1997a08](https://github.com/sweatboys/open-discogs-api/commit/1997a085f546dba9551fb2a74cb5f077940fc7fd))
+
+
+### Bug Fixes
+
+* adds sortable params to artist controller ([0f26a30](https://github.com/sweatboys/open-discogs-api/commit/0f26a30445f6b643ee4ad6d9463b6ae9b8aa046e))
+* updates container release strategy ([dad1e8f](https://github.com/sweatboys/open-discogs-api/commit/dad1e8f5effc5fa525f052e3eabce9b60ee29a19))
+
 ## 1.0.0 (2022-12-19)
 
 
