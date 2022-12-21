@@ -41,7 +41,7 @@ service:
   api:
     port: 8080
   metric:
-    port: 9090
+    port: 8081
 ingress:
   enabled: false
   className: ""
