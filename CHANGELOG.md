@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/sweatboys/open-discogs-api/compare/v1.2.0...v1.2.1) (2022-12-21)
+
+
+### Bug Fixes
+
+* **helm:** adds quotation for ports ([266432a](https://github.com/sweatboys/open-discogs-api/commit/266432a69f65aaf8f4691cfa79b5af1b67ebfec8))
+
 ## [1.2.0](https://github.com/sweatboys/open-discogs-api/compare/v1.1.0...v1.2.0) (2022-12-21)
 
 
