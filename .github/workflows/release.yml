@@ -4,6 +4,8 @@ name: Release
 # On changes to release branches
 on:
   push:
+    tags:
+      - '*'
     branches: [main]
   workflow_dispatch:
 
@@ -61,9 +63,9 @@ jobs:
       tag_name: ${{ steps.release-please.outputs.tag_name }}
   build-and-push-image:
     env:
-      CONTAINER_IMAGE_VERSION: ${{ needs.release.outputs.tag_name }}
+      CONTAINER_IMAGE_VERSION: ${{ github.ref_name }}
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' && needs.release.outputs.tag_name != '' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     needs:
       - build
       - release
