@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/sweatboys/open-discogs-api/compare/v1.1.0...v1.2.0) (2022-12-21)
+
+
+### Features
+
+* routes actuator to API_SERVER_HOST target ([f8e61f4](https://github.com/sweatboys/open-discogs-api/commit/f8e61f4eb715d601412bfaed0b14874853bd1c00))
+
 ## [1.1.0](https://github.com/sweatboys/open-discogs-api/compare/v1.0.0...v1.1.0) (2022-12-21)
 
 
