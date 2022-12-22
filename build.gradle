@@ -5,8 +5,8 @@ plugins {
     id 'jacoco'
     id 'maven-publish'
     id 'com.google.osdetector' version '1.7.1'
-    id 'org.springdoc.openapi-gradle-plugin' version '1.6.0'
     id 'nu.studer.jooq' version '8.0'
+    id 'org.springdoc.openapi-gradle-plugin' version '1.6.0'
 }
 
 sourceCompatibility = 17
@@ -49,6 +49,7 @@ dependencies {
 
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.2'
+    implementation 'org.springdoc:springdoc-openapi-starter-webflux-api:2.0.2'
 
     // validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'

@@ -1,13 +1,18 @@
 package io.dsub.sweatboys.opendiscogs.api.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.ReactivePageableHandlerMethodArgumentResolver;
+import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.ResourceHandlerRegistry;
-import org.springframework.web.reactive.config.WebFluxConfigurationSupport;
+import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer;
 
-@Configuration(proxyBeanMethods = false)
-public class PageableWebFluxConfiguration extends WebFluxConfigurationSupport {
+@Configuration
+@ConditionalOnClass(EnableWebFlux.class)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+public class PageableWebFluxConfiguration implements WebFluxConfigurer {
 
   @Override
   public void configureArgumentResolvers(ArgumentResolverConfigurer configurer) {

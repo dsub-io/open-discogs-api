@@ -5,6 +5,7 @@ server:
     8080
   http2:
     enabled: true
+  forward-headers-strategy: framework
 # spring
 spring:
   application:
@@ -37,24 +38,20 @@ management:
       probes:
         enabled: on
 logging:
-#  level:
+  level:
+    web: TRACE
+    org.springframework.web: TRACE
 #    io.r2dbc.postgresql.QUERY: TRACE # for queries
 #    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
   pattern:
     level: "trace_id=%mdc{trace_id} span_id=%mdc{span_id} trace_flags=%mdc{trace_flags} %p"
 # swagger
 springdoc:
-  api-docs:
-    groups:
-      enabled: true
-    resolve-schema-properties: true
   swagger-ui:
     disable-swagger-default-url: true
     urls:
       - name: Open Discogs API
         url: ${API_SERVER_HOST}
+    urls-primary-name: Public
   enable-native-support: true
-  model-converters:
-    polymorphic-converter:
-      enabled: true
   default-flat-param-object: true
