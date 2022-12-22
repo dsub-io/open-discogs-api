@@ -48,7 +48,7 @@ dependencies {
     implementation 'io.prometheus:simpleclient:0.16.0'
 
     // swagger
-    implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.2'
 
     // validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
