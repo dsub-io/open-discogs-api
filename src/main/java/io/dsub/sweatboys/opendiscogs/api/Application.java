@@ -7,15 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @OpenAPIDefinition(info = @Info(
-        title = "Open Discogs API",
-        // {x-release-please-start-version}
-        version = "1.3.1", description =
-        // {x-release-please-end}
-        "Open Discogs API Documentation"
+    // {x-release-please-start-version}
+    title = "Open Discogs API", version = "1.3.1", description = "Open Discogs API Documentation"
+    // {x-release-please-end}
 ))
 public class Application {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(Application.class, args);
+  }
 }
