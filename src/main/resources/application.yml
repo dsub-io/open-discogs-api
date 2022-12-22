@@ -21,7 +21,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,openapi,swagger-ui,prometheus
+        include: health,info,prometheus
   server:
     port: 8081
   metrics:
