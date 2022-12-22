@@ -45,20 +45,16 @@ logging:
 # swagger
 springdoc:
   api-docs:
-    path: /swagger-doc/v3/api-docs
     groups:
       enabled: true
     resolve-schema-properties: true
   swagger-ui:
-    enabled: true
     disable-swagger-default-url: true
     urls:
       - name: Open Discogs API
         url: ${API_SERVER_HOST}
-  show-spring-cloud-functions: false
-  show-actuator: true
-  use-management-port: true
   enable-native-support: true
   model-converters:
     polymorphic-converter:
       enabled: true
+  default-flat-param-object: true
