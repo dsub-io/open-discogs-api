@@ -1,13 +1,17 @@
 package io.dsub.sweatboys.opendiscogs.api.master.query;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.With;
+
 @With
 @Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class MasterQuery {
+
   @Schema(description = "Year when master released")
   @Builder.Default
   private final Integer year = null;

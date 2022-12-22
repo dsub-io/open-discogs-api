@@ -1,14 +1,18 @@
 # netty
 server:
   shutdown: graceful
-
+  port:
+    8080
+  http2:
+    enabled: true
 # spring
 spring:
   application:
     name: open-discogs-api
   jackson:
     property-naming-strategy: LOWER_CAMEL_CASE
-
+  main:
+    banner-mode: off
 # observability
 management:
   tracing:
@@ -17,31 +21,44 @@ management:
   endpoints:
     web:
       exposure:
-        include: prometheus,openapi,swagger-ui
+        include: health,info,openapi,swagger-ui,prometheus
+  server:
+    port: 8081
   metrics:
     distribution:
       percentiles-histogram:
-        http.server.requests: true
-  zipkin:
-    tracing:
-      endpoint: http://zipkin.dsub.io:9411/api/v2/spans
-  server:
-    port: 9090
+        http:
+          server:
+            requests: 'true'
+    tags:
+      application: open-discogs-api
+  endpoint:
+    health:
+      probes:
+        enabled: on
 logging:
-  level:
-    io.r2dbc.postgresql.QUERY: TRACE # for queries
-    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
+#  level:
+#    io.r2dbc.postgresql.QUERY: TRACE # for queries
+#    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
   pattern:
-    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+    level: "trace_id=%mdc{trace_id} span_id=%mdc{span_id} trace_flags=%mdc{trace_flags} %p"
 # swagger
 springdoc:
   api-docs:
     path: /swagger-doc/v3/api-docs
     groups:
       enabled: true
+    resolve-schema-properties: true
   swagger-ui:
     enabled: true
+    disable-swagger-default-url: true
+    urls:
+      - name: Open Discogs API
+        url: ${API_SERVER_HOST}
   show-spring-cloud-functions: false
-  show-actuator: false
+  show-actuator: true
   use-management-port: true
   enable-native-support: true
+  model-converters:
+    polymorphic-converter:
+      enabled: true

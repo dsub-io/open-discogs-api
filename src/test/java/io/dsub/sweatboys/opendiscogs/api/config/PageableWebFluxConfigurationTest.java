@@ -10,5 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 class PageableWebFluxConfigurationTest extends ConcurrentTest {
 
   @Test
-  void contextTest() {}
+  void contextTest() {
+  }
 }

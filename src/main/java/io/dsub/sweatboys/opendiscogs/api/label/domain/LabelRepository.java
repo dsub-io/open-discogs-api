@@ -9,8 +9,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface LabelRepository {
-    Mono<Page<Label>> findAllBy(Example<Label> example, Pageable pageable);
-    Mono<LabelDetailDTO> findById(Long id);
-    Flux<LabelReleaseDTO> findReleasesByLabelId(Long id, Pageable pageable);
-    Mono<Long> countReleasesByLabelId(Long id);
+
+  Mono<Page<Label>> findAllBy(Example<Label> example, Pageable pageable);
+
+  Mono<LabelDetailDTO> findById(Long id);
+
+  Flux<LabelReleaseDTO> findReleasesByLabelId(Long id, Pageable pageable);
+
+  Mono<Long> countReleasesByLabelId(Long id);
 }

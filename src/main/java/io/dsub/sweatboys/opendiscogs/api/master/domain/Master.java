@@ -1,6 +1,7 @@
 package io.dsub.sweatboys.opendiscogs.api.master.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dsub.sweatboys.opendiscogs.api.core.entity.BaseEntity;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,22 +16,23 @@ import org.springframework.data.relational.core.mapping.Table;
 @Builder
 @Table(name = "master")
 @AllArgsConstructor
-public class Master {
-    @Id
-    @Min(1)
-    @Column("id")
-    @JsonProperty("id")
-    private final Long id;
+public class Master extends BaseEntity<Long> {
 
-    @Column("data_quality")
-    @JsonProperty("data_quality")
-    private final String dataQuality;
+  @Id
+  @Min(1)
+  @Column("id")
+  @JsonProperty("id")
+  private final Long id;
 
-    @Column("title")
-    @JsonProperty("title")
-    private final String title;
-    
-    @Column("released_year")
-    @JsonProperty("released_year")
-    private final Integer releasedYear;
+  @Column("data_quality")
+  @JsonProperty("data_quality")
+  private final String dataQuality;
+
+  @Column("title")
+  @JsonProperty("title")
+  private final String title;
+
+  @Column("released_year")
+  @JsonProperty("released_year")
+  private final Integer releasedYear;
 }

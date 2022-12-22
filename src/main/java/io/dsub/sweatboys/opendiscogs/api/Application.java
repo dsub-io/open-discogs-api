@@ -6,11 +6,20 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-// {x-release-please-start-version}
-@OpenAPIDefinition(info = @Info(title = "Open Discogs API", version = "0.0.0", description = "Documentation APIs v0.0.0"))
-// {x-release-please-end}
+
+@OpenAPIDefinition(info = @Info(
+        title = "Open Discogs API",
+        // {x-release-please-start-version}
+        version = "1.3.1", description =
+        // {x-release-please-end}
+        "Open Discogs API Swagger: " +
+        // {x-release-please-start-version}
+        "1.3.1"
+        // {x-release-please-end}
+))
 public class Application {
-  public static void main(String[] args) {
-    SpringApplication.run(Application.class, args);
-  }
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
 }

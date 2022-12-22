@@ -17,29 +17,30 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table(name = "label")
 @AllArgsConstructor
 public class Label extends BaseEntity<Long> {
-    @Id
-    @Min(1)
-    @Column("id")
-    @JsonProperty("id")
-    private final Long id;
 
-    @Column("contact_info")
-    @JsonProperty("contact_ifo")
-    private final String contactInfo;
+  @Id
+  @Min(1)
+  @Column("id")
+  @JsonProperty("id")
+  private final Long id;
 
-    @Column("data_quality")
-    @JsonProperty("data_quality")
-    private final String dataQuality;
+  @Column("contact_info")
+  @JsonProperty("contact_ifo")
+  private final String contactInfo;
 
-    @Column("name")
-    @JsonProperty("name")
-    private final String name;
+  @Column("data_quality")
+  @JsonProperty("data_quality")
+  private final String dataQuality;
 
-    @Column("profile")
-    @JsonProperty("profile")
-    private final String profile;
+  @Column("name")
+  @JsonProperty("name")
+  private final String name;
 
-    @Column("parent_id")
-    @JsonProperty("parent_id")
-    private final Long parentId;
+  @Column("profile")
+  @JsonProperty("profile")
+  private final String profile;
+
+  @Column("parent_id")
+  @JsonProperty("parent_id")
+  private final Long parentId;
 }

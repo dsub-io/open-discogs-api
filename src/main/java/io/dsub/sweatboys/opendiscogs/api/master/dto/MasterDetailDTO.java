@@ -3,12 +3,11 @@ package io.dsub.sweatboys.opendiscogs.api.master.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReferenceDTO;
 import io.dsub.sweatboys.opendiscogs.api.master.domain.Master;
+import java.util.List;
 import lombok.Builder;
 import lombok.With;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-
-import java.util.List;
 
 @With
 @Builder
@@ -32,13 +31,14 @@ public record MasterDetailDTO(
     @JsonProperty("videos")
     List<MasterVideoDTO> videos
 ) {
-    public static Mono<MasterDetailDTO> fromMaster(Master master) {
-        return Mono.fromCallable(() -> MasterDetailDTO.builder()
-                .id(master.getId())
-                .title(master.getTitle())
-                .dataQuality(master.getDataQuality())
-                .year(master.getReleasedYear())
-                .build())
-            .subscribeOn(Schedulers.boundedElastic());
-    }
+
+  public static Mono<MasterDetailDTO> fromMaster(Master master) {
+    return Mono.fromCallable(() -> MasterDetailDTO.builder()
+            .id(master.getId())
+            .title(master.getTitle())
+            .dataQuality(master.getDataQuality())
+            .year(master.getReleasedYear())
+            .build())
+        .subscribeOn(Schedulers.boundedElastic());
+  }
 }

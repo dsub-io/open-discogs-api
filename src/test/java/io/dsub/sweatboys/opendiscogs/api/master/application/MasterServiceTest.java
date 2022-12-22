@@ -1,5 +1,12 @@
 package io.dsub.sweatboys.opendiscogs.api.master.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import io.dsub.sweatboys.opendiscogs.api.core.exception.ItemNotFoundException;
 import io.dsub.sweatboys.opendiscogs.api.master.domain.Master;
 import io.dsub.sweatboys.opendiscogs.api.master.domain.MasterRepository;
@@ -7,21 +14,23 @@ import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterDetailDTO;
 import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterReleaseDTO;
 import io.dsub.sweatboys.opendiscogs.api.master.query.MasterQuery;
 import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.springframework.data.domain.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
-import java.util.stream.IntStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 class MasterServiceTest {
 
@@ -85,8 +94,9 @@ class MasterServiceTest {
     StepVerifier.create(service.getById(1L))
         .expectErrorSatisfies(error -> assertThat(error)
             .isInstanceOf(ItemNotFoundException.class)
-            .satisfies(err -> assertThat(((ItemNotFoundException)err).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND))
-            .satisfies(err -> assertThat(((ItemNotFoundException)err).getReason())
+            .satisfies(err -> assertThat(((ItemNotFoundException) err).getStatusCode()).isEqualTo(
+                HttpStatus.NOT_FOUND))
+            .satisfies(err -> assertThat(((ItemNotFoundException) err).getReason())
                 .contains("not found")
                 .contains("1")))
         .verify();
@@ -96,50 +106,52 @@ class MasterServiceTest {
   }
 
   @Test
-  void getMasterSubReleasesReturnsError(){
+  void getMasterSubReleasesReturnsError() {
     var iCaptor = ArgumentCaptor.forClass(Long.class);
     var pCaptor = ArgumentCaptor.forClass(Pageable.class);
     var pReq = PageRequest.of(1, 10);
     given(masterRepository.findReleasesByMasterId(iCaptor.capture(), pCaptor.capture()))
-            .willReturn(Flux.empty());
+        .willReturn(Flux.empty());
     given(masterRepository.countReleasesByMasterId(iCaptor.capture()))
-            .willReturn(Mono.empty());
+        .willReturn(Mono.empty());
     StepVerifier.create(service.getMasterSubReleases(1L, pReq))
-            .expectErrorSatisfies(err -> assertThat(err).hasMessageContainingAll("master", "1", "not found"))
-            .verify();
+        .expectErrorSatisfies(
+            err -> assertThat(err).hasMessageContainingAll("master", "1", "not found"))
+        .verify();
     assertThat(iCaptor.getAllValues())
-            .hasSize(2)
-            .allSatisfy(i -> assertThat(i).isEqualTo(1L));
+        .hasSize(2)
+        .allSatisfy(i -> assertThat(i).isEqualTo(1L));
     assertThat(pCaptor.getAllValues()).hasSize(1);
     assertThat(pCaptor.getValue()).isEqualTo(pReq);
     verify(masterRepository, times(1)).findReleasesByMasterId(any(), any());
     verify(masterRepository, times(1)).countReleasesByMasterId(any());
   }
 
-    @Test
-    void getMasterSubReleasesReturnsResult() {
-      var iCaptor = ArgumentCaptor.forClass(Long.class);
-      var pCaptor = ArgumentCaptor.forClass(Pageable.class);
-      var pReq = PageRequest.of(0, 10);
-      var res = IntStream.rangeClosed(1, 10).mapToObj(i -> TestUtil.getInstanceOf(MasterReleaseDTO.class)).toList();
-      given(masterRepository.findReleasesByMasterId(iCaptor.capture(), pCaptor.capture()))
-              .willReturn(Flux.fromIterable(res));
-      given(masterRepository.countReleasesByMasterId(iCaptor.capture()))
-              .willReturn(Mono.just(15L));
-      StepVerifier.create(service.getMasterSubReleases(1L, pReq))
-              .assertNext(dto -> assertThat(dto)
-                      .satisfies(d -> assertThat(d.getPageSize()).isEqualTo(10))
-                      .satisfies(d -> assertThat(d.getItems()).hasSize(10))
-                      .satisfies(d -> assertThat(d.getLast()).isNotNull().isFalse())
-                      .satisfies(d -> assertThat(d.getFirst()).isNotNull().isTrue())
-                      .satisfies(d -> assertThat(d.getPageNumber()).isEqualTo(1)))
-              .verifyComplete();
-      assertThat(iCaptor.getAllValues())
-              .hasSize(2)
-              .allSatisfy(i -> assertThat(i).isEqualTo(1L));
-      assertThat(pCaptor.getAllValues()).hasSize(1);
-      assertThat(pCaptor.getValue()).isEqualTo(pReq);
-      verify(masterRepository, times(1)).findReleasesByMasterId(any(), any());
-      verify(masterRepository, times(1)).countReleasesByMasterId(any());
-    }
+  @Test
+  void getMasterSubReleasesReturnsResult() {
+    var iCaptor = ArgumentCaptor.forClass(Long.class);
+    var pCaptor = ArgumentCaptor.forClass(Pageable.class);
+    var pReq = PageRequest.of(0, 10);
+    var res = IntStream.rangeClosed(1, 10)
+        .mapToObj(i -> TestUtil.getInstanceOf(MasterReleaseDTO.class)).toList();
+    given(masterRepository.findReleasesByMasterId(iCaptor.capture(), pCaptor.capture()))
+        .willReturn(Flux.fromIterable(res));
+    given(masterRepository.countReleasesByMasterId(iCaptor.capture()))
+        .willReturn(Mono.just(15L));
+    StepVerifier.create(service.getMasterSubReleases(1L, pReq))
+        .assertNext(dto -> assertThat(dto)
+            .satisfies(d -> assertThat(d.getPageSize()).isEqualTo(10))
+            .satisfies(d -> assertThat(d.getItems()).hasSize(10))
+            .satisfies(d -> assertThat(d.getLast()).isNotNull().isFalse())
+            .satisfies(d -> assertThat(d.getFirst()).isNotNull().isTrue())
+            .satisfies(d -> assertThat(d.getPageNumber()).isEqualTo(1)))
+        .verifyComplete();
+    assertThat(iCaptor.getAllValues())
+        .hasSize(2)
+        .allSatisfy(i -> assertThat(i).isEqualTo(1L));
+    assertThat(pCaptor.getAllValues()).hasSize(1);
+    assertThat(pCaptor.getValue()).isEqualTo(pReq);
+    verify(masterRepository, times(1)).findReleasesByMasterId(any(), any());
+    verify(masterRepository, times(1)).countReleasesByMasterId(any());
+  }
 }

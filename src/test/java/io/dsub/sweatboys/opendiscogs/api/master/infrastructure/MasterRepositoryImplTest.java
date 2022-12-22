@@ -1,29 +1,37 @@
 package io.dsub.sweatboys.opendiscogs.api.master.infrastructure;
 
-import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReferenceDTO;
-import io.dsub.sweatboys.opendiscogs.api.master.domain.Master;
-import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterReleaseDTO;
-import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterVideoDTO;
-import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.reactivestreams.Publisher;
-import org.springframework.data.domain.*;
-import org.springframework.data.repository.query.FluentQuery;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.IntStream;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import io.dsub.sweatboys.opendiscogs.api.artist.dto.ArtistReferenceDTO;
+import io.dsub.sweatboys.opendiscogs.api.master.domain.Master;
+import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterReleaseDTO;
+import io.dsub.sweatboys.opendiscogs.api.master.dto.MasterVideoDTO;
+import io.dsub.sweatboys.opendiscogs.api.test.util.TestUtil;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.IntStream;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.reactivestreams.Publisher;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.FluentQuery;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 class MasterRepositoryImplTest {
 
@@ -69,8 +77,10 @@ class MasterRepositoryImplTest {
     var master = TestUtil.getInstanceOf(Master.class);
     var genres = IntStream.rangeClosed(0, 5).mapToObj(i -> TestUtil.getRandomString()).toList();
     var styles = IntStream.rangeClosed(0, 5).mapToObj(i -> TestUtil.getRandomString()).toList();
-    var artists = IntStream.rangeClosed(0, 3).mapToObj(i -> TestUtil.getInstanceOf(ArtistReferenceDTO.class)).toList();
-    var videos = IntStream.rangeClosed(0, 8).mapToObj(i -> TestUtil.getInstanceOf(MasterVideoDTO.class)).toList();
+    var artists = IntStream.rangeClosed(0, 3)
+        .mapToObj(i -> TestUtil.getInstanceOf(ArtistReferenceDTO.class)).toList();
+    var videos = IntStream.rangeClosed(0, 8)
+        .mapToObj(i -> TestUtil.getInstanceOf(MasterVideoDTO.class)).toList();
     var releaseID = TestUtil.RANDOM.nextLong();
 
     given(delegate.findById(idCaptor.capture())).willReturn(Mono.just(master));
@@ -106,29 +116,29 @@ class MasterRepositoryImplTest {
 
   @Test
   void findReleasesByMasterId() {
-    var releases =IntStream.rangeClosed(1, 10)
-            .mapToObj(i -> TestUtil.getInstanceOf(MasterReleaseDTO.class))
-            .toList();
+    var releases = IntStream.rangeClosed(1, 10)
+        .mapToObj(i -> TestUtil.getInstanceOf(MasterReleaseDTO.class))
+        .toList();
     var p = PageRequest.of(0, 10, Sort.by(Sort.Order.by("id")));
     var id = 1L;
     given(delegate.findReleasesByMasterId(id, "id ASC", 0L, 10))
-            .willReturn(Flux.fromIterable(releases));
+        .willReturn(Flux.fromIterable(releases));
     StepVerifier.create(masterRepository.findReleasesByMasterId(1L, p))
-            .expectNextSequence(releases)
-            .verifyComplete();
+        .expectNextSequence(releases)
+        .verifyComplete();
     verify(delegate, times(1))
-            .findReleasesByMasterId(id, "id ASC", 0L, 10);
+        .findReleasesByMasterId(id, "id ASC", 0L, 10);
   }
 
   @Test
   void countReleasesByMasterId() {
     given(delegate.countReleasesByMasterId(1L))
-            .willReturn(Mono.just(10L));
+        .willReturn(Mono.just(10L));
     StepVerifier.create(masterRepository.countReleasesByMasterId(1L))
-            .expectNext(10L)
-            .verifyComplete();
+        .expectNext(10L)
+        .verifyComplete();
     verify(delegate, times(1))
-            .countReleasesByMasterId(1L);
+        .countReleasesByMasterId(1L);
   }
 
 }

@@ -3,14 +3,21 @@ package io.dsub.sweatboys.opendiscogs.api.core.util;
 import java.util.Arrays;
 
 public class StringUtility {
-  private static final StringUtility INSTANCE =new StringUtility();
 
-  public static StringUtility getInstance() {
-    return INSTANCE;
+  private static final StringUtility INSTANCE = new StringUtility();
+
+  private StringUtility() {
   }
-  private StringUtility(){}
 
-  public String normalize(String in) {
+  public static String normalize(String in) {
+    return INSTANCE.doNormalize(in);
+  }
+
+  public static String getMostChildPath(String path) {
+    return INSTANCE.doGetMostChildPath(path);
+  }
+
+  private String doNormalize(String in) {
     if (in == null) {
       return null;
     }
@@ -18,7 +25,14 @@ public class StringUtility {
     return v.isEmpty() ? null : v;
   }
 
-  public String getMostChildPath(String path) {
-    return Arrays.stream(path.split("\\.")).reduce((prev, curr) -> curr).orElse("");
+  private String doGetMostChildPath(String path) {
+    return Arrays.stream(path.split("\\."))
+        .reduce((prev, curr) -> {
+          if (prev.isEmpty()) {
+            return curr;
+          }
+          return curr.isEmpty() ? prev : curr;
+        })
+        .orElse("");
   }
 }
