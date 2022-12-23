@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.3](https://github.com/sweatboys/open-discogs-api/compare/v1.5.2...v1.5.3) (2022-12-23)
+
+
+### Bug Fixes
+
+* moves helm chart to group chart repo ([0a77ea3](https://github.com/sweatboys/open-discogs-api/commit/0a77ea39896710337e09291ef8ea4b832d6fd656))
+
 ## [1.5.2](https://github.com/sweatboys/open-discogs-api/compare/v1.5.1...v1.5.2) (2022-12-23)
 
 
