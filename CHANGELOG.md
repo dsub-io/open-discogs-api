@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://github.com/sweatboys/open-discogs-api/compare/v1.5.1...v1.5.2) (2022-12-23)
+
+
+### Bug Fixes
+
+* adds fix for deployment parser again ([8dedd88](https://github.com/sweatboys/open-discogs-api/commit/8dedd88ae9454a93bf9dda0f533761ec8955e4e8))
+
 ## [1.5.1](https://github.com/sweatboys/open-discogs-api/compare/v1.5.0...v1.5.1) (2022-12-23)
 
 
