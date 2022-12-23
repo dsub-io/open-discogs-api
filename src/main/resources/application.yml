@@ -41,6 +41,7 @@ logging:
   level:
     web: TRACE
     org.springframework.web: TRACE
+    io.dsub.sweatboys: TRACE
 #    io.r2dbc.postgresql.QUERY: TRACE # for queries
 #    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
   pattern:
@@ -49,9 +50,16 @@ logging:
 springdoc:
   swagger-ui:
     disable-swagger-default-url: true
-    urls:
-      - name: Open Discogs API
-        url: ${API_SERVER_HOST}
     urls-primary-name: Public
+    display-request-duration: true
+    defaultModelsExpandDepth: -1
+    use-root-path: true
+    urls:
+      - display-name: Open Discogs API
+        name: Open Discogs API
+        url: http://localhost:8080/v3/api-docs
   enable-native-support: true
   default-flat-param-object: true
+  api-docs:
+    groups:
+      enabled: true

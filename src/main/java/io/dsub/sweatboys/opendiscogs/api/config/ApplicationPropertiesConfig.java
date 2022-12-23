@@ -19,7 +19,7 @@ public class ApplicationPropertiesConfig {
     return HOST_ADDRESS;
   }
 
-  @Value("${API.SERVER.HOST}")
+  @Value("${API.SERVER.HOST:localhost:8080}")
   public void setHostName(String host) {
     HOST_ADDRESS = host;
   }
