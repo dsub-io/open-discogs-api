@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.2](https://github.com/sweatboys/open-discogs-api/compare/v1.3.1...v1.3.2) (2022-12-23)
+
+
+### Bug Fixes
+
+* adds default meta info for WebFluxHandler ([b6d8906](https://github.com/sweatboys/open-discogs-api/commit/b6d8906fd9274973d8d2b7db99a8bf15e8655092))
+* removes redandant dependencies ([96e6bc8](https://github.com/sweatboys/open-discogs-api/commit/96e6bc8763dc8de3c61d4246330db4c8e8570483))
+
 ## [1.3.1](https://github.com/sweatboys/open-discogs-api/compare/v1.3.0...v1.3.1) (2022-12-21)
 
 
