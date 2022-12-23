@@ -5,6 +5,7 @@ server:
     8080
   http2:
     enabled: true
+  forward-headers-strategy: framework
 # spring
 spring:
   application:
@@ -21,7 +22,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,openapi,swagger-ui,prometheus
+        include: health,info,prometheus
   server:
     port: 8081
   metrics:
@@ -37,28 +38,28 @@ management:
       probes:
         enabled: on
 logging:
-#  level:
+  level:
+    web: TRACE
+    org.springframework.web: TRACE
+    io.dsub.sweatboys: TRACE
 #    io.r2dbc.postgresql.QUERY: TRACE # for queries
 #    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
   pattern:
     level: "trace_id=%mdc{trace_id} span_id=%mdc{span_id} trace_flags=%mdc{trace_flags} %p"
 # swagger
 springdoc:
-  api-docs:
-    path: /swagger-doc/v3/api-docs
-    groups:
-      enabled: true
-    resolve-schema-properties: true
   swagger-ui:
-    enabled: true
     disable-swagger-default-url: true
+    urls-primary-name: Public
+    display-request-duration: true
+    defaultModelsExpandDepth: -1
+    use-root-path: true
     urls:
-      - name: Open Discogs API
-        url: ${API_SERVER_HOST}
-  show-spring-cloud-functions: false
-  show-actuator: true
-  use-management-port: true
+      - display-name: Open Discogs API
+        name: Open Discogs API
+        url: http://localhost:8080/v3/api-docs
   enable-native-support: true
-  model-converters:
-    polymorphic-converter:
+  default-flat-param-object: true
+  api-docs:
+    groups:
       enabled: true
