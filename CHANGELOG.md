@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.0](https://github.com/sweatboys/open-discogs-api/compare/v1.4.0...v1.5.0) (2022-12-23)
+
+
+### Features
+
+* adds documentations with helm env support ([a591802](https://github.com/sweatboys/open-discogs-api/commit/a5918025402916a1cdab0a0455f0ca792d3c7e98))
+
+
+### Bug Fixes
+
+* adds missing configurable swagger-ui-url ([27467d8](https://github.com/sweatboys/open-discogs-api/commit/27467d8ca5307682d43f01a52a13ac7d3f3a64ea))
+
 ## [1.4.0](https://github.com/sweatboys/open-discogs-api/compare/v1.3.2...v1.4.0) (2022-12-23)
 
 
