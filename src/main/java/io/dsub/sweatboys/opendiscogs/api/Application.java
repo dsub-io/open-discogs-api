@@ -14,10 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         version = "1.4.0",
         description = "Open Discogs API Documentation"
         // {x-release-please-end}
-),
-        servers = @Server(url = "${API.SERVER.HOST:http://localhost:8080}")
-
-)
+))
 public class Application {
 
     public static void main(String[] args) {
