@@ -80,6 +80,14 @@ public class LabelRepositoryImpl implements LabelRepository {
         .flatMap(withUrls());
   }
 
+
+  private Function<LabelDetailDTO, Mono<? extends LabelDetailDTO>> withSublabels() {
+    return dto -> delegate.findSubLabels(dto.id())
+        .collectList()
+        .flatMap(sublabels -> Mono.fromCallable(() -> dto.withSublabels(sublabels))
+        .subscribeOn(Schedulers.boundedElastic()));
+  }
+
   @Override
   public Flux<LabelReleaseDTO> findReleasesByLabelId(Long id, Pageable pageable) {
     return delegate.findReleasesByLabelId(
@@ -92,14 +100,6 @@ public class LabelRepositoryImpl implements LabelRepository {
   @Override
   public Mono<Long> countReleasesByLabelId(Long id) {
     return delegate.countReleasesByLabelId(id);
-  }
-
-  private Function<LabelDetailDTO, Mono<? extends LabelDetailDTO>> withSublabels() {
-//        return dto -> delegate.findSubLabels(dto.id()).collectList().map(dto::withSublabels);
-    return dto -> delegate.findSubLabels(dto.id())
-        .collectList()
-        .flatMap(sublabels -> Mono.fromCallable(() -> dto.withSublabels(sublabels))
-            .subscribeOn(Schedulers.boundedElastic()));
   }
 
   private Function<LabelDetailDTO, Mono<? extends LabelDetailDTO>> withUrls() {
