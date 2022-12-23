@@ -55,9 +55,14 @@ spec:
             periodSeconds: 5
             failureThreshold: 30
           env:
-            {{- range $key, $value := .Values.application.env }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
+            {{- range $k, $v := .Values.application.env }}
+            {{- if kindIs "string" $v }}
+            - name: {{ $k }}
+              value: {{ $v }}
+            {{- else }}
+            - name: {{ $v.name }}
+              value: {{ $v.value }}
+            {{- end }}
             {{- end }}
             - name: SPRING_APPLICATION_NAME
               value: {{ .Values.application.name }}
