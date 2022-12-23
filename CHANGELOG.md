@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/sweatboys/open-discogs-api/compare/v1.5.0...v1.5.1) (2022-12-23)
+
+
+### Bug Fixes
+
+* **helm:** fixes deployment.yml parser for env map ranging ([7f09eb8](https://github.com/sweatboys/open-discogs-api/commit/7f09eb821d606a5cad36ec911b6947596735a39b))
+
 ## [1.5.0](https://github.com/sweatboys/open-discogs-api/compare/v1.4.0...v1.5.0) (2022-12-23)
 
 
