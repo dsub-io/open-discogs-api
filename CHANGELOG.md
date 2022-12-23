@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/sweatboys/open-discogs-api/compare/v1.3.2...v1.4.0) (2022-12-23)
+
+
+### Features
+
+* bump gradle wrapper for 7.6 ([4c804c7](https://github.com/sweatboys/open-discogs-api/commit/4c804c71fdcc2fe2725c82fd3e50ccf4615fe503))
+
 ## [1.3.2](https://github.com/sweatboys/open-discogs-api/compare/v1.3.1...v1.3.2) (2022-12-23)
 
 
