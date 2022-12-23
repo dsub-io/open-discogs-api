@@ -96,6 +96,18 @@ jacocoTestReport {
     reports {
         xml.enabled(true)
     }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "io/dsub/opendiscogs/jooq/**",
+                    "io/dsub/sweatboys/**/dto/**",
+                    "io/dsub/sweatboys/**/query/**",
+                    "io/dsub/sweatboys/**/domain/**",
+                    "**/*DTO.*",
+                    "**/config/*"
+            ])
+        }))
+    }
 }
 
 jacocoTestCoverageVerification {

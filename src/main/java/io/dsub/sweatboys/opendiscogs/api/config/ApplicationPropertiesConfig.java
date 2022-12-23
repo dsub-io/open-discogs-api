@@ -13,17 +13,19 @@ import org.springframework.validation.annotation.Validated;
 @EnableConfigurationProperties
 public class ApplicationPropertiesConfig {
 
-  private static String HOST_ADDRESS;
-
-  public static String getServerAddress() {
-    return HOST_ADDRESS;
+  private static String SERVER_URL;
+  public static String getServerUrl() {
+    return SERVER_URL;
   }
 
-  @Value("${API.SERVER.HOST:localhost:8080}")
-  public void setHostName(String host) {
-    HOST_ADDRESS = host;
+  @Value("${API.SERVER.URL:localhost:8080}")
+  public void applyServerUrl(String host) {
+    setServerUrl(host);
   }
 
+  private static void setServerUrl(String host) {
+    SERVER_URL = host;
+  }
   @Bean
   @Validated
   @ConfigurationProperties("api.db")

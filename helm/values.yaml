@@ -40,21 +40,34 @@ securityContext: {}
 # update service settings accordingly...:)
 application:
   # application name.
-  # this applies to OpenTelemetry service name as well.
   name: open-discogs-api
   api:
+    # api server port
     port: 8080
   management:
+    # management server port
     port: 8081
   # postgres configuration
   database:
-    # host address including port.
-    # i.e. pg.test.io:5432
+    # postgres host address including port
     host: 'localhost:5432'
+    # postgres username
     user: 'fill-me'
+    # postgres password
     pass: 'fill-me'
-  # base_url value to be displayed on resource_uri of query result.
-  endpoint: 'localhost:8080'
+  # url with FQDN for this deployment.
+  url: 'http://localhost:8080'
+  # custom environment values for container.
+  # this mainly exists for supporting OTEL java-agent.
+  # values set from above (i.e. api.port) will override settings from here,
+  # so only put things that you missed from above settings.
+  env:
+    - name: OTEL_EXPORTER
+      value: none
+    - name: OTEL_SERVICE_NAME
+      value: open-discogs-api
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: none
 
 # service settings
 service:
@@ -64,23 +77,8 @@ service:
   management:
     port: 8081
 
-opentelemetry:
-  otlp:
-    # Open telemetry otlp endpoint.
-    # This could be a tempo, a jaeger, etc.
-    endpoint: ''
-    # If insecure endpoint or not.
-    insecure: false
-  traces:
-    exporter: none
-  metrics:
-    exporter: none
-  # Exporter types
-  exporter: none
-  # Open Telemetry Resources
-  resource:
-    # Open Telemetry Resource Attributes (i.e. service.name=<svc-name>)
-    attributes: pod=$(KUBE_POD_NAME),namespace={{ .Release.Namespace }}
+
+
 ingress:
   enabled: false
   className: ""

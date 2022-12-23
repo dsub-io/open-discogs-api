@@ -35,10 +35,10 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.api.port }}
+              containerPort: {{ .Values.service.api.port | default 8080 }}
               protocol: TCP
             - name: management
-              containerPort: {{ .Values.service.management.port }}
+              containerPort: {{ .Values.service.management.port | default 8081 }}
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -55,34 +55,24 @@ spec:
             periodSeconds: 5
             failureThreshold: 30
           env:
-            - name: SERVER_PORT
-              value: {{ .Values.application.api.port | quote }}
-            - name: MANAGEMENT_SERVER_PORT
-              value: {{ .Values.application.management.port | quote }}
+            {{- range .Values.application.env }}
+              - name: {{ .name }}
+                value: {{ .value }}
+            {{- end }}
+            - name: SPRING_APPLICATION_NAME
+              value: {{ .Values.application.name }}
             - name: API_DB_HOST
               value: {{ .Values.application.database.host }}
             - name: API_DB_USERNAME
               value: {{ .Values.application.database.user }}
             - name: API_DB_PASSWORD
               value: {{ .Values.application.database.pass }}
-            - name: API_SERVER_HOST
-              value: {{ .Values.application.endpoint }}
-            - name: OTEL_EXPORTER
-              value: {{ .Values.opentelemetry.exporter }}
-            - name: OTEL_TRACES_EXPORTER
-              value: {{ .Values.opentelemetry.traces.exporter }}
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: {{ .Values.opentelemetry.otlp.endpoint }}
-            - name: OTEL_SERVICE_NAME
-              value: {{ include "open-discogs-api.fullname" . }}
-            - name: KUBE_POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: OTEL_RESOURCE_ATTRIBUTES
-              value: {{ .Values.opentelemetry.resource.attributes }}
-            - name: OTEL_METRICS_EXPORTER
-              value: {{ .Values.opentelemetry.metrics.exporter }}
+            - name: API_SERVER_URL
+              value: {{ .Values.application.url }}
+            - name: SERVER_PORT
+              value: {{ .Values.application.api.port }}
+            - name: MANAGEMENT_SERVER_PORT
+              value: {{ .Values.application.management.port }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

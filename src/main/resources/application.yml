@@ -1,8 +1,7 @@
 # netty
 server:
   shutdown: graceful
-  port:
-    8080
+  port: 8080
   http2:
     enabled: true
   forward-headers-strategy: framework
@@ -57,7 +56,7 @@ springdoc:
     urls:
       - display-name: Open Discogs API
         name: Open Discogs API
-        url: ${API_SERVER_HOST:http://localhost:8080}/v3/api-docs
+        url: ${API_SERVER_URL:http://localhost:8080}/v3/api-docs
   enable-native-support: true
   default-flat-param-object: true
   api-docs:

@@ -1,13 +1,11 @@
 package io.dsub.sweatboys.opendiscogs.api.release.dto;
 
-import static io.dsub.sweatboys.opendiscogs.api.config.ApplicationPropertiesConfig.getServerAddress;
+import static io.dsub.sweatboys.opendiscogs.api.config.ApplicationPropertiesConfig.getServerUrl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.With;
 import org.springframework.data.relational.core.mapping.Column;
 
@@ -29,6 +27,6 @@ public final class ReleaseLabelDTO {
 
   @JsonProperty("resource_url")
   public String getResourceUrl() {
-    return getServerAddress() + "/label/" + this.id;
+    return getServerUrl() + "/label/" + this.id;
   }
 }
