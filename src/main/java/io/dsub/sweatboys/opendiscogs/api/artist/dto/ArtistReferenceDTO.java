@@ -1,10 +1,10 @@
 package io.dsub.sweatboys.opendiscogs.api.artist.dto;
 
-import static io.dsub.sweatboys.opendiscogs.api.config.ApplicationPropertiesConfig.getServerAddress;
+import static io.dsub.sweatboys.opendiscogs.api.config.ApplicationPropertiesConfig.getServerUrl;
 
 public record ArtistReferenceDTO(Long id, String name) {
 
   public String getResourceURL() {
-    return getServerAddress() + "/artists/" + id;
+    return getServerUrl() + "/artists/" + id;
   }
 }

@@ -1,6 +1,6 @@
 package io.dsub.sweatboys.opendiscogs.api.artist.dto;
 
-import static io.dsub.sweatboys.opendiscogs.api.config.ApplicationPropertiesConfig.getServerAddress;
+import static io.dsub.sweatboys.opendiscogs.api.config.ApplicationPropertiesConfig.getServerUrl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;
@@ -37,11 +37,11 @@ public record ArtistDetailDTO(@JsonProperty("id") Long id, @JsonProperty("name")
 
   @JsonProperty("uri")
   public String getUri() {
-    return getServerAddress() + "/artists/" + this.id;
+    return getServerUrl() + "/artists/" + this.id;
   }
 
   @JsonProperty("release_url")
   public String getReleasesUrl() {
-    return getServerAddress() + "/artists/" + this.id + "/releases";
+    return getServerUrl() + "/artists/" + this.id + "/releases";
   }
 }

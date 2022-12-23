@@ -44,6 +44,6 @@ public class ArtistReleaseDTO {
 
   @JsonProperty("resource_url")
   public String getResourceUrl() {
-    return ApplicationPropertiesConfig.getServerAddress() + "/releases/" + id;
+    return ApplicationPropertiesConfig.getServerUrl() + "/releases/" + id;
   }
 }
