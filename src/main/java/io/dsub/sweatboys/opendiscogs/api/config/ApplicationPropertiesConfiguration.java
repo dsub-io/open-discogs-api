@@ -8,10 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.annotation.Validated;
 
-
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties
-public class ApplicationPropertiesConfig {
+public class ApplicationPropertiesConfiguration {
 
   private static String SERVER_URL;
   public static String getServerUrl() {

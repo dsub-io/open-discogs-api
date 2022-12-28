@@ -12,14 +12,14 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationPropertiesConfig.class)
+@ContextConfiguration(classes = ApplicationPropertiesConfiguration.class)
 @TestPropertySource(properties = {
     "api.db.username=testUsername",
     "api.db.password=testPassword",
     "api.db.database=testDatabase",
     "api.db.host=testHost"
 })
-class ApplicationPropertiesConfigTest extends ConcurrentTest {
+class ApplicationPropertiesConfigurationTest extends ConcurrentTest {
 
   @Autowired
   private DatabaseProperties properties;

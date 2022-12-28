@@ -1,6 +1,6 @@
 package io.dsub.sweatboys.opendiscogs.api.release.dto;
 
-import static io.dsub.sweatboys.opendiscogs.api.config.ApplicationPropertiesConfig.getServerUrl;
+import static io.dsub.sweatboys.opendiscogs.api.config.ApplicationPropertiesConfiguration.getServerUrl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

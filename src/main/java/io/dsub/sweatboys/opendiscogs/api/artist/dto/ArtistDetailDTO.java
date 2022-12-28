@@ -1,6 +1,6 @@
 package io.dsub.sweatboys.opendiscogs.api.artist.dto;
 
-import static io.dsub.sweatboys.opendiscogs.api.config.ApplicationPropertiesConfig.getServerUrl;
+import static io.dsub.sweatboys.opendiscogs.api.config.ApplicationPropertiesConfiguration.getServerUrl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dsub.sweatboys.opendiscogs.api.artist.domain.Artist;

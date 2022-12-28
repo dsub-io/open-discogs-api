@@ -4,7 +4,7 @@ server:
   port: 8080
   http2:
     enabled: true
-  forward-headers-strategy: framework
+  forward-headers-strategy: native
 # spring
 spring:
   application:
