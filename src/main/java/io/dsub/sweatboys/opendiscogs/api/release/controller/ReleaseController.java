@@ -7,6 +7,7 @@ import io.dsub.sweatboys.opendiscogs.api.release.application.ReleaseService;
 import io.dsub.sweatboys.opendiscogs.api.release.dto.ReleaseDTO;
 import io.dsub.sweatboys.opendiscogs.api.release.dto.ReleaseDetailDTO;
 import io.dsub.sweatboys.opendiscogs.api.release.query.ReleaseQuery;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/releases")
 @RequiredArgsConstructor
-@Tag(name = "releases", description = "release resource endpoints")
+@Tag(name = "releases", description = "release resource endpoints.")
 public class ReleaseController {
   private final ReleaseService service;
 
@@ -36,23 +37,24 @@ public class ReleaseController {
   }
 
   @GetMapping()
+  @Operation(description = "Search releases by query with AND condition. Empty strings will be ignored.")
   public Mono<PagedResponseDTO<ReleaseDTO>> search(
       @RequestParam(value = "title", required = false)
-      @Schema(description = "Title of release", type = "string")
+      @Schema(description = "Title of release to lookup releases.", type = "string")
       String title,
       @RequestParam(value = "country", required = false)
-      @Schema(description = "Released country", type = "string")
+      @Schema(description = "Released country to lookup releases.", type = "string")
       String country,
       @RequestParam(value = "year", required = false)
-      @Schema(description = "Released year", type = "integer")
+      @Schema(description = "Released year to lookup releases.", type = "integer")
       @Range(min = 0, max = 32767)
       Integer year,
       @RequestParam(value = "month", required = false)
-      @Schema(description = "Released month", type = "integer")
+      @Schema(description = "Released month to lookup releases", type = "integer")
       @Range(min = 1, max = 12)
       Integer month,
       @RequestParam(value = "master", required = false)
-      @Schema(description = "Valid only if main release", type = "boolean")
+      @Schema(description = "Valid only if main release.", type = "boolean")
       Boolean master,
       @ParameterObject
       @PageableDefault(sort = {"id"})
@@ -63,7 +65,11 @@ public class ReleaseController {
   }
 
   @GetMapping("/{id}")
-  public Mono<ReleaseDetailDTO> getById(@PathVariable("id") Long id) {
+  @Operation(description = "Get release and details of itself.")
+  public Mono<ReleaseDetailDTO> getById(
+      @PathVariable("id")
+      @Schema(description = "ID of the release to lookup.", type = "long")
+      Long id) {
     return service.getReleaseById(id)
         .switchIfEmpty(Mono.error(new ItemNotFoundException("release", id)));
   }

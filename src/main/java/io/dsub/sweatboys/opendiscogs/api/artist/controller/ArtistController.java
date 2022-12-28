@@ -32,7 +32,7 @@ import reactor.core.scheduler.Schedulers;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/artists")
-@Tag(name = "artists", description = "artist resource endpoints")
+@Tag(name = "artists", description = "artist resource endpoints.")
 public class ArtistController {
 
   private final ArtistService service;
@@ -45,13 +45,13 @@ public class ArtistController {
   @Operation(description = "Search artists by query with AND condition. Empty strings will be ignored.")
   public Mono<ResponseEntity<PagedResponseDTO<Artist>>> searchArtists(
       @RequestParam(value = "name", required = false)
-      @Schema(description = "Name to search for artist", type = "string")
+      @Schema(description = "Name to search for artist.", type = "string")
       String name,
       @RequestParam(value = "real_name", required = false)
-      @Schema(description = "Real name to search for artist", type = "string")
+      @Schema(description = "Real name to search for artist.", type = "string")
       String realName,
       @RequestParam(value = "profile", required = false)
-      @Schema(description = "Profile to search for artist", type = "string")
+      @Schema(description = "Profile to search for artist.", type = "string")
       String profile,
       @ParameterObject
       @PageableDefault
@@ -65,16 +65,19 @@ public class ArtistController {
   }
 
   @GetMapping("/{id}")
-  @Operation(description = "Get details by artist id")
+  @Operation(description = "Get artist and details of itself.")
   public Mono<ResponseEntity<ArtistDetailDTO>> getArtist(
-      @PathVariable("id") @Valid @NotNull @Min(1) long id) {
+      @PathVariable("id")
+      @Schema(description = "ID of the artist to lookup.", type = "long")
+      @Valid @NotNull @Min(1) long id
+  ) {
     return service.getArtist(id);
   }
 
   @GetMapping("/{id}/releases")
-  @Operation(description = "Get releases under specific artist")
+  @Operation(description = "Get artist releases from given artist by paging and sorting assist.")
   public Mono<ResponseEntity<PagedResponseDTO<ArtistReleaseDTO>>> findArtistReleases(
-      @Schema(name = "id", description = "artist id", type = "long")
+      @Schema(name = "id", description = "ID of the artist releases to lookup.", type = "long")
       @PathVariable(value = "id")
       Long id,
       @ParameterObject
