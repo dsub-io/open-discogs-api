@@ -1,6 +1,6 @@
 [//]: # (x-release-please-start-version)
 
-# open-discogs-api v1.5.4
+# open-discogs-api v1.5.5
 
 [//]: # (x-release-please-end)
 [![codecov](https://codecov.io/gh/sweatboys/open-discogs-api/branch/main/graph/badge.svg)](https://codecov.io/gh/sweatboys/open-discogs-api)

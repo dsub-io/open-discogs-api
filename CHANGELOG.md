@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.5](https://github.com/sweatboys/open-discogs-api/compare/v1.5.4...v1.5.5) (2022-12-28)
+
+
+### Bug Fixes
+
+* adds fix for swagger malformed url ([94d6fe4](https://github.com/sweatboys/open-discogs-api/commit/94d6fe4c2b70d961050ffb11b417c805f797cc3a))
+* revert back prometheus exemplar config ([7673823](https://github.com/sweatboys/open-discogs-api/commit/7673823bb9c0e159dc8e531fda5e591fc1097189))
+
 ## [1.5.4](https://github.com/sweatboys/open-discogs-api/compare/v1.5.3...v1.5.4) (2022-12-28)
 
 
