@@ -76,7 +76,7 @@ public class LabelController {
   @Operation(description = "Get label and details of itself.")
   public Mono<ResponseEntity<LabelDetailDTO>> getLabel(
       @PathVariable("id")
-      @Schema(description = "ID of the label to lookup.", type = "long")
+      @Schema(description = "ID of the label to lookup.", implementation = Long.class)
       long id
   ) {
     return labelService.getLabel(id);
@@ -85,7 +85,7 @@ public class LabelController {
   @GetMapping("/{id}/releases")
   @Operation(description = "Get label releases from given label by paging and sorting assist.")
   public Mono<ResponseEntity<PagedResponseDTO<LabelReleaseDTO>>> findLabelReleases(
-      @Schema(name = "id", description = "ID of the label releases to lookup", type = "long")
+      @Schema(name = "id", implementation = Long.class, description = "ID of the label releases to lookup")
       @PathVariable(value = "id")
       Long id,
       @ParameterObject

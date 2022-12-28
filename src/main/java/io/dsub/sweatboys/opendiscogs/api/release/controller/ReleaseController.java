@@ -40,21 +40,21 @@ public class ReleaseController {
   @Operation(description = "Search releases by query with AND condition. Empty strings will be ignored.")
   public Mono<PagedResponseDTO<ReleaseDTO>> search(
       @RequestParam(value = "title", required = false)
-      @Schema(description = "Title of release to lookup releases.", type = "string")
+      @Schema(description = "Title of release to lookup releases.", implementation = String.class)
       String title,
       @RequestParam(value = "country", required = false)
-      @Schema(description = "Released country to lookup releases.", type = "string")
+      @Schema(description = "Released country to lookup releases.", implementation = String.class)
       String country,
       @RequestParam(value = "year", required = false)
-      @Schema(description = "Released year to lookup releases.", type = "integer")
+      @Schema(description = "Released year to lookup releases.", implementation = Integer.class)
       @Range(min = 0, max = 32767)
       Integer year,
       @RequestParam(value = "month", required = false)
-      @Schema(description = "Released month to lookup releases", type = "integer")
+      @Schema(description = "Released month to lookup releases", implementation = Integer.class)
       @Range(min = 1, max = 12)
       Integer month,
       @RequestParam(value = "master", required = false)
-      @Schema(description = "Valid only if main release.", type = "boolean")
+      @Schema(description = "Valid only if main release.", implementation = Boolean.class)
       Boolean master,
       @ParameterObject
       @PageableDefault(sort = {"id"})
@@ -68,7 +68,7 @@ public class ReleaseController {
   @Operation(description = "Get release and details of itself.")
   public Mono<ReleaseDetailDTO> getById(
       @PathVariable("id")
-      @Schema(description = "ID of the release to lookup.", type = "long")
+      @Schema(description = "ID of the release to lookup.", implementation = Long.class)
       Long id) {
     return service.getReleaseById(id)
         .switchIfEmpty(Mono.error(new ItemNotFoundException("release", id)));

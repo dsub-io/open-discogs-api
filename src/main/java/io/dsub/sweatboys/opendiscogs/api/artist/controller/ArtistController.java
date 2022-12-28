@@ -15,6 +15,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class ArtistController {
     return ArtistQuery.builder().name(name).realName(realName).profile(profile).build();
   }
 
-  @GetMapping()
+  @GetMapping
   @Operation(description = "Search artists by query with AND condition. Empty strings will be ignored.")
   public Mono<ResponseEntity<PagedResponseDTO<Artist>>> searchArtists(
       @RequestParam(value = "name", required = false)
@@ -68,7 +69,7 @@ public class ArtistController {
   @Operation(description = "Get artist and details of itself.")
   public Mono<ResponseEntity<ArtistDetailDTO>> getArtist(
       @PathVariable("id")
-      @Schema(description = "ID of the artist to lookup.", type = "long")
+      @Schema(description = "ID of the artist to lookup.", implementation = Long.class)
       @Valid @NotNull @Min(1) long id
   ) {
     return service.getArtist(id);
@@ -77,7 +78,7 @@ public class ArtistController {
   @GetMapping("/{id}/releases")
   @Operation(description = "Get artist releases from given artist by paging and sorting assist.")
   public Mono<ResponseEntity<PagedResponseDTO<ArtistReleaseDTO>>> findArtistReleases(
-      @Schema(name = "id", description = "ID of the artist releases to lookup.", type = "long")
+      @Schema(name = "id", implementation = Long.class, description = "ID of the artist releases to lookup.")
       @PathVariable(value = "id")
       Long id,
       @ParameterObject

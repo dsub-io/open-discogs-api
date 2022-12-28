@@ -32,55 +32,55 @@ import reactor.core.scheduler.Schedulers;
 @Tag(name = "masters", description = "master resource endpoints.")
 public class MasterController {
 
-  private final MasterService service;
+    private final MasterService service;
 
-  private static MasterQuery withQuery(String title, Integer year) {
-    return MasterQuery.builder()
-        .title(title)
-        .year(year)
-        .build();
-  }
+    private static MasterQuery withQuery(String title, Integer year) {
+        return MasterQuery.builder()
+                .title(title)
+                .year(year)
+                .build();
+    }
 
-  @GetMapping
-  @Operation(description = "Search master releases by query AND condition. Empty strings will be ignored.")
-  public Mono<PagedResponseDTO<Master>> search(
-      @RequestParam(value = "title", required = false)
-      @Schema(description = "Title to be contained.", type = "string")
-      String title,
-      @RequestParam(value = "year", required = false)
-      @Schema(description = "Year to search.", type = "integer")
-      Integer year,
-      @ParameterObject
-      @PageableDefault(sort = {"id"})
-      @SortableParams({"id", "title", "released_year"})
-      Pageable pageable,
-      ServerHttpRequest request) {
-    return service.findMasters(withQuery(title, year), pageable)
-        .flatMap(dto -> Mono.fromCallable(() -> dto.withResourceURI(request.getURI().getPath()))
-            .publishOn(Schedulers.boundedElastic()));
-  }
+    @GetMapping
+    @Operation(description = "Search master releases by query AND condition. Empty strings will be ignored.")
+    public Mono<PagedResponseDTO<Master>> search(
+            @RequestParam(value = "title", required = false)
+            @Schema(description = "Title to be contained.", implementation = String.class)
+            String title,
+            @RequestParam(value = "year", required = false)
+            @Schema(description = "Year to search.", implementation = Integer.class)
+            Integer year,
+            @ParameterObject
+            @PageableDefault(sort = {"id"})
+            @SortableParams({"id", "title", "released_year"})
+            Pageable pageable,
+            ServerHttpRequest request) {
+        return service.findMasters(withQuery(title, year), pageable)
+                .flatMap(dto -> Mono.fromCallable(() -> dto.withResourceURI(request.getURI().getPath()))
+                        .publishOn(Schedulers.boundedElastic()));
+    }
 
-  @GetMapping("/{id}")
-  @Operation(description = "Get master and details of itself.")
-  public Mono<ResponseEntity<MasterDetailDTO>> getMaster(
-      @PathVariable("id")
-      @Schema(description = "ID of the master release to lookup.", type = "long")
-      long id
-  ) {
-    return service.getById(id)
-        .flatMap(dto -> Mono.fromCallable(() -> ResponseEntity.ok(dto))
-            .subscribeOn(Schedulers.boundedElastic()));
-  }
+    @GetMapping("/{id}")
+    @Operation(description = "Get master and details of itself.")
+    public Mono<ResponseEntity<MasterDetailDTO>> getMaster(
+            @PathVariable("id")
+            @Schema(description = "ID of the master release to lookup.", implementation = Long.class)
+            long id
+    ) {
+        return service.getById(id)
+                .flatMap(dto -> Mono.fromCallable(() -> ResponseEntity.ok(dto))
+                        .subscribeOn(Schedulers.boundedElastic()));
+    }
 
-  @GetMapping("/{id}/releases")
-  @Operation(description = "Get master releases from given master by paging and sorting assist.")
-  public Mono<PagedResponseDTO<MasterReleaseDTO>> getMasterReleases(
-      @PathVariable("id")
-      @Schema(description = "ID of the master release to lookup.", type = "long")
-      long id,
-      @ParameterObject
-      @PageableDefault
-      Pageable pageable) {
-    return service.getMasterSubReleases(id, pageable);
-  }
+    @GetMapping("/{id}/releases")
+    @Operation(description = "Get master releases from given master by paging and sorting assist.")
+    public Mono<PagedResponseDTO<MasterReleaseDTO>> getMasterReleases(
+            @PathVariable("id")
+            @Schema(description = "ID of the master release to lookup.", implementation = Long.class)
+            long id,
+            @ParameterObject
+            @PageableDefault
+            Pageable pageable) {
+        return service.getMasterSubReleases(id, pageable);
+    }
 }
