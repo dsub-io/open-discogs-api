@@ -29,7 +29,7 @@ import reactor.core.scheduler.Schedulers;
 @RestController
 @RequestMapping("/masters")
 @RequiredArgsConstructor
-@Tag(name = "masters", description = "master resource endpoints")
+@Tag(name = "masters", description = "master resource endpoints.")
 public class MasterController {
 
   private final MasterService service;
@@ -45,10 +45,10 @@ public class MasterController {
   @Operation(description = "Search master releases by query AND condition. Empty strings will be ignored.")
   public Mono<PagedResponseDTO<Master>> search(
       @RequestParam(value = "title", required = false)
-      @Schema(description = "Title to be contained")
+      @Schema(description = "Title to be contained.", type = "string")
       String title,
       @RequestParam(value = "year", required = false)
-      @Schema(description = "Year to search")
+      @Schema(description = "Year to search.", type = "integer")
       Integer year,
       @ParameterObject
       @PageableDefault(sort = {"id"})
@@ -61,10 +61,10 @@ public class MasterController {
   }
 
   @GetMapping("/{id}")
-  @Operation(description = "Get master and details of itself")
+  @Operation(description = "Get master and details of itself.")
   public Mono<ResponseEntity<MasterDetailDTO>> getMaster(
       @PathVariable("id")
-      @Schema(description = "ID of the master release to lookup.")
+      @Schema(description = "ID of the master release to lookup.", type = "long")
       long id
   ) {
     return service.getById(id)
@@ -76,7 +76,7 @@ public class MasterController {
   @Operation(description = "Get master releases from given master by paging and sorting assist.")
   public Mono<PagedResponseDTO<MasterReleaseDTO>> getMasterReleases(
       @PathVariable("id")
-      @Schema(description = "ID of the master release to lookup.")
+      @Schema(description = "ID of the master release to lookup.", type = "long")
       long id,
       @ParameterObject
       @PageableDefault

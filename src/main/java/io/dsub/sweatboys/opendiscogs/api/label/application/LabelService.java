@@ -27,7 +27,7 @@ public class LabelService {
 
   private final LabelRepository labelRepository;
 
-  private static <T> Mono<T> getItemNotfoundException(long id) {
+  private static <T> Mono<T> getItemNotFoundException(long id) {
     return Mono.error(new ItemNotFoundException("label", id));
   }
 
@@ -47,7 +47,7 @@ public class LabelService {
   public Mono<ResponseEntity<LabelDetailDTO>> getLabel(long id) {
     return labelRepository.findById(id)
         .map(ResponseEntity::ok)
-        .switchIfEmpty(getItemNotfoundException(id));
+        .switchIfEmpty(getItemNotFoundException(id));
   }
 
   public Mono<PagedResponseDTO<LabelReleaseDTO>> getLabelReleases(long id, Pageable pageable) {

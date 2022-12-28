@@ -28,7 +28,7 @@ import reactor.core.scheduler.Schedulers;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/labels")
-@Tag(name = "labels", description = "label resource endpoints")
+@Tag(name = "labels", description = "label resource endpoints.")
 public class LabelController {
 
   private final LabelService labelService;
@@ -54,16 +54,16 @@ public class LabelController {
   @Operation(description = "Search labels by query with AND condition. Empty strings will be ignored.")
   public Mono<ResponseEntity<PagedResponseDTO<Label>>> searchLabels(
       @RequestParam(value = "contact_info", required = false)
-      @Schema(description = "Contact info to search for label")
+      @Schema(description = "Contact info of label to lookup labels.", type ="string")
       String contactInfo,
       @RequestParam(value = "data_quality", required = false)
-      @Schema(description = "Data Quality to search for label")
+      @Schema(description = "Data Quality of label to lookup labels.", type = "string")
       String dataQuality,
       @RequestParam(value = "name", required = false)
-      @Schema(description = "Name to search for label")
+      @Schema(description = "Name of label to lookup labels.", type = "string")
       String name,
       @RequestParam(value = "profile", required = false)
-      @Schema(description = "Profile to search for label")
+      @Schema(description = "Profile to search for label.", type = "string")
       String profile,
       @ParameterObject @PageableDefault(sort = {"id"}) Pageable pageable,
       ServerHttpRequest request) {
@@ -73,15 +73,19 @@ public class LabelController {
   }
 
   @GetMapping("/{id}")
-  @Operation(description = "Get details by label id")
-  public Mono<ResponseEntity<LabelDetailDTO>> getLabel(@PathVariable("id") long id) {
+  @Operation(description = "Get label and details of itself.")
+  public Mono<ResponseEntity<LabelDetailDTO>> getLabel(
+      @PathVariable("id")
+      @Schema(description = "ID of the label to lookup.", type = "long")
+      long id
+  ) {
     return labelService.getLabel(id);
   }
 
   @GetMapping("/{id}/releases")
-  @Operation(description = "Get release under specific label")
+  @Operation(description = "Get label releases from given label by paging and sorting assist.")
   public Mono<ResponseEntity<PagedResponseDTO<LabelReleaseDTO>>> findLabelReleases(
-      @Schema(name = "id of label to be searched")
+      @Schema(name = "id", description = "ID of the label releases to lookup", type = "long")
       @PathVariable(value = "id")
       Long id,
       @ParameterObject
