@@ -1,7 +1,7 @@
 package io.dsub.sweatboys.opendiscogs.api.release.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dsub.sweatboys.opendiscogs.api.config.ApplicationPropertiesConfig;
+import io.dsub.sweatboys.opendiscogs.api.config.ApplicationPropertiesConfiguration;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +24,6 @@ public class ReleaseArtistDTO {
 
   @JsonProperty("resource_url")
   public String getResourceUrl() {
-    return ApplicationPropertiesConfig.getServerUrl() + "/artists/" + id;
+    return ApplicationPropertiesConfiguration.getServerUrl() + "/artists/" + id;
   }
 }

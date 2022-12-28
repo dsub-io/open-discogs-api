@@ -11,7 +11,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {ApplicationPropertiesConfig.class, DatabaseConfiguration.class})
+@ContextConfiguration(classes = {ApplicationPropertiesConfiguration.class, DatabaseConfiguration.class})
 @TestPropertySource(properties = {
     "api.db.username=testUsername",
     "api.db.password=testPassword",
