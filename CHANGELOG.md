@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.4](https://github.com/sweatboys/open-discogs-api/compare/v1.5.3...v1.5.4) (2022-12-28)
+
+
+### Bug Fixes
+
+* adds native cors handler from netty not framework ([5f62b5d](https://github.com/sweatboys/open-discogs-api/commit/5f62b5d8e398bc2217223d62aa197d582b9cd9bf))
+
 ## [1.5.3](https://github.com/sweatboys/open-discogs-api/compare/v1.5.2...v1.5.3) (2022-12-23)
 
 
