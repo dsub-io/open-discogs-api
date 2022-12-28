@@ -56,7 +56,7 @@ jobs:
           extra-files: |
             gradle.properties
             README.md
-            src/main/java/io/dsub/sweatboys/opendiscogs/api/Application.java
+            src/main/java/io/dsub/sweatboys/opendiscogs/api/config/SwaggerConfiguration.java
             helm/Chart.yaml
           pull-request-title-pattern: "chore${scope}: release${component} v${version}"
           package-name: ${{ env.GITHUB_REPOSITORY }}
