@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @OpenAPIDefinition(info = @Info(
         // {x-release-please-start-version}
         title = "Open Discogs API",
-        version = "1.5.3",
+        version = "1.5.4",
         description = "Open Discogs API Documentation"
         // {x-release-please-end}
 ))
