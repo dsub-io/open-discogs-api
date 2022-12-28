@@ -45,13 +45,13 @@ public class ArtistController {
   @Operation(description = "Search artists by query with AND condition. Empty strings will be ignored.")
   public Mono<ResponseEntity<PagedResponseDTO<Artist>>> searchArtists(
       @RequestParam(value = "name", required = false)
-      @Schema(description = "Name to search for artist")
+      @Schema(description = "Name to search for artist", type = "string")
       String name,
       @RequestParam(value = "real_name", required = false)
-      @Schema(description = "Real name to search for artist")
+      @Schema(description = "Real name to search for artist", type = "string")
       String realName,
       @RequestParam(value = "profile", required = false)
-      @Schema(description = "Profile to search for artist")
+      @Schema(description = "Profile to search for artist", type = "string")
       String profile,
       @ParameterObject
       @PageableDefault
@@ -74,7 +74,7 @@ public class ArtistController {
   @GetMapping("/{id}/releases")
   @Operation(description = "Get releases under specific artist")
   public Mono<ResponseEntity<PagedResponseDTO<ArtistReleaseDTO>>> findArtistReleases(
-      @Schema(name = "id", description = "artist id")
+      @Schema(name = "id", description = "artist id", type = "long")
       @PathVariable(value = "id")
       Long id,
       @ParameterObject
