@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/dsub-io/open-discogs-api/compare/v1.6.0...v1.6.1) (2026-07-30)
+
+
+### Build System
+
+* keep Dependabot on Java 21 ([03aafbb](https://github.com/dsub-io/open-discogs-api/commit/03aafbb7d049e91d25f96168d51162faf9294102))
+
 ## [1.6.0](https://github.com/dsub-io/open-discogs-api/compare/v1.5.5...v1.6.0) (2026-07-30)
 
 
