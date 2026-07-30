@@ -5,7 +5,6 @@ server:
   http2:
     enabled: true
   forward-headers-strategy: native
-# spring
 spring:
   application:
     name: open-discogs-api
@@ -13,11 +12,12 @@ spring:
     property-naming-strategy: LOWER_CAMEL_CASE
   main:
     banner-mode: off
-# observability
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
 management:
   tracing:
     sampling:
-      probability: 1.0
+      probability: 0.1
   endpoints:
     web:
       exposure:
@@ -38,14 +38,12 @@ management:
         enabled: on
 logging:
   level:
-    web: TRACE
-    org.springframework.web: TRACE
-    io.dsub.sweatboys: TRACE
-#    io.r2dbc.postgresql.QUERY: TRACE # for queries
-#    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
+    root: INFO
+    io.dsub.opendiscogs: INFO
+    io.r2dbc.postgresql.QUERY: WARN
+    io.r2dbc.postgresql.PARAM: WARN
   pattern:
     level: "trace_id=%mdc{trace_id} span_id=%mdc{span_id} trace_flags=%mdc{trace_flags} %p"
-# swagger
 springdoc:
   swagger-ui:
     disable-swagger-default-url: true

@@ -1,120 +1,209 @@
-# Prepares, builds and publishes new releases
 name: Release
 
-# On changes to release branches
 on:
   push:
-    tags:
-      - '*'
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
-env:
-  CONTAINER_REGISTRY: ghcr.io
-  CONTAINER_IMAGE_NAME: ${{ github.repository }}
-  CONTAINER_IMAGE_VERSION: ${{ github.sha }}
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  build:
+  release-please:
+    name: Release Please
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      prs-created: ${{ steps.release.outputs.prs_created }}
+      pr: ${{ steps.release.outputs.pr }}
+      release-created: ${{ steps.release.outputs.release_created }}
+      tag-name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+      sha: ${{ steps.release.outputs.sha }}
     steps:
-      - uses: actions/checkout@v3
-      - name: ☕ Set up GraalVM JDK 17
-        uses: graalvm/setup-graalvm@v1
-        with:
-          version: 'latest'
-          java-version: '17'
-          components: 'native-image'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          cache: 'gradle'
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew build
-      - name: Send status to Slack
-        uses: lazy-actions/slatify@c4847b8c84e3e8076fd3c42cc00517a10426ed65
-        if: ${{ failure() && github.ref == 'refs/heads/main' && env.SLACK_WEBHOOK_URL }}
+      - name: Verify release token
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          RELEASE_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          if [[ -z "$RELEASE_GITHUB_TOKEN" ]]; then
+            echo "::error::The GH_TOKEN organization secret is required."
+            exit 1
+          fi
+
+      - name: Create or update release
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
-          type: ${{ job.status }}
-          job_name: "Build :point_right:"
-          mention: "here"
-          mention_if: "failure"
-          commit: true
-          url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-  release:
-    name: Release
+          token: ${{ secrets.GH_TOKEN }}
+
+  sign-release-pr:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.prs-created == 'true' }}
     runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: 🙌 Prepare release
-        id: release-please
-        uses: google-github-actions/release-please-action@v3
-        with:
-          release-type: simple
-          extra-files: |
-            gradle.properties
-            README.md
-            src/main/java/io/dsub/sweatboys/opendiscogs/api/Application.java
-            helm/Chart.yaml
-          pull-request-title-pattern: "chore${scope}: release${component} v${version}"
-          package-name: ${{ env.GITHUB_REPOSITORY }}
-    outputs:
-      release_created: ${{ steps.release-please.outputs.release_created }}
-      tag_name: ${{ steps.release-please.outputs.tag_name }}
-  build-and-push-image:
-    runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' && needs.release.outputs.tag_name != '' }}
-    needs:
-      - build
-      - release
+    timeout-minutes: 10
     permissions:
-      contents: read
-      id-token: write # This is used to complete the identity challenge with sigstore/fulcio..
-      packages: write
-    outputs:
-      version: ${{ steps.set-version.outputs.version }}
+      contents: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - name: Get Previous tag
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-      - name: Install cosign
-        uses: sigstore/cosign-installer@7cc35d7fdbe70d4278a0c96779081e6fac665f88
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Login to container registry
-        uses: docker/login-action@v2
+          persist-credentials: true
+          ref: ${{ fromJSON(needs.release-please.outputs.pr).headBranchName }}
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Import commit signing key
+        shell: bash
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$GPG_PRIVATE_KEY" ]]; then
+            echo "::error::Missing GitHub Actions secret: GPG_PRIVATE_KEY"
+            exit 1
+          fi
+          export GNUPGHOME="$RUNNER_TEMP/gnupg"
+          install -d -m 700 "$GNUPGHOME"
+          printf '%s' "$GPG_PRIVATE_KEY" | gpg --batch --import
+          echo "GNUPGHOME=$GNUPGHOME" >> "$GITHUB_ENV"
+
+      - name: Sign the Release Please commit
+        shell: bash
+        env:
+          EXPECTED_BASE_BRANCH: ${{ fromJSON(needs.release-please.outputs.pr).baseBranchName }}
+          RELEASE_PR_BRANCH: ${{ fromJSON(needs.release-please.outputs.pr).headBranchName }}
+        run: |
+          set -euo pipefail
+          if [[ "$EXPECTED_BASE_BRANCH" != "main" ]]; then
+            echo "::error::Release Please pull request does not target main."
+            exit 1
+          fi
+          if [[ ! "$RELEASE_PR_BRANCH" =~ ^release-please--branches--main--components--[A-Za-z0-9._-]+$ ]]; then
+            echo "::error::Unexpected Release Please branch."
+            exit 1
+          fi
+          expected_head_sha="$(git rev-parse "refs/remotes/origin/$RELEASE_PR_BRANCH")"
+          if [[ "$(git rev-parse HEAD)" != "$expected_head_sha" ]]; then
+            echo "::error::Checked-out commit does not match Release Please output."
+            exit 1
+          fi
+
+          signing_key="$(
+            gpg --batch --with-colons --list-secret-keys |
+              awk -F: '$1 == "fpr" { print $10; exit }'
+          )"
+          if [[ -z "$signing_key" ]]; then
+            echo "::error::No GPG secret key is available for commit signing."
+            exit 1
+          fi
+
+          git config user.name state303
+          git config user.email state303@linux.com
+          git config user.signingkey "$signing_key"
+          git commit --amend --no-edit --gpg-sign="$signing_key"
+          git verify-commit HEAD
+          git push \
+            --force-with-lease="refs/heads/$RELEASE_PR_BRANCH:$expected_head_sha" \
+            origin \
+            "HEAD:refs/heads/$RELEASE_PR_BRANCH"
+
+  publish-image:
+    name: Publish release image
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release-created == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE_NAME: ghcr.io/${{ github.repository }}
+      RELEASE_SHA: ${{ needs.release-please.outputs.sha }}
+      RELEASE_TAG: ${{ needs.release-please.outputs.tag-name }}
+      RELEASE_VERSION: ${{ needs.release-please.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          registry: ${{ env.CONTAINER_REGISTRY }}
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ needs.release-please.outputs.sha }}
+
+      - name: Validate the immutable release context
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Release Please returned an invalid semantic version."
+            exit 1
+          fi
+          if [[ "$RELEASE_TAG" != "v$RELEASE_VERSION" ]]; then
+            echo "::error::Release tag does not match the release version."
+            exit 1
+          fi
+          if [[ "$(git rev-parse HEAD)" != "$RELEASE_SHA" ]]; then
+            echo "::error::Checked-out commit does not match the release SHA."
+            exit 1
+          fi
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          if ! git merge-base --is-ancestor "$RELEASE_SHA" origin/main; then
+            echo "::error::Release commit is not on main."
+            exit 1
+          fi
+          if [[ "$(tr -d '[:space:]' < version.txt)" != "$RELEASE_VERSION" ]]; then
+            echo "::error::version.txt does not match the release version."
+            exit 1
+          fi
+
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6.2.0
+
+      - name: Rebuild and verify the release commit
+        run: ./gradlew clean check bootJar --no-daemon --warning-mode=fail
+
+      - uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push
-        uses: docker/build-push-action@v3
+          password: ${{ github.token }}
+
+      - name: Build and publish the release image
+        id: image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
         with:
           context: .
-          platforms: linux/amd64
           push: true
+          provenance: mode=max
+          sbom: true
           tags: |
-            ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ needs.release.outputs.tag_name }}
-            ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:latest
-      - id: set-version
-        run: echo "version=${{ steps.previoustag.outputs.tag }}" >> $GITHUB_OUTPUT
-      - name: Send status to Slack
-        uses: lazy-actions/slatify@c4847b8c84e3e8076fd3c42cc00517a10426ed65
-        if: ${{ failure() && env.SLACK_WEBHOOK_URL }}
+            ${{ env.IMAGE_NAME }}:${{ env.RELEASE_VERSION }}
+            ${{ env.IMAGE_NAME }}:${{ env.RELEASE_TAG }}
+            ${{ env.IMAGE_NAME }}:sha-${{ env.RELEASE_SHA }}
+            ${{ env.IMAGE_NAME }}:latest
+          labels: |
+            org.opencontainers.image.revision=${{ env.RELEASE_SHA }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.version=${{ env.RELEASE_VERSION }}
+
+      - name: Validate the published immutable digest
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          type: ${{ job.status }}
-          job_name: "Build/push image :point_right:"
-          mention: "here"
-          mention_if: "failure"
-          commit: true
-          url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE_DIGEST: ${{ steps.image.outputs.digest }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$IMAGE_DIGEST" =~ ^sha256:[a-f0-9]{64}$ ]]; then
+            echo "::error::The image action did not return a valid immutable digest."
+            exit 1
+          fi
+          docker buildx imagetools inspect "$IMAGE_NAME@$IMAGE_DIGEST"
