@@ -11,7 +11,7 @@ Discogs. The Discogs name is used only to identify the public data source.
 [![Release](https://github.com/dsub-io/open-discogs-api/actions/workflows/release.yml/badge.svg)](https://github.com/dsub-io/open-discogs-api/actions/workflows/release.yml)
 
 <!-- x-release-please-start-version -->
-Current version: `1.5.5`
+Current version: `1.6.0`
 <!-- x-release-please-end -->
 
 ## Architecture
