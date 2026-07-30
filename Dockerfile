@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk-jammy AS build
+FROM eclipse-temurin:25-jdk-jammy AS build
 
 WORKDIR /workspace
 COPY gradle gradle
@@ -8,7 +8,7 @@ COPY src src
 COPY LICENSE NOTICE ./
 RUN ./gradlew clean bootJar --no-daemon --warning-mode=fail
 
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:25-jre-jammy
 
 RUN groupadd --system open-discogs \
     && useradd --system --gid open-discogs --home-dir /app open-discogs
