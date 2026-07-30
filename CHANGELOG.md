@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/dsub-io/open-discogs-api/compare/v1.5.5...v1.6.0) (2026-07-30)
+
+
+### Build System
+
+* housekeeping ([f0708c7](https://github.com/dsub-io/open-discogs-api/commit/f0708c722ce0147a95c6af17bd8ad124c15f0cc8))
+
 ## [1.5.5](https://github.com/dsub-io/open-discogs-api/compare/v1.5.4...v1.5.5) (2022-12-28)
 
 
