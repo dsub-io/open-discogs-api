@@ -1,14 +1,20 @@
-FROM curlimages/curl:7.86.0 AS download
-ARG OTEL_AGENT_VERSION="1.21.0"
-RUN curl --silent --fail -L "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OTEL_AGENT_VERSION}/opentelemetry-javaagent.jar" \
-    -o "$HOME/opentelemetry-javaagent.jar"
+FROM eclipse-temurin:21-jdk-jammy AS build
 
-FROM eclipse-temurin:17-alpine AS build
-ADD . /
-RUN cd / && ./gradlew bootJar --quiet
+WORKDIR /workspace
+COPY gradle gradle
+COPY gradlew build.gradle settings.gradle gradle.properties version.txt ./
+RUN ./gradlew dependencies --no-daemon --warning-mode=fail
+COPY src src
+COPY LICENSE NOTICE ./
+RUN ./gradlew clean bootJar --no-daemon --warning-mode=fail
 
-FROM eclipse-temurin:17-alpine
-COPY --from=build /build/libs/*.jar /app.jar
-COPY --from=download /home/curl_user/opentelemetry-javaagent.jar /opentelemetry-javaagent.jar
+FROM eclipse-temurin:21-jre-jammy
 
-ENTRYPOINT java -jar -javaagent:/opentelemetry-javaagent.jar /app.jar
+RUN groupadd --system open-discogs \
+    && useradd --system --gid open-discogs --home-dir /app open-discogs
+WORKDIR /app
+COPY --from=build --chown=open-discogs:open-discogs /workspace/build/libs/*.jar open-discogs-api.jar
+
+USER open-discogs
+EXPOSE 8080 8081
+ENTRYPOINT ["java", "-jar", "/app/open-discogs-api.jar"]

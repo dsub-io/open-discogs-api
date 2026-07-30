@@ -1,0 +1,35 @@
+package io.dsub.opendiscogs.api.config;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import io.dsub.opendiscogs.api.config.properties.DatabaseProperties;
+import io.dsub.opendiscogs.api.test.ConcurrentTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationPropertiesConfiguration.class)
+@TestPropertySource(properties = {
+    "api.db.username=testUsername",
+    "api.db.password=testPassword",
+    "api.db.database=testDatabase",
+    "api.db.host=testHost"
+})
+class ApplicationPropertiesConfigurationUnitTest extends ConcurrentTest {
+
+  @Autowired
+  private DatabaseProperties properties;
+
+  @Test
+  void databasePropertiesMustBeSet() {
+    assertThat(properties).isNotNull();
+    assertThat(properties.getDatabase()).isEqualTo("testDatabase");
+    assertThat(properties.getUsername()).isEqualTo("testUsername");
+    assertThat(properties.getPassword()).isEqualTo("testPassword");
+    assertThat(properties.getHost()).isEqualTo("testHost");
+  }
+}

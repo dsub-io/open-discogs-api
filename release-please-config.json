@@ -1,0 +1,69 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "9a140353c5f5af7f48a19f1435e28f8a92d9ad31",
+  "release-type": "simple",
+  "include-component-in-tag": false,
+  "include-v-in-tag": true,
+  "pull-request-title-pattern": "build: release ${version}",
+  "changelog-sections": [
+    {
+      "type": "build",
+      "section": "Build System"
+    },
+    {
+      "type": "chore",
+      "section": "Maintenance"
+    },
+    {
+      "type": "ci",
+      "section": "Continuous Integration"
+    },
+    {
+      "type": "docs",
+      "section": "Documentation"
+    },
+    {
+      "type": "feat",
+      "section": "Features"
+    },
+    {
+      "type": "fix",
+      "section": "Bug Fixes"
+    },
+    {
+      "type": "perf",
+      "section": "Performance Improvements"
+    },
+    {
+      "type": "refactor",
+      "section": "Code Refactoring"
+    },
+    {
+      "type": "revert",
+      "section": "Reverts"
+    },
+    {
+      "type": "style",
+      "section": "Styles"
+    },
+    {
+      "type": "test",
+      "section": "Tests"
+    }
+  ],
+  "packages": {
+    ".": {
+      "package-name": "open-discogs-api",
+      "extra-files": [
+        {
+          "type": "generic",
+          "path": "README.md"
+        },
+        {
+          "type": "generic",
+          "path": "version.txt"
+        }
+      ]
+    }
+  }
+}
