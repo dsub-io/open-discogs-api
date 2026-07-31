@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.2](https://github.com/dsub-io/open-discogs-api/compare/v1.6.1...v1.6.2) (2026-07-31)
+
+
+### Bug Fixes
+
+* prevent documentation-only releases ([8061554](https://github.com/dsub-io/open-discogs-api/commit/806155419da2c66e2c7c88df1e11b3e16e5ca185))
+
 ## [1.6.1](https://github.com/dsub-io/open-discogs-api/compare/v1.6.0...v1.6.1) (2026-07-30)
 
 
