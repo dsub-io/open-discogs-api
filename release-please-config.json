@@ -5,52 +5,6 @@
   "include-component-in-tag": false,
   "include-v-in-tag": true,
   "pull-request-title-pattern": "build: release ${version}",
-  "changelog-sections": [
-    {
-      "type": "build",
-      "section": "Build System"
-    },
-    {
-      "type": "chore",
-      "section": "Maintenance"
-    },
-    {
-      "type": "ci",
-      "section": "Continuous Integration"
-    },
-    {
-      "type": "docs",
-      "section": "Documentation"
-    },
-    {
-      "type": "feat",
-      "section": "Features"
-    },
-    {
-      "type": "fix",
-      "section": "Bug Fixes"
-    },
-    {
-      "type": "perf",
-      "section": "Performance Improvements"
-    },
-    {
-      "type": "refactor",
-      "section": "Code Refactoring"
-    },
-    {
-      "type": "revert",
-      "section": "Reverts"
-    },
-    {
-      "type": "style",
-      "section": "Styles"
-    },
-    {
-      "type": "test",
-      "section": "Tests"
-    }
-  ],
   "packages": {
     ".": {
       "package-name": "open-discogs-api",
