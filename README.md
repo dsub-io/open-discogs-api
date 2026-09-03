@@ -13,7 +13,7 @@ Discogs. The Discogs name is used only to identify the public data source.
 [![Release](https://github.com/dsub-io/open-discogs-api/actions/workflows/release.yml/badge.svg)](https://github.com/dsub-io/open-discogs-api/actions/workflows/release.yml)
 
 <!-- x-release-please-start-version -->
-Current version: `1.6.2`
+Current version: `1.6.3`
 <!-- x-release-please-end -->
 
 ## OpenDiscogs stack
@@ -47,7 +47,7 @@ Pull and run a versioned image:
 
 <!-- x-release-please-start-version -->
 ```bash
-docker pull ghcr.io/dsub-io/open-discogs-api:1.6.2
+docker pull ghcr.io/dsub-io/open-discogs-api:1.6.3
 
 docker run --rm --name open-discogs-api \
   --publish 8080:8080 \
@@ -57,7 +57,7 @@ docker run --rm --name open-discogs-api \
   --env API_DB_USERNAME=discogs_reader \
   --env API_DB_PASSWORD='<database-password>' \
   --env API_SERVER_URL=http://localhost:8080 \
-  ghcr.io/dsub-io/open-discogs-api:1.6.2
+  ghcr.io/dsub-io/open-discogs-api:1.6.3
 ```
 <!-- x-release-please-end -->
 
