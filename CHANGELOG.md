@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.3](https://github.com/dsub-io/open-discogs-api/compare/v1.6.2...v1.6.3) (2026-09-03)
+
+
+### Bug Fixes
+
+* accept CRLF in diff validation ([#93](https://github.com/dsub-io/open-discogs-api/issues/93)) ([4119aba](https://github.com/dsub-io/open-discogs-api/commit/4119aba18d3919e1f2e636906f250cd265a8213f))
+
 ## [1.6.2](https://github.com/dsub-io/open-discogs-api/compare/v1.6.1...v1.6.2) (2026-07-31)
 
 
