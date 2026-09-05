@@ -1,110 +1,69 @@
 # OpenDiscogs API
 
-A read-only, reactive HTTP API for PostgreSQL databases populated by
-[OpenDiscogs Batch](https://github.com/dsub-io/open-discogs-batch). It exposes
-artists, labels, masters, and releases imported from the public monthly data
-dumps.
-
-This is an independent DSUB project. It is not affiliated with or endorsed by
-Discogs. The Discogs name is used only to identify the public data source.
-
 [![Build](https://github.com/dsub-io/open-discogs-api/actions/workflows/build.yml/badge.svg)](https://github.com/dsub-io/open-discogs-api/actions/workflows/build.yml)
 [![CodeQL](https://github.com/dsub-io/open-discogs-api/actions/workflows/codeql.yml/badge.svg)](https://github.com/dsub-io/open-discogs-api/actions/workflows/codeql.yml)
 [![Release](https://github.com/dsub-io/open-discogs-api/actions/workflows/release.yml/badge.svg)](https://github.com/dsub-io/open-discogs-api/actions/workflows/release.yml)
+
+A read-only HTTP API for artists, labels, masters, and releases imported from
+the public Discogs monthly data dumps.
+
+OpenDiscogs is an independent DSUB project. It is not affiliated with or
+endorsed by Discogs.
 
 <!-- x-release-please-start-version -->
 Current version: `1.6.2`
 <!-- x-release-please-end -->
 
-## OpenDiscogs stack
+## Quick start
 
-The OpenDiscogs repositories have separate responsibilities:
+The API requires a PostgreSQL database that has already been initialized and
+populated by [OpenDiscogs Batch](https://github.com/dsub-io/open-discogs-batch).
+Use a database role with read-only access.
 
-- [open-discogs-batch](https://github.com/dsub-io/open-discogs-batch) downloads,
-  verifies, and imports the public monthly data dumps into PostgreSQL.
-- [open-discogs-jooq](https://github.com/dsub-io/open-discogs-jooq) publishes
-  the generated PostgreSQL schema model to Maven Central.
-- `open-discogs-api` consumes that Maven artifact and serves the imported data
-  through Spring WebFlux and R2DBC.
+Create an environment file:
 
-The API currently consumes:
-
-```text
-io.dsub.opendiscogs:open-discogs-jooq:0.0.5
+```dotenv
+API_DB_HOST=host.docker.internal:5432
+API_DB_DATABASE=discogs
+API_DB_USERNAME=discogs_reader
+API_DB_PASSWORD=replace-me
+API_SERVER_URL=http://localhost:8080
 ```
 
-Generated jOOQ sources and package-registry credentials do not belong in this
-repository.
-
-## Run the container
-
-The public container is available from the
-[open-discogs-api package](https://github.com/dsub-io/open-discogs-api/pkgs/container/open-discogs-api).
-A PostgreSQL database initialized and populated by OpenDiscogs Batch must
-already be reachable.
-
-Pull and run a versioned image:
+Pull and run the current release:
 
 <!-- x-release-please-start-version -->
 ```bash
 docker pull ghcr.io/dsub-io/open-discogs-api:1.6.2
 
 docker run --rm --name open-discogs-api \
+  --env-file .env \
   --publish 8080:8080 \
-  --publish 8081:8081 \
-  --env API_DB_HOST=host.docker.internal:5432 \
-  --env API_DB_DATABASE=discogs \
-  --env API_DB_USERNAME=discogs_reader \
-  --env API_DB_PASSWORD='<database-password>' \
-  --env API_SERVER_URL=http://localhost:8080 \
+  --publish 127.0.0.1:8081:8081 \
   ghcr.io/dsub-io/open-discogs-api:1.6.2
 ```
 <!-- x-release-please-end -->
 
-The example uses Docker Desktop's `host.docker.internal` address for a database
-running on the host. On Linux, add
-`--add-host=host.docker.internal:host-gateway`, or set `API_DB_HOST` to a
-database hostname reachable from the container. Prefer a read-only database
-role.
+On Linux, add `--add-host=host.docker.internal:host-gateway` when PostgreSQL
+runs on the host. Otherwise set `API_DB_HOST` to a hostname reachable from
+the container.
 
-Check the running service from another terminal:
+Verify the service:
 
 ```bash
 curl --fail http://localhost:8081/actuator/health
 curl --fail http://localhost:8080/v3/api-docs
 ```
 
-Interactive OpenAPI documentation is available at
-`http://localhost:8080/swagger-ui.html`. The management port also exposes
-`/actuator/info` and `/actuator/prometheus`; protect that port from untrusted
-networks.
-
-Published images target `linux/amd64` and include SBOM and provenance
-attestations. Version tags (`MAJOR.MINOR.PATCH` and `vMAJOR.MINOR.PATCH`)
-identify a release, `sha-<release-commit>` identifies its source commit, and
-`latest` moves to the newest release. Use an image digest when deployment
-immutability is required.
-
-## Configuration
-
-The application validates its database settings during startup.
-
-| Environment variable | Required | Default | Purpose |
-| --- | --- | --- | --- |
-| `API_DB_HOST` | yes | — | PostgreSQL host and port, such as `postgres:5432` |
-| `API_DB_USERNAME` | yes | — | Database user; a read-only role is recommended |
-| `API_DB_PASSWORD` | yes | — | Password for the database user |
-| `API_DB_DATABASE` | no | `discogs` | Database name |
-| `API_SERVER_URL` | no | `http://localhost:8080` | OpenAPI server URL |
-| `SERVER_PORT` | no | `8080` | Public API port |
-| `MANAGEMENT_SERVER_PORT` | no | `8081` | Actuator port |
+The public API is available on port `8080`. Port `8081` serves Actuator
+health, info, and Prometheus endpoints and should remain private.
 
 ## API
 
-All endpoints are read-only. Collection endpoints accept `page`, `size`, and
-resource-specific filters; page numbers start at 1 and page size is capped at
-30. Supported filters and sort fields are described in the generated OpenAPI
-document.
+Interactive documentation is available at
+[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+after startup. The generated OpenAPI document is the authoritative endpoint
+and parameter reference.
 
 | Resource | Collection and detail endpoints | Related releases |
 | --- | --- | --- |
@@ -113,7 +72,8 @@ document.
 | Masters | `/masters`, `/masters/{id}` | `/masters/{id}/releases` |
 | Releases | `/releases`, `/releases/{id}` | — |
 
-For example:
+Collection endpoints use one-based `page` values, cap `size` at 30, and
+support the filters and sort fields documented in OpenAPI.
 
 ```bash
 curl --get http://localhost:8080/releases \
@@ -122,84 +82,96 @@ curl --get http://localhost:8080/releases \
   --data 'size=10'
 ```
 
-## Develop locally
+## Configuration
+
+The application validates its database settings during startup.
+
+| Environment variable | Required | Default | Purpose |
+| --- | --- | --- | --- |
+| `API_DB_HOST` | yes | — | PostgreSQL host and port |
+| `API_DB_USERNAME` | yes | — | PostgreSQL user |
+| `API_DB_PASSWORD` | yes | — | PostgreSQL password |
+| `API_DB_DATABASE` | no | `discogs` | PostgreSQL database |
+| `API_SERVER_URL` | no | `http://localhost:8080` | Public URL shown in OpenAPI |
+| `SERVER_PORT` | no | `8080` | Public API port |
+| `MANAGEMENT_SERVER_PORT` | no | `8081` | Actuator port |
+
+Keep credentials out of command-line arguments and source control. Published
+images target `linux/amd64`; use a digest instead of a version tag when an
+immutable deployment is required.
+
+## Data source and usage
+
+The service reads only the monthly dump snapshot already imported into
+PostgreSQL. It does not call the Discogs API, accept Discogs credentials,
+perform live hydration, or write catalog data. A `404` only means that a
+resource is absent from the imported snapshot.
+
+Applications that need fresher data must integrate the Discogs API separately
+and comply with its current
+[API Terms of Use](https://support.discogs.com/hc/en-us/articles/360009334593-API-Terms-of-Use),
+including freshness, caching, attribution, rate-limit, Restricted Data,
+availability, and termination requirements. This repository's MIT license
+covers the source code, not third-party data.
+
+## Repository roles
+
+- [open-discogs-model](https://github.com/dsub-io/open-discogs-model) owns the
+  canonical PostgreSQL schema and publishes the generated Java model.
+- [open-discogs-batch](https://github.com/dsub-io/open-discogs-batch) imports
+  verified public monthly dumps.
+- `open-discogs-api` serves the populated database through Spring WebFlux and
+  R2DBC.
+
+The API currently consumes
+`io.dsub.opendiscogs:open-discogs-jooq:0.0.5` from Maven Central. Generated
+model sources and package credentials do not belong in this repository.
+
+## Development
 
 Requirements:
 
 - JDK 21
-- Docker, used by PostgreSQL integration and E2E tests
-- a PostgreSQL database initialized by the current OpenDiscogs schema to run
-  the application against real imported data
+- Docker for PostgreSQL integration and end-to-end tests
 
-The Gradle wrapper uses Gradle 9.6.1. The application uses Spring Boot 4.1,
-jOOQ 3.21.6, and Testcontainers 2.0.5. With SDKMAN installed, activate the
-repository toolchain before running Gradle:
-
-```bash
-sdk env
-```
-
-Run the complete deterministic suite and coverage gate:
+Use the checked-in Gradle wrapper:
 
 ```bash
 ./gradlew clean check --no-daemon --warning-mode=fail
 ```
 
-Individual test boundaries are also available:
+The full check runs unit, PostgreSQL integration, HTTP end-to-end, test naming,
+and coverage gates. Individual suites are available as `test`,
+`integrationTest`, and `e2eTest`.
 
-```bash
-./gradlew test
-./gradlew integrationTest
-./gradlew e2eTest
-```
-
-The build enforces at least 85% line coverage and 40% branch coverage.
-Executable test classes must end in `UnitTest`, `IntegrationTest`, or
-`E2ETest`. Pull-request CI runs the suite, builds the production container,
-reviews dependency changes, validates Conventional Commits, and analyzes Java
-with CodeQL on GitHub-hosted `ubuntu-latest` runners.
-
-Run from source with a populated database:
+To run the application against an existing database:
 
 ```bash
 API_DB_HOST=localhost:5432 \
 API_DB_USERNAME=discogs_reader \
-API_DB_PASSWORD='<database-password>' \
+API_DB_PASSWORD=replace-me \
 ./gradlew bootRun
 ```
 
-## Releases
+## Releases and contributions
 
-Release Please collects Conventional Commits from `main`:
-
-- `fix:` produces a patch candidate.
-- `feat:` produces a minor candidate.
-- `!` or a `BREAKING CHANGE:` footer produces a major candidate.
-- `docs:` by itself does not create or update a release pull request.
-
-Merging the generated `build: release <version>` pull request creates the tag
-and GitHub Release. The release workflow rebuilds that exact release commit,
-runs the full test and coverage suite, and only then publishes the GHCR image.
-Ordinary pushes and pull requests build containers for verification but never
-publish production images.
-
-## Contributing
-
-Pull request titles and commit subjects must follow
-[Conventional Commits](https://www.conventionalcommits.org/), for example:
+Pull request titles and commit subjects use
+[Conventional Commits](https://www.conventionalcommits.org/). For example:
 
 ```text
-feat: add release date filters
-fix(labels): return the configured resource URL
 docs: clarify container networking
-build: align the OpenDiscogs dependency set
+fix(labels): return the configured resource URL
+feat: add release date filters
 ```
 
-Allowed types are `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`,
-`refactor`, `revert`, `style`, and `test`. Pull-request branches must not use
-the reserved `agent/`, `codex/`, or `claude/` prefixes.
+`fix:` creates a patch candidate, `feat:` creates a minor candidate, and a
+breaking change creates a major candidate. A documentation-only `docs:`
+change does not create or update a release pull request.
+
+Merging a Release Please pull request creates the GitHub release and triggers
+publication of the matching GHCR image after the full verification suite.
 
 ## License
 
-Licensed under the [MIT License](LICENSE). Redistribution must retain the
-copyright and permission notice.
+Licensed under the [MIT License](LICENSE). Discogs data remains subject to the
+rights and terms applicable at its source.
