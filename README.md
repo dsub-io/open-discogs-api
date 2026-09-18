@@ -11,7 +11,7 @@ OpenDiscogs is an independent DSUB project. It is not affiliated with or
 endorsed by Discogs.
 
 <!-- x-release-please-start-version -->
-Current version: `1.6.2`
+Current version: `1.6.3`
 <!-- x-release-please-end -->
 
 ## Quick start
@@ -34,13 +34,13 @@ Pull and run the current release:
 
 <!-- x-release-please-start-version -->
 ```bash
-docker pull ghcr.io/dsub-io/open-discogs-api:1.6.2
+docker pull ghcr.io/dsub-io/open-discogs-api:1.6.3
 
 docker run --rm --name open-discogs-api \
   --env-file .env \
   --publish 8080:8080 \
-  --publish 127.0.0.1:8081:8081 \
-  ghcr.io/dsub-io/open-discogs-api:1.6.2
+  --publish 1.6.3.1:8081:8081 \
+  ghcr.io/dsub-io/open-discogs-api:1.6.3
 ```
 <!-- x-release-please-end -->
 
