@@ -1,0 +1,6 @@
+{
+  "repository": "dsub-io/open-discogs-api",
+  "replacement": "dsub-io/go-open-discogs-api",
+  "replacement_name": "Go OpenDiscogs API",
+  "description": "Deprecated Java API. Use dsub-io/go-open-discogs-api for the OpenDiscogs read-only API."
+}
