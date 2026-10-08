@@ -1,8 +1,13 @@
-# OpenDiscogs API
+# Java OpenDiscogs API
 
-[![Build](https://github.com/dsub-io/open-discogs-api/actions/workflows/build.yml/badge.svg)](https://github.com/dsub-io/open-discogs-api/actions/workflows/build.yml)
-[![CodeQL](https://github.com/dsub-io/open-discogs-api/actions/workflows/codeql.yml/badge.svg)](https://github.com/dsub-io/open-discogs-api/actions/workflows/codeql.yml)
+[![CI](https://github.com/dsub-io/open-discogs-api/actions/workflows/ci.yml/badge.svg)](https://github.com/dsub-io/open-discogs-api/actions/workflows/ci.yml)
 [![Release](https://github.com/dsub-io/open-discogs-api/actions/workflows/release.yml/badge.svg)](https://github.com/dsub-io/open-discogs-api/actions/workflows/release.yml)
+
+This Java API is deprecated. Use [Go OpenDiscogs API](https://github.com/dsub-io/go-open-discogs-api)
+and [Go OpenDiscogs Batch](https://github.com/dsub-io/go-open-discogs-batch) for new
+deployments. Existing deployments should read the [migration guide](docs/migration-to-go.md)
+before switching; pagination, response contracts, and database models differ.
+The instructions below describe the existing Java service.
 
 A read-only HTTP API for artists, labels, masters, and releases imported from
 the public Discogs monthly data dumps.
@@ -17,7 +22,8 @@ Current version: `1.6.2`
 ## Quick start
 
 The API requires a PostgreSQL database that has already been initialized and
-populated by [OpenDiscogs Batch](https://github.com/dsub-io/open-discogs-batch).
+populated with the schema expected by this Java version. See the
+[migration guide](docs/migration-to-go.md) before using a current Go importer.
 Use a database role with read-only access.
 
 Create an environment file:
@@ -117,9 +123,11 @@ covers the source code, not third-party data.
 ## Repository roles
 
 - [open-discogs-model](https://github.com/dsub-io/open-discogs-model) owns the
-  canonical PostgreSQL schema and publishes the generated Java model.
-- [open-discogs-batch](https://github.com/dsub-io/open-discogs-batch) imports
-  verified public monthly dumps.
+  canonical PostgreSQL schema and publishes generated Go and Java models.
+- [go-open-discogs-batch](https://github.com/dsub-io/go-open-discogs-batch) is
+  the recommended dump importer. Java Batch remains a legacy implementation.
+- [go-open-discogs-api](https://github.com/dsub-io/go-open-discogs-api) is
+  the recommended read-only API.
 - `open-discogs-api` serves the populated database through Spring WebFlux and
   R2DBC.
 
@@ -153,6 +161,8 @@ API_DB_PASSWORD=replace-me \
 ./gradlew bootRun
 ```
 
+See [CI and contributions](docs/ci.md) for application and documentation checks.
+
 ## Releases and contributions
 
 Pull request titles and commit subjects use
@@ -166,7 +176,7 @@ feat: add release date filters
 
 `fix:` creates a patch candidate, `feat:` creates a minor candidate, and a
 breaking change creates a major candidate. A documentation-only `docs:`
-change does not create or update a release pull request.
+change does not request a version bump.
 
 Merging a Release Please pull request creates the GitHub release and triggers
 publication of the matching GHCR image after the full verification suite.
