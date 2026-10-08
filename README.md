@@ -1,13 +1,20 @@
-# Java OpenDiscogs API
+# Java OpenDiscogs API (deprecated)
+
+Use [Go OpenDiscogs API](https://github.com/dsub-io/go-open-discogs-api).
+This Java implementation is deprecated.
+
+- [Run the Go API](https://github.com/dsub-io/go-open-discogs-api#run)
+- [Go API releases](https://github.com/dsub-io/go-open-discogs-api/releases)
+- [Migrate an existing Java deployment](docs/migration-to-go.md)
+
+The Go API uses [Go OpenDiscogs Batch](https://github.com/dsub-io/go-open-discogs-batch)
+for imports. Existing Java deployments need database and client changes;
+review the migration guide before switching.
+
+## Existing Java service
 
 [![CI](https://github.com/dsub-io/open-discogs-api/actions/workflows/ci.yml/badge.svg)](https://github.com/dsub-io/open-discogs-api/actions/workflows/ci.yml)
 [![Release](https://github.com/dsub-io/open-discogs-api/actions/workflows/release.yml/badge.svg)](https://github.com/dsub-io/open-discogs-api/actions/workflows/release.yml)
-
-This Java API is deprecated. Use [Go OpenDiscogs API](https://github.com/dsub-io/go-open-discogs-api)
-and [Go OpenDiscogs Batch](https://github.com/dsub-io/go-open-discogs-batch) for new
-deployments. Existing deployments should read the [migration guide](docs/migration-to-go.md)
-before switching; pagination, response contracts, and database models differ.
-The instructions below describe the existing Java service.
 
 A read-only HTTP API for artists, labels, masters, and releases imported from
 the public Discogs monthly data dumps.
@@ -19,7 +26,7 @@ endorsed by Discogs.
 Current version: `1.6.2`
 <!-- x-release-please-end -->
 
-## Quick start
+## Run the Java service
 
 The API requires a PostgreSQL database that has already been initialized and
 populated with the schema expected by this Java version. See the
@@ -36,7 +43,7 @@ API_DB_PASSWORD=replace-me
 API_SERVER_URL=http://localhost:8080
 ```
 
-Pull and run the current release:
+Pull and run an existing Java release:
 
 <!-- x-release-please-start-version -->
 ```bash
@@ -125,7 +132,7 @@ covers the source code, not third-party data.
 - [open-discogs-model](https://github.com/dsub-io/open-discogs-model) owns the
   canonical PostgreSQL schema and publishes generated Go and Java models.
 - [go-open-discogs-batch](https://github.com/dsub-io/go-open-discogs-batch) is
-  the recommended dump importer. Java Batch remains a legacy implementation.
+  the recommended dump importer. Java Batch is deprecated.
 - [go-open-discogs-api](https://github.com/dsub-io/go-open-discogs-api) is
   the recommended read-only API.
 - `open-discogs-api` serves the populated database through Spring WebFlux and
