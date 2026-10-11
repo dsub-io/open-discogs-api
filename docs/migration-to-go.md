@@ -1,6 +1,6 @@
 # Migrating from the Java API to Go
 
-The Java API is deprecated. New deployments should use
+The Java API is deprecated and its repository is archived. Use
 [Go OpenDiscogs API](https://github.com/dsub-io/go-open-discogs-api) with
 [Go OpenDiscogs Batch](https://github.com/dsub-io/go-open-discogs-batch).
 
@@ -9,7 +9,7 @@ image alone is not a supported migration.
 
 ## Database preparation
 
-The Java API currently depends on `open-discogs-jooq:0.0.5`. The Go services use
+The archived Java API depends on `open-discogs-jooq:0.0.5`. The Go services use
 the canonical `open-discogs-model` module and its migration ledger. Do not assume
 that a database serving this Java API satisfies the Go schema contract.
 
