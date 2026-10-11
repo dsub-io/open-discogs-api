@@ -1,5 +1,9 @@
 # CI and contributions
 
+This Java repository is archived and GitHub Actions is disabled. The checks
+and release procedures below describe its previous workflow. Submit API
+changes to [Go OpenDiscogs API](https://github.com/dsub-io/go-open-discogs-api).
+
 Application verification runs on pull requests and merge-queue candidates.
 Merging into `main` does not rerun the CI workflow. The separate release
 workflow still handles release metadata and verifies artifacts when a release

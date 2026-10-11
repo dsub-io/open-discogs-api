@@ -1,7 +1,9 @@
-# Java OpenDiscogs API (deprecated)
+# Java OpenDiscogs API (archived)
 
 Use [Go OpenDiscogs API](https://github.com/dsub-io/go-open-discogs-api).
-This Java implementation is deprecated.
+This Java implementation is deprecated and the repository is archived.
+Java releases remain available for existing deployments. Development and
+dependency updates continue in the Go repository.
 
 - [Run the Go API](https://github.com/dsub-io/go-open-discogs-api#run)
 - [Go API releases](https://github.com/dsub-io/go-open-discogs-api/releases)
@@ -142,7 +144,7 @@ The API currently consumes
 `io.dsub.opendiscogs:open-discogs-jooq:0.0.5` from Maven Central. Generated
 model sources and package credentials do not belong in this repository.
 
-## Development
+## Historical development
 
 Requirements:
 
@@ -170,7 +172,11 @@ API_DB_PASSWORD=replace-me \
 
 See [CI and contributions](docs/ci.md) for application and documentation checks.
 
-## Releases and contributions
+## Historical releases and contributions
+
+The following procedure describes Java publication before this repository was
+archived. For current releases and contributions, use
+[Go OpenDiscogs API](https://github.com/dsub-io/go-open-discogs-api).
 
 Pull request titles and commit subjects use
 [Conventional Commits](https://www.conventionalcommits.org/). For example:
